@@ -1,6 +1,6 @@
 module.exports = [
   {
-    url: '/mock/dologin',
+    url: '/mock/api/v1/dologin',
     method: 'post',
     type: 'func',
     response: req => {

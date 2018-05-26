@@ -7,37 +7,53 @@
         <span class="text-xxl text-white align-middle ml-1 layout-logo-text">AiDesign</span>
       </a>
       <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion >
+        <t-menu-item name="0">
+          <t-icon type="home"></t-icon>
+          <span>首页</span>
+        </t-menu-item>
         <t-submenu name="1">
           <template slot="title">
-            <t-icon type="home"></t-icon>
-            <span>内容管理</span>
+            <t-icon type="alert-octagram"></t-icon>
+            <span>系统管理</span>
           </template>
-          <t-menu-item name="1-1">文章管理</t-menu-item>
-          <t-menu-item name="1-2">评论管理</t-menu-item>
-          <t-menu-item name="1-3">举报管理</t-menu-item>
+          <t-menu-item name="1-1">新增用户</t-menu-item>
+          <t-menu-item name="1-2">活跃用户</t-menu-item>
         </t-submenu>
         <t-submenu name="2">
           <template slot="title">
-            <t-icon type="account-multiple"></t-icon>
-            <span>用户管理</span>
+            <t-icon type="road-variant"></t-icon>
+            <span>段道管理</span>
           </template>
           <t-menu-item name="2-1">新增用户</t-menu-item>
           <t-menu-item name="2-2">活跃用户</t-menu-item>
         </t-submenu>
-        <t-submenu name="3">
+        <t-menu-item name="3">
+          <t-icon type="home"></t-icon>
+          <span>流转额计划管理</span>
+        </t-menu-item>
+        <t-submenu name="4">
           <template slot="title">
             <t-icon type="chart-bar"></t-icon>
-            <span>统计分析</span>
+            <span>产品分类</span>
           </template>
-          <t-menu-group title="使用">
-            <t-menu-item name="3-1">新增和启动</t-menu-item>
-            <t-menu-item name="3-2">活跃分析</t-menu-item>
-            <t-menu-item name="3-3">时段分析</t-menu-item>
-          </t-menu-group>
-          <t-menu-group title="留存">
-            <t-menu-item name="3-4">用户留存</t-menu-item>
-            <t-menu-item name="3-5">流失用户</t-menu-item>
-          </t-menu-group>
+          <t-menu-item name="4-1">基础产品目录</t-menu-item>
+          <t-menu-item name="4-2">精品推荐管理</t-menu-item>
+        </t-submenu>
+        <t-submenu name="5">
+          <template slot="title">
+            <t-icon type="library-books"></t-icon>
+            <span>系统日志</span>
+          </template>
+          <t-menu-item name="5-1">设备使用日志</t-menu-item>
+          <t-menu-item name="5-2">人员登录日志</t-menu-item>
+        </t-submenu>
+        <t-submenu name="6">
+          <template slot="title">
+            <t-icon type="account-multiple"></t-icon>
+            <span>客户管理</span>
+          </template>
+          <t-menu-item name="6-1">设备使用日志</t-menu-item>
+          <t-menu-item name="6-2">人员登录日志</t-menu-item>
         </t-submenu>
       </t-menu>
     </div>
@@ -50,7 +66,7 @@
             <t-icon type="arrow-down-drop" size="20"></t-icon>
           </t-badge>
           <t-dropdown-menu slot="list">
-            <t-dropdown-item>个人中心</t-dropdown-item>
+            <t-dropdown-item><router-link to="/userinfo">个人中心</router-link></t-dropdown-item>
             <t-dropdown-item>退出系统</t-dropdown-item>
           </t-dropdown-menu>
         </t-dropdown>
@@ -62,7 +78,7 @@
         <t-breadcrumb-item>当前页</t-breadcrumb-item>
       </t-breadcrumb>
       <div class="layout-main px-4" style="top: 105px; bottom: 50px;">
-        <div class="bg-white p-3" style="height: 500px;">
+        <div :class="['bg-white', { 'p-3' : needPadding}]" style="min-height: 100%;">
           <transition name="fade">
             <router-view></router-view>
           </transition>
@@ -87,6 +103,13 @@ export default {
     }
   },
   computed: {
+    needPadding() {
+      let reg =  /^\/user/
+      if (reg.test(this.$route.path)) {
+        return false
+      }
+      return true
+    }
   },
   mounted() {
     window.addEventListener('resize', () => {

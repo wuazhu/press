@@ -1,6 +1,8 @@
 <template>
   <main>
-    <router-view></router-view>
+    <transition name="fade">
+      <router-view></router-view>
+    </transition>
     <t-back-top :bottom="80"></t-back-top>
   </main>
 </template>
