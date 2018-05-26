@@ -17,6 +17,7 @@ import config from './conf/axios.config.js'
 /* eslint no-useless-escape: "off" */
 /* eslint no-prototype-builtins: "off" */
 
+const BK_TOKEN = 'bk-token'
 /**
  * 深度合并多个对象，返回合并后的新对象
  * @private
@@ -127,6 +128,10 @@ const HttpPlugin = {
  */
 function requestInterceptor(config) {
   // 将post方法的content-type 设置为 application/x-www-form-urlencoded
+  let token = localStorage.getItem(BK_TOKEN)
+  if (token) {
+    config.headers.token = token
+  }
   if (config.method === 'post') {
     config.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     let data = config.data

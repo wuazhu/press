@@ -1,6 +1,6 @@
 module.exports = [
   {
-    url: '/mock/dologin',
+    url: '/mock/api/v1/dologin',
     method: 'post',
     type: 'func',
     response: req => {
@@ -16,7 +16,7 @@ module.exports = [
         }
       } else {
         return {
-          status: 200,
+          status: 201,
           msg: "密码错误"
         }
       }

@@ -2,6 +2,10 @@
   <div class="login-container">
     <transition :name="transName">
       <div v-show="showLoginbox" class="login" @keyup.enter="doLoginHdl">
+        <div class="logos d-flex">
+          <img src="/static/images/logo.png" alt="">
+          <h1 class="col text-lg text-center align-middle">报刊<br>系统</h1>
+        </div>
         <t-form
           ref="login"
           :rules="rules"
@@ -17,8 +21,8 @@
             <t-input v-model="loginForm.password" type="password" placeholder="密码: 11"></t-input>
           </t-form-item>
           <t-form-item class="verify-code" label="验证码" prop="verify">
-            <div class="d-flex justify-content-between">
-              <t-input v-model="loginForm.verify" class="col-5" placeholder="验证码itzx"></t-input>
+            <div class="code-wrap">
+              <t-input v-model="loginForm.verify" class="" placeholder="验证码itzx"></t-input>
               <span class="code col-3 border"><img src="/static/images/code.png" alt=""></span>
             </div>
           </t-form-item>
@@ -47,8 +51,8 @@ export default {
       showLoginbox: false,
       transName: 'flipY-reverse-slow',
       loginForm: {
-        username: '',
-        password: '',
+        username: 'admin',
+        password: '11',
         verify: 'itzx',
         rember: true
       },
@@ -77,13 +81,17 @@ export default {
     doLoginHdl() {
       this.$refs.login.validate(passed => {
         if (passed) {
-          this.doLoginAcs(this.loginForm).then(() => {
-            if (this.loginForm.rememberMe === true) {
-              localStorage.setItem(KEY_USER_NAME, this.loginForm.username)
+          this.doLoginAcs(this.loginForm).then((res) => {
+            if (res.status === 200) {
+              if (this.loginForm.rememberMe === true) {
+                localStorage.setItem(KEY_USER_NAME, this.loginForm.username)
+              } else {
+                localStorage.removeItem(KEY_USER_NAME)
+              }
+              this.$router.push({ name: 'dashboard' })
             } else {
-              localStorage.removeItem(KEY_USER_NAME)
+              this.$Message.danger(res.msg)
             }
-            this.$router.push({ name: 'dashboard' })
           }).catch(err => {
             this.$Message.danger(err)
           })
@@ -109,22 +117,35 @@ export default {
   justify-content: center;
   background: url("/static/images/logins.png") #f1f1f1 center 80% no-repeat;
   background-size: 100% auto;
+  .logos {
+    padding-bottom: 30px;
+    img {
+      width: 220px;
+      height: 74px;
+    }
+    h1 {
+      line-height: 36px;
+      font-size: 26px;
+    }
+  }
   .login {
     width: 400px;
     margin: 0 auto;
     align-items:center;
     position: relative;
     z-index: 2;
-    padding: 50px 30px 30px;
+    padding: 30px 30px 30px;
     background: #fff;
+    box-shadow: 0 0 30px -2px rgba(0, 0, 0, .2);
   }
   .verify-code {
-    .col-5 {
-      padding-left: 0;
-      padding-right: 0;
-      width: 66.66%;
+    .code-wrap {
+      position: relative;
     }
     .code {
+      top: 1px;
+      right: 2px;
+      position: absolute;
       padding-left: 0;
       padding-right: 0;
       height: 32px;
