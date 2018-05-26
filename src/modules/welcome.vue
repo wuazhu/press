@@ -66,7 +66,7 @@
             <t-icon type="arrow-down-drop" size="20"></t-icon>
           </t-badge>
           <t-dropdown-menu slot="list">
-            <t-dropdown-item><router-link to="/userinfo">个人中心</router-link></t-dropdown-item>
+            <t-dropdown-item><router-link to="/user">个人中心</router-link></t-dropdown-item>
             <t-dropdown-item>退出系统</t-dropdown-item>
           </t-dropdown-menu>
         </t-dropdown>
@@ -78,7 +78,7 @@
         <t-breadcrumb-item>当前页</t-breadcrumb-item>
       </t-breadcrumb>
       <div class="layout-main px-4" style="top: 105px; bottom: 50px;">
-        <div class="bg-white p-3" style="min-height: 100%;">
+        <div :class="['bg-white', { 'p-3' : needPadding}]" style="min-height: 100%;">
           <transition name="fade">
             <router-view></router-view>
           </transition>
@@ -103,6 +103,13 @@ export default {
     }
   },
   computed: {
+    needPadding() {
+      let reg =  /^\/user/
+      if (reg.test(this.$route.path)) {
+        return false
+      }
+      return true
+    }
   },
   mounted() {
     window.addEventListener('resize', () => {
