@@ -1,7 +1,6 @@
-// const userIndex = r => require.ensure([], () => r(require('./index.vue')), 'user')
-// const userIndex2 = r => require.ensure([], () => r(require('./text.vue')), 'usser')
-const userIndex = () => import(/* webpackChunkName: user */ './Index.vue')
-const info = () => import(/* webpackChunkName: user */ './Info.vue')
+const userIndex = () => import(/* webpackChunkName: user */ './Index')
+const info = () => import(/* webpackChunkName: user */ './Info')
+
 export default [
   {
     path: '/user',

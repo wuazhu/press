@@ -19,16 +19,16 @@
             <span>系统管理</span>
           </template>
           <t-menu-item name="user.baseInfo">组织机构</t-menu-item>
-          <t-menu-item name="sys-account">账户管理</t-menu-item>
-          <t-menu-item name="sys-permission">权限管理</t-menu-item>
-          <t-menu-item name="sys-device">账号设备授权</t-menu-item>
+          <t-menu-item name="sys.account">账户管理</t-menu-item>
+          <t-menu-item name="sys.permission">权限管理</t-menu-item>
+          <t-menu-item name="sys.device">账号设备授权</t-menu-item>
         </t-submenu>
         <t-submenu name="road">
           <template slot="title">
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
           </template>
-          <t-menu-item name="road-allot">段道分配</t-menu-item>
+          <t-menu-item name="road.allot">段道分配</t-menu-item>
           <t-menu-item name="2-2">活跃用户</t-menu-item>
         </t-submenu>
         <t-menu-item name="roam">
