@@ -6,8 +6,8 @@
     <div class="row index-content d-flex">
       <div class="content-left col-3">
         <div class="top-title">组织机构</div>
-        <span class="mr-5 content-search w-100 d-flex"><t-input placeholder="请输入搜索内容"></t-input></span>
-        <span class="mr-5"><t-tree ref="tree" :data="companyList" class="filter-tree"></t-tree></span>
+        <span class="mr-5 content-search w-100 d-flex"><t-input v-model="searchContent" placeholder="请输入搜索内容"></t-input></span>
+        <span class="mr-5"><t-tree ref="tree" :data="companyList" :filter-node-method="filterNode" class="filter-tree"></t-tree></span>
       </div>
       <div class="content-right">
         <div class="top-title">账户列表</div>
@@ -58,16 +58,32 @@
           <span>2016年目标</span>
           <span>￥3000 / ￥4000</span>
         </div>
-        <!-- <t-modal v-model="targetIsShow" :closable="false" title="设定考核目标" style="width:455px;height:463px;"> -->
         <t-progress :percent="75" status="active"></t-progress>
       </t-form>
     </t-modal>
     <!-- 设备授权信息 -->
-    <t-modal v-model="equipmentIsShow" :closable="false" title="设备授权信息" style="width:455px;height:463px;"></t-modal>
+    <t-modal v-model="equipmentIsShow" :closable="false" title="设备授权信息" style="width:455px;height:463px;">
+      <div class="equipment-title">刘德华 拥有的设备</div>
+      <div class="equipmentList">
+        <p>设备MAC</p>
+        <ul>
+          <li class="d-flex justify-content-between">
+            <span>00-05-5D-E8-0F-A3</span>
+            <span>删除授权</span>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span>00-05-5D-E8-0F-A3</span>
+            <span>删除授权</span>
+          </li>
+        </ul>
+        <i class="new-add">+ 新增授权</i>
+      </div>
+    </t-modal>
   </div>
 </template>
 
 <script>
+// import { accounts } from '../../conf/services'
 export default {
   data() {
     return {
@@ -129,7 +145,36 @@ export default {
         },
         {
           title: '操作',
-          key: 'operation'
+          width: 240,
+          render: (h, params) => {
+            let vm = this
+            return h('div', [
+              h('span', {
+                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding': '0 6px'},
+                on: {
+                  click() {
+                    vm.isShow = true
+                  }
+                }
+              }, '修改信息'),
+              h('span', {
+                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding': '0 6px'},
+                on: {
+                  click() {
+                    vm.targetIsShow = true
+                  }
+                }
+              }, '授权'),
+              h('span', {
+                style: {'color': '#108EEA', 'padding': '0 6px'},
+                on: {
+                  click() {
+                    vm.equipmentIsShow = true
+                  }
+                }
+              }, '设定考核目标')
+            ])
+          }
         }
       ],
       listData: [
@@ -138,32 +183,54 @@ export default {
           coding: '09287621',
           station: '投递员',
           equipment: '3',
-          target: '￥26000',
-          operation: '删除'
+          target: '￥26000'
         },
         {
           name: '张学友',
           coding: '09287621',
           station: '投递员',
           equipment: '3',
-          target: '￥26000',
-          operation: '删除'
+          target: '￥26000'
         },
         {
           name: '张学友',
           coding: '09287621',
           station: '投递员',
           equipment: '3',
-          target: '￥26000',
-          operation: '删除'
+          target: '￥26000'
         }
       ],
       isShow: false,
       targetIsShow: false,
-      equipmentIsShow: true,
+      equipmentIsShow: false,
       inforData: {},
       targetItem: {},
-      equipmenttItem: {}
+      equipmenttItem: {},
+      searchContent: ''
+    }
+  },
+  watch: {
+    searchContent(val) {
+      this.$refs.tree.filter(val)
+    }
+  },
+  created() {
+    // console.log(this.$http)
+    // this.$http.get('/api/v1/accounts', {
+    //   params: {
+    //     orgId: '100',
+    //     currentPage: 1,
+    //     pageSize: 10
+    //   }
+    // })
+    // .then((res) => {
+    //   console.log(res)
+    // })
+  },
+  methods: {
+    filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
     }
   }
 }
@@ -229,6 +296,9 @@ export default {
             height: 40px;
             font-size: 12px;
             color: #000;
+            span{
+              cursor: pointer;
+            }
           }
         }
         .table-paging {
@@ -296,5 +366,43 @@ export default {
   height: 1px;
   background: #E9E9E9;
   margin-bottom: 20px;
+}
+.equipment-title {
+  font-size: 12px;
+  line-height: 18px;
+  margin: 0 0 11px;
+}
+.equipmentList {
+  border: 1px solid #E9E9E9;
+  border-radius: 4px;
+  p {
+    background: #E9E9E9;
+    border-bottom: 1px solid #E9E9E9;
+    line-height: 40px;
+    padding-left: 16px;
+    margin:0;
+  }
+  ul {
+    list-style: none;
+    padding:0;
+    margin: 0;
+    li{
+      line-height: 32px;
+      border-bottom: 1px solid #E9E9E9;
+      padding:0 16px;
+      span {
+        &:nth-child(2) {
+          color: #108EEA;
+        }
+      }
+    }
+  }
+  .new-add {
+    line-height: 32px;
+    font-style: normal;
+    color: #108EEA;
+    font-size: 12px;
+    padding-left: 16px;
+  }
 }
 </style>

@@ -10,5 +10,6 @@
  */
 
 export default {
-  login: '/api/v1/dologin'
+  login: '/api/v1/dologin',
+  accounts: '/api/v1/accounts'
 }
