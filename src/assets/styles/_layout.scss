@@ -1,7 +1,22 @@
 /**
- * 本文件是项目布局样式
+ * 本文件是项目布局样式 重置 aidesign 部分样式
 **/
 
-.full-height {
-  height: 100%;
+.menu--dark.menu {
+  background: #3a4556;
+}
+
+.bg-green {
+  background: #3ca358;
+}
+
+.menu--dark .menu__item:hover,
+.menu--dark .menu--open .menu__submenu-title:hover,
+.menu--dark .menu__submenu-title:hover {
+  background-color: rgba(0, 0, 0, .18);
+}
+.menu--dark .menu__submenu--checked > .menu__submenu-title,
+.menu--dark .menu__item--checked {
+  background-color: rgba(0, 0, 0, .18);
+  background-image:  linear-gradient(to bottom, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.20) 100%);
 }

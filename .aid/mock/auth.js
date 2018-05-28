@@ -16,7 +16,7 @@ module.exports = [
         }
       } else {
         return {
-          status: 200,
+          status: 201,
           msg: "密码错误"
         }
       }
