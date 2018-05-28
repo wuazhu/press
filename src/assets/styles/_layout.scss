@@ -2,6 +2,11 @@
  * 本文件是项目布局样式 重置 aidesign 部分样式
 **/
 
+.ov-hide {
+  overflow: hidden;
+}
+
+// 菜单样式开始
 .menu--dark.menu {
   background: #3a4556;
 }
@@ -20,3 +25,10 @@
   background-color: rgba(0, 0, 0, .18);
   background-image:  linear-gradient(to bottom, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.20) 100%);
 }
+// 菜单样式结束
+
+// loadingBar 开始
+// .loading-bar-inner-color-primary {
+//   background-color: #ffbc33;
+// }
+// loadingBar 结束

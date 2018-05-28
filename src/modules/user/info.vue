@@ -9,7 +9,10 @@
           </t-upload>
         </div>
       </div>
-      <t-form :model="userInfo" label-position="right" :label-span="4">
+      <t-form
+        :model="userInfo"
+        :label-span="4"
+        label-position="right">
         <t-form-item label="用户名" prop="username">
           <t-input v-model="userInfo.username" placeholder="用户名"></t-input>
         </t-form-item>
@@ -29,14 +32,14 @@
           <t-input v-model="userInfo.email" placeholder="email"></t-input>
         </t-form-item>
         <t-form-item label="出生日期" prop="birthday">
-          <t-date-picker v-model="userInfo.birthday"
+          <t-date-picker
+            v-model="userInfo.birthday"
             placeholder="请选择出生日期">
           </t-date-picker>
         </t-form-item>
         <t-form-item label="地址信息">
           <div class="row">
             <div class="col-6">
-              <!-- <t-select v-model="userInfo.province" placeholder="请选择"></t-select> -->
               <t-select v-model="userInfo.province" placeholder="请选择">
                 <t-option v-for="item in cityList" :value="item.id" :key="item.id">{{ item.text }}</t-option>
               </t-select>

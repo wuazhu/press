@@ -18,6 +18,7 @@
 
 import Vuex from 'vuex'
 import Vue from 'vue'
+import createPersistedState from 'vuex-persistedstate'
 
 import login from './modules/login/store'
 
@@ -27,7 +28,13 @@ const store = new Vuex.Store({
   state: {},
   modules: {
     login
-  }
+  },
+  plugins: [createPersistedState({
+    filter: (action) => {
+      console.log(!(action.type === 'login/DO_LOGIN'))
+      return !(action.type === 'login/DO_LOGIN')
+    }
+  })]
 })
 
 export default store

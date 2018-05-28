@@ -1,5 +1,5 @@
 let {
-  join
+  join, resolve
 } = require('path')
 
 function rules(config) {
@@ -15,6 +15,24 @@ function rules(config) {
   return {
     module: {
       rules
+    },
+    resolve: {
+      alias: {
+        'src': resolve(__dirname, '../src'),
+        'asset': resolve(__dirname, '../src/asset'),
+        'components': resolve(__dirname, '../src/module/components'),
+        'module': resolve(__dirname, '../src/module'),
+        'styles': resolve(__dirname, '../src/assets/styles'),
+      },
+      extensions: [
+        ".js",
+        ".json",
+        ".vue",
+        ".styl",
+        ".css",
+        ".less",
+        '.scss'
+      ]
     }
   }
 }

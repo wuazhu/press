@@ -11,6 +11,10 @@ import routes from './routes'
 // 注册路由插件
 Vue.use(VueRouter)
 
+TGlobalLoading.config({
+  height: 3
+})
+
 const router = new VueRouter({
   mode: 'history',
   routes,

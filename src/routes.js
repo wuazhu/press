@@ -3,17 +3,16 @@ export default [
   {
     name: 'login',
     path: '/',
-    component: require('./modules/login/index.vue')
+    component: require('./modules/login/Index.vue')
   },
   {
-    name: 'dashboard',
     path: '/bk',
     component: require('./modules/welcome.vue'),
     children: [
       {
-        name: 'dashboard.index',
+        name: 'dashboard',
         path: '',
-        component: require('./modules/index/index.vue')
+        component: require('./modules/index/Index.vue')
       },
       ...user
     ]

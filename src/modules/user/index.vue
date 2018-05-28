@@ -1,6 +1,6 @@
 <template>
   <div class="user-center h-100 ">
-    <div class="d-flex">
+    <div class="d-flex ov-hide">
       <div class="col-3 user-left">
         <div class="userinfo row">
           <span class="col-3 text-center align-middle"><t-avatar bg-state="warning" text="WU"></t-avatar></span>

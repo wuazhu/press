@@ -8,56 +8,55 @@
           <img src="/static/images/post-logo.png" alt="" class="logo-text ml-2">
         </span>
       </a>
-      <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion >
-        <t-menu-item name="0">
+      <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion @on-select="menuSelect">
+        <t-menu-item name="dashboard">
           <t-icon type="home"></t-icon>
           <span>首页</span>
         </t-menu-item>
-        <t-submenu name="1">
+        <t-submenu name="sys">
           <template slot="title">
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
           </template>
-          <t-menu-item name="1-1">组织机构</t-menu-item>
-          <t-menu-item name="1-2">账户管理</t-menu-item>
-          <t-menu-item name="1-3">权限管理</t-menu-item>
-          <t-menu-item name="1-4">账号设备授权</t-menu-item>
+          <t-menu-item name="user.baseInfo">组织机构</t-menu-item>
+          <t-menu-item name="sys-account">账户管理</t-menu-item>
+          <t-menu-item name="sys-permission">权限管理</t-menu-item>
+          <t-menu-item name="sys-device">账号设备授权</t-menu-item>
         </t-submenu>
-        <t-submenu name="2">
+        <t-submenu name="road">
           <template slot="title">
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
           </template>
-          <t-menu-item name="2-1">新增用户</t-menu-item>
+          <t-menu-item name="road-allot">段道分配</t-menu-item>
           <t-menu-item name="2-2">活跃用户</t-menu-item>
         </t-submenu>
-        <t-menu-item name="3">
-          <t-icon type="home"></t-icon>
+        <t-menu-item name="roam">
+          <t-icon type="water-percent"></t-icon>
           <span>流转额计划管理</span>
         </t-menu-item>
-        <t-submenu name="4">
+        <t-submenu name="product">
           <template slot="title">
             <t-icon type="chart-bar"></t-icon>
             <span>产品分类</span>
           </template>
-          <t-menu-item name="4-1">基础产品目录</t-menu-item>
-          <t-menu-item name="4-2">精品推荐管理</t-menu-item>
+          <t-menu-item name="product-base">基础产品目录</t-menu-item>
+          <t-menu-item name="product-quality">精品推荐管理</t-menu-item>
         </t-submenu>
-        <t-submenu name="5">
+        <t-submenu name="logger">
           <template slot="title">
             <t-icon type="library-books"></t-icon>
             <span>系统日志</span>
           </template>
-          <t-menu-item name="5-1">设备使用日志</t-menu-item>
-          <t-menu-item name="5-2">人员登录日志</t-menu-item>
+          <t-menu-item name="logger-device">设备使用日志</t-menu-item>
+          <t-menu-item name="logger-login">人员登录日志</t-menu-item>
         </t-submenu>
-        <t-submenu name="6">
+        <t-submenu name="cust">
           <template slot="title">
             <t-icon type="account-multiple"></t-icon>
             <span>客户管理</span>
           </template>
-          <t-menu-item name="6-1">设备使用日志</t-menu-item>
-          <t-menu-item name="6-2">人员登录日志</t-menu-item>
+          <t-menu-item name="cust-repeat">客户去重</t-menu-item>
         </t-submenu>
       </t-menu>
     </div>
@@ -108,7 +107,7 @@ export default {
   },
   computed: {
     needPadding() {
-      let reg =  /^\/user/
+      let reg = /^\/user/
       if (reg.test(this.$route.path)) {
         return false
       }
@@ -127,7 +126,15 @@ export default {
       }
     })
   },
-  methods: { // methods
+  updated() {
+    console.log(this.$route.matched)
+  },
+  methods: {
+    menuSelect(name) {
+      this.$router.push({
+        name
+      })
+    },
     switchedSidebarState () {
       this.isOpen = !this.isOpen
       this.openPosition = this.openPosition === 'down' ? 'right' : 'down'
@@ -163,7 +170,7 @@ export default {
   }
 }
 </script>
-<style type="text/css" scoped>
+<style lang="less" scoped>
   .layout {
     position: relative;
   }
@@ -276,6 +283,10 @@ export default {
 
   .layout--one-screen .layout-sidebar {
     position: fixed;
+    .menu__item a {
+      display: block;
+      width: 100%;
+    }
   }
 
   .layout--one-screen .menu--vertical {
