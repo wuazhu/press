@@ -1,4 +1,6 @@
 import user from './modules/user/route.js'
+import passageManage from './modules/passageManage/route.js'
+import accountManage from './modules/accountManage/route.js'
 export default [
   {
     name: 'login',
@@ -15,7 +17,9 @@ export default [
         path: '',
         component: require('./modules/index/index.vue')
       },
-      ...user
+      ...user,
+      ...passageManage,
+      ...accountManage
     ]
   },
   {
@@ -25,4 +29,3 @@ export default [
     }
   }
 ]
-

@@ -104,7 +104,7 @@ export default {
   },
   computed: {
     needPadding() {
-      let reg =  /^\/user/
+      let reg = /^\/user/
       if (reg.test(this.$route.path)) {
         return false
       }
