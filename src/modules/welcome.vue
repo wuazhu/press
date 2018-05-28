@@ -3,8 +3,10 @@
     <div :class="['menu-backdrop', {'show': isOpen===true}]" @click="closeSidebar"></div>
     <div :class="['layout-sidebar bg-gray-darker show',{'layout-sidebar--folded': isOpen===false}]">
       <a href="#" class="layout-logo-left">
-        <img src="/static/images/aid-logo.png" alt="" class="layout-logo-img">
-        <span class="text-xxl text-white align-middle ml-1 layout-logo-text">AiDesign</span>
+        <img src="/static/images/zy-logo.png" alt="" class="layout-logo-img">
+        <span class="text-xxl text-white align-middle ml-1 layout-logo-text">
+          <img src="/static/images/post-logo.png" alt="" class="logo-text ml-2">
+        </span>
       </a>
       <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion >
         <t-menu-item name="0">
@@ -16,8 +18,10 @@
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
           </template>
-          <t-menu-item name="1-1">新增用户</t-menu-item>
-          <t-menu-item name="1-2">活跃用户</t-menu-item>
+          <t-menu-item name="1-1">组织机构</t-menu-item>
+          <t-menu-item name="1-2">账户管理</t-menu-item>
+          <t-menu-item name="1-3">权限管理</t-menu-item>
+          <t-menu-item name="1-4">账号设备授权</t-menu-item>
         </t-submenu>
         <t-submenu name="2">
           <template slot="title">
@@ -58,12 +62,12 @@
       </t-menu>
     </div>
     <div class="layout-content">
-      <nav class="navbar  navbar-expand-lg bg-white layout-nav--top px-4">
-        <a href="javascript:;"><i class="aid aid-menu text-xxl text-gray" @click="switchedSidebarState"></i></a>
+      <nav class="navbar  navbar-expand-lg bg-green layout-nav--top px-4">
+        <a href="javascript:;"><i class="aid aid-menu text-xxl text-white" @click="switchedSidebarState"></i></a>
         <t-dropdown class="ml-auto" trigger="click" placement="bottom-end">
           <t-badge class="ml-4">
-            <t-avatar dot-state="danger" text="HC" size="sm"></t-avatar>
-            <t-icon type="arrow-down-drop" size="20"></t-icon>
+            <t-avatar bg-state="warning" text="HC" size="sm"></t-avatar>
+            <t-icon type="arrow-down-drop text-white" size="20"></t-icon>
           </t-badge>
           <t-dropdown-menu slot="list">
             <t-dropdown-item><router-link to="/user">个人中心</router-link></t-dropdown-item>
@@ -164,18 +168,22 @@ export default {
     position: relative;
   }
 
+  .logo-text {
+    width: 80px;
+  }
+
   .layout-logo-left {
     display: flex;
     align-items: center;
     height: 60px;
     padding: 12.5px 20px;
     white-space: nowrap;
-    background: #363745;
+    background: #007f3b;
   }
 
   .layout-logo-img {
-    width: 24px;
-    height: 24px;
+    width: 34px;
+    height: 34px;
   }
 
   .layout-sidebar {
