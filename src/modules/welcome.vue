@@ -2,12 +2,12 @@
   <div class="layout layout--one-screen bg-gray-lightest-5">
     <div :class="['menu-backdrop', {'show': isOpen===true}]" @click="closeSidebar"></div>
     <div :class="['layout-sidebar bg-gray-darker show',{'layout-sidebar--folded': isOpen===false}]">
-      <a href="#" class="layout-logo-left">
+      <router-link to="/bk" class="layout-logo-left">
         <img src="/static/images/zy-logo.png" alt="" class="layout-logo-img">
         <span class="text-xxl text-white align-middle ml-1 layout-logo-text">
           <img src="/static/images/post-logo.png" alt="" class="logo-text ml-2">
         </span>
-      </a>
+      </router-link>
       <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion @on-select="menuSelect">
         <t-menu-item name="dashboard">
           <t-icon type="home"></t-icon>
