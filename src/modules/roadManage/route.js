@@ -1,8 +1,8 @@
 const passageIndex = () => import(/* webpackChunkName: road */ './Index.vue')
 export default [
   {
-    path: '/bk/roadManage',
-    name: 'road.allot',
+    path: '/road/allot',
+    name: '/road/allot',
     component: passageIndex
   }
 ]

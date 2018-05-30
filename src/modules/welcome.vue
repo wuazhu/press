@@ -9,7 +9,7 @@
         </span>
       </router-link>
       <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion @on-select="menuSelect">
-        <t-menu-item name="dashboard">
+        <t-menu-item name="/bk/dashboard">
           <t-icon type="home"></t-icon>
           <span>首页</span>
         </t-menu-item>
@@ -18,8 +18,8 @@
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
           </template>
-          <t-menu-item name="user.baseInfo">组织机构</t-menu-item>
-          <t-menu-item name="sys.account">账户管理</t-menu-item>
+          <t-menu-item name="/user/baseInfo">组织机构</t-menu-item>
+          <t-menu-item name="/account/manage">账户管理</t-menu-item>
           <t-menu-item name="sys.permission">权限管理</t-menu-item>
           <t-menu-item name="sys.device">账号设备授权</t-menu-item>
         </t-submenu>
@@ -28,7 +28,7 @@
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
           </template>
-          <t-menu-item name="road.allot">段道分配</t-menu-item>
+          <t-menu-item name="/road/allot">段道分配</t-menu-item>
           <t-menu-item name="2-2">活跃用户</t-menu-item>
         </t-submenu>
         <t-menu-item name="roam">
@@ -40,16 +40,16 @@
             <t-icon type="chart-bar"></t-icon>
             <span>产品分类</span>
           </template>
-          <t-menu-item name="product-base">基础产品目录</t-menu-item>
-          <t-menu-item name="product-quality">精品推荐管理</t-menu-item>
+          <t-menu-item name="/product/base">基础产品目录</t-menu-item>
+          <t-menu-item name="/product/quality">精品推荐管理</t-menu-item>
         </t-submenu>
         <t-submenu name="logger">
           <template slot="title">
             <t-icon type="library-books"></t-icon>
             <span>系统日志</span>
           </template>
-          <t-menu-item name="logger-device">设备使用日志</t-menu-item>
-          <t-menu-item name="logger-login">人员登录日志</t-menu-item>
+          <t-menu-item name="/logger/device">设备使用日志</t-menu-item>
+          <t-menu-item name="/logger/login">人员登录日志</t-menu-item>
         </t-submenu>
         <t-submenu name="cust">
           <template slot="title">
@@ -69,7 +69,7 @@
             <t-icon type="arrow-down-drop text-white" size="20"></t-icon>
           </t-badge>
           <t-dropdown-menu slot="list">
-            <t-dropdown-item><router-link to="/user">个人中心</router-link></t-dropdown-item>
+            <t-dropdown-item><router-link to="/user/baseInfo">个人中心</router-link></t-dropdown-item>
             <t-dropdown-item>退出系统</t-dropdown-item>
           </t-dropdown-menu>
         </t-dropdown>
@@ -81,8 +81,8 @@
         <t-breadcrumb-item>当前页</t-breadcrumb-item>
       </t-breadcrumb>
       <div class="layout-main px-4" style="top: 105px; bottom: 50px;">
-        <div :class="['bg-white', { 'p-3' : needPadding}]" style="min-height: 100%;">
-          <transition name="fade">
+        <div :class="['bg-white pos-rel', { 'p-3' : true}]" style="min-height: 100%;">
+          <transition name="cust-router-change" mode="out-in">
             <router-view></router-view>
           </transition>
         </div>
@@ -132,7 +132,7 @@ export default {
   methods: {
     menuSelect(name) {
       this.$router.push({
-        name
+        path: name
       })
     },
     switchedSidebarState () {
@@ -316,4 +316,7 @@ export default {
     left: 50%;
     transform: translate(-50%, 0);
   }
+.test-abs {
+  position: absolute;
+}
 </style>

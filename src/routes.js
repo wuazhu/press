@@ -13,16 +13,23 @@ export default [
     children: [
       {
         name: 'dashboard',
-        path: '',
+        path: 'dashboard',
         component: require('./modules/index/Index')
       },
       ...user,
       ...roadManage,
-      ...accountManage
+      ...accountManage,
+      {
+        path: '404',
+        component: {
+          template: '<div>not found</div>'
+        }
+      }
     ]
   },
   {
     path: '*',
+    redirect: '/bk/404',
     component: {
       template: '<div>not found</div>'
     }
