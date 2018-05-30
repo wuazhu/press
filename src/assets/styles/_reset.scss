@@ -1,3 +1,44 @@
 /**
  * 本文件是项目重置 aidesign 样式
 **/
+
+// 路由变化动画
+.cust-router-change-enter-active, .cust-router-change-leave-active {
+  transition: all .3s;
+}
+
+// 动画进入
+.cust-router-change-enter, .cust-router-change-leave-active{
+  opacity: 0;
+}
+.cust-router-change-enter {
+  transform: translate3d(30px, 0, 0);
+}
+.cust-router-change-leave-active {
+  transform: translate3d(-30px, 0, 0);
+}
+// .cust-router-change-to {
+//   opacity: 0;
+//   transform: translate3d(0, 0, 0);
+// }
+
+// .cust-router-change-leave {
+//   opacity: 1;
+//   transform: translate3d(0, 0, 0);
+// }
+
+
+// .cust-router-change-leave-to {
+//   opacity: 0;
+//   transform: translate3d(30px, 0, 0);
+// }
+
+// .no-mode-translate-fade-enter, .no-mode-translate-fade-leave-active {
+//   opacity: 0;
+// }
+// .no-mode-translate-fade-enter {
+//   transform: translateX(31px);
+// }
+// .no-mode-translate-fade-leave-active {
+//   transform: translateX(-31px);
+// }
