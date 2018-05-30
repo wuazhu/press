@@ -1,5 +1,5 @@
 <template>
-  <div class="road-index">
+  <div class="client-distinct">
     <div class="index-title">
       <p class="text-base">段道管理</p>
     </div>
@@ -9,16 +9,19 @@
         <company-trees></company-trees>
       </div>
       <div class="content-right">
-        <div class="top-title">段道列表</div>
-        <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
+        <div class="screen-module">
+          <p class="top-title">待筛客户组1</p>
+          <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
+        </div>
+        <div class="screen-module">
+          <p class="top-title">待筛客户组2</p>
+          <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
+        </div>
         <div class="table-paging">
           <t-pager :total="100" :current="1"></t-pager>
         </div>
       </div>
     </div>
-    <t-modal v-model="isShow" :closable="false" title="分配段道负责人" style="width:455px;height:351px;">
-      <t-transfer :operations="['>>','<<']" size="sm"></t-transfer>
-    </t-modal>
   </div>
 </template>
 
@@ -31,89 +34,81 @@ export default {
   },
   data() {
     return {
-      companyList: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }],
       listHeaderData: [
         {
-          title: '段道名',
+          title: '姓名',
           key: 'name'
         },
         {
-          title: '描述',
-          key: 'description'
+          title: '联系电话',
+          key: 'teleNumber'
         },
         {
-          title: '责任人',
-          key: 'person'
+          title: '客户地址',
+          key: 'address'
+        },
+        {
+          title: '所在段道',
+          key: 'road'
+        },
+        {
+          title: '段道责任人',
+          key: 'responsible'
         },
         {
           title: '操作',
+          width: 240,
           render: (h, params) => {
-            let vm = this
+            // let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA'},
+                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding-right': '6px'},
                 on: {
                   click() {
-                    vm.isShow = true
                   }
                 }
-              }, '分配责任人')
+              }, '详情'),
+              h('span', {
+                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding': '0 6px'},
+                on: {
+                  click() {
+                  }
+                }
+              }, '合并其他'),
+              h('span', {
+                style: {'color': '#108EEA', 'padding': '0 6px'},
+                on: {
+                  click() {
+                  }
+                }
+              }, '移出本组')
             ])
           }
         }
       ],
       listData: [
         {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
+          name: '刘德华',
+          teleNumber: '18219223456',
+          address: '北京市海淀区中关村软件园二期西北旺东路1',
+          road: '1区1段',
+          responsible: '张卫健'
         },
         {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
+          name: '刘德华',
+          teleNumber: '18219223456',
+          address: '北京市海淀区中关村软件园二期西北旺东路1',
+          road: '1区1段',
+          responsible: '张卫健'
         },
         {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
+          name: '刘德华',
+          teleNumber: '18219223456',
+          address: '北京市海淀区中关村软件园二期西北旺东路1',
+          road: '1区1段',
+          responsible: '张卫健'
         }
-      ],
-      isShow: false
+      ]
     }
   },
   methods: {
@@ -125,7 +120,7 @@ export default {
 .p-3 {
   padding:0 !important;
 }
-.road-index {
+.client-distinct {
   .row {
     margin: 0;
   }
@@ -144,11 +139,13 @@ export default {
       padding-left: 16px;
       line-height: 40px;
       color: #323232;
+      margin: 0;
     }
     &>div {
       background: #FFFFFF;
       border: 1px solid #E9E9E9;
       min-height: 350px;
+      padding-bottom: 100px;
       &:nth-child(1) {
         padding: 0;
         .content-search {
@@ -169,6 +166,11 @@ export default {
         margin-left: 20px;
         flex: 1;
         position: relative;
+        border: 0;
+        .screen-module {
+          border: 1px solid #E9E9E9;
+          margin-bottom: 20px;
+        }
         .table__header {
           table {
             th {

@@ -6,8 +6,7 @@
     <div class="row index-content d-flex">
       <div class="content-left col-3">
         <div class="top-title">组织机构</div>
-        <span class="mr-5 content-search w-100 d-flex"><t-input v-model="searchContent" placeholder="请输入搜索内容"></t-input></span>
-        <span class="mr-5"><t-tree ref="tree" :data="companyList" :filter-node-method="filterNode" class="filter-tree"></t-tree></span>
+        <company-trees></company-trees>
       </div>
       <div class="content-right">
         <div class="top-title">账户列表</div>
@@ -83,45 +82,14 @@
 </template>
 
 <script>
-// import { accounts } from '../../conf/services'
+import companyTrees from '../components/companyTrees.vue'
+
 export default {
+  components: {
+    companyTrees
+  },
   data() {
     return {
-      companyList: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }],
       listHeaderData: [
         {
           title: '姓名',
@@ -150,7 +118,7 @@ export default {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding': '0 6px'},
+                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding-right': '6px'},
                 on: {
                   click() {
                     vm.isShow = true
@@ -205,13 +173,7 @@ export default {
       equipmentIsShow: false,
       inforData: {},
       targetItem: {},
-      equipmenttItem: {},
-      searchContent: ''
-    }
-  },
-  watch: {
-    searchContent(val) {
-      this.$refs.tree.filter(val)
+      equipmenttItem: {}
     }
   },
   created() {
@@ -228,10 +190,6 @@ export default {
     // })
   },
   methods: {
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
-    }
   }
 }
 </script>
@@ -241,6 +199,9 @@ export default {
   padding:0 !important;
 }
 .passage-index {
+  .row {
+    margin: 0;
+  }
   .index-title {
     p{
       line-height: 22px;

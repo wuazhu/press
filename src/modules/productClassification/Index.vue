@@ -1,5 +1,5 @@
 <template>
-  <div class="road-index">
+  <div class="product-index">
     <div class="index-title">
       <p class="text-base">段道管理</p>
     </div>
@@ -9,7 +9,7 @@
         <company-trees></company-trees>
       </div>
       <div class="content-right">
-        <div class="top-title">段道列表</div>
+        <div class="top-title">段道列表1111</div>
         <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
         <div class="table-paging">
           <t-pager :total="100" :current="1"></t-pager>
@@ -31,41 +31,6 @@ export default {
   },
   data() {
     return {
-      companyList: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }],
       listHeaderData: [
         {
           title: '段道名',
@@ -85,7 +50,7 @@ export default {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA'},
+                style: {'color': '#108EEA', 'padding': '0 6px'},
                 on: {
                   click() {
                     vm.isShow = true
@@ -125,7 +90,7 @@ export default {
 .p-3 {
   padding:0 !important;
 }
-.road-index {
+.product-index {
   .row {
     margin: 0;
   }
