@@ -1,6 +1,8 @@
 import user from './modules/user/route'
 import roadManage from './modules/roadManage/route'
 import accountManage from './modules/accountManage/route'
+import productClassification from './modules/productClassification/route'
+import ClientManage from './modules/ClientManage/route'
 export default [
   {
     name: 'login',
@@ -18,7 +20,9 @@ export default [
       },
       ...user,
       ...roadManage,
-      ...accountManage
+      ...accountManage,
+      ...productClassification,
+      ...ClientManage
     ]
   },
   {
