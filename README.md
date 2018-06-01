@@ -2,10 +2,12 @@
 
 ## 版本
 
-|  编号  |        发布时间        |  描述  |
-| :----: | :--------------------: | :----: |
-| v0.0.1 | 2018年05月24日09:09:14 | 初始化 |
-| v0.0.2 | 2018年05月24日19:12:00 |  公约  |
+|  编号  |        发布时间        |                        描述                         |
+| :----: | :--------------------: | :-------------------------------------------------: |
+| v0.0.1 | 2018年05月24日09:09:14 |                       初始化                        |
+| v0.0.2 | 2018年05月24日19:12:00 |                        公约                         |
+| v0.0.3 | 2018年05月30日10:30:00 |                      修改登录                       |
+| v0.0.4 | 2018年05月31日17:27:24 | 新增报刊客户管理, <br />统一返回 msg 修改为 message |
 
 ## 概述
 
@@ -18,12 +20,12 @@
 公共字段说明
 
 - status:  接口响应状态, 可选值为 'ok' 或 'error'
-- msg:  接口响应状态消息
+- message:  接口响应状态消息
 - data:  具体接口响应数据
 
 请求返回状态码
 
-| 状态码 |       返回msg        |    详细描述    |
+| 状态码 |     返回message      |    详细描述    |
 | :----: | :------------------: | :------------: |
 |  200   |     系统请求成功     |    请求成功    |
 |  302   |      系统被转发      |   请求被转发   |
@@ -34,6 +36,52 @@
 |  500   | 系统错误，请稍候再试 |   服务器错误   |
 
 ## 登录
+
+### 登录
+
+- 接口地址: /login
+- 请求方式: POST
+- 请求参数
+
+| 名称     |  描述  | 默认值 |
+| -------- | :----: | -----: |
+| username | 用户名 |     无 |
+| password |  密码  |     无 |
+
+- 返回数据
+
+```json
+{
+  "status": 200,
+  "message": "请求成功",
+  "data": {
+    "id": 2000001,
+    "code": "10ADMIN",
+    "staffId": 2000001,
+    "loginStationId": null,
+    "state": null,
+    "token": "B4AEEB78893C3F0B08224E817690F12B",
+    "staff": {
+      "staffId": 2000001,
+      "staffCode": null,
+      "staffName": "10ADMIN",
+      "orgId": 10006404,
+      "orgName": "中国邮政集团公司",
+      "staffType": null,
+      "staffLevel": null,
+      "jobNumber": null,
+      "thumbnail": null,
+      "contactsDTO": null,
+      "districtId": "110000",
+      "districtTypeId": "10"
+    }
+  }
+}
+```
+
+
+
+### 登出
 
 ## 段道管理
 
@@ -52,7 +100,7 @@
 ```json
 {
     "status": "ok",
-    "msg": "ok",
+    "message": "ok",
     "data": [{
         "text": "中国邮政集团节点1", // 节点名称
         "id": "xxx",  // 节点 id
@@ -93,7 +141,7 @@
 ```json
 {
     "status": "ok",
-    "msg": "ok",
+    "message": "ok",
     "data": [
         {
             "id": "xxx", 	// 段道 id
@@ -159,7 +207,7 @@
 ```json
 {
     "status": "ok",
-    "msg": "ok",
+    "message": "ok",
     "data": {}
 }
 ```
@@ -168,7 +216,7 @@
 
 ## 账户管理
 
-### 查询账户列表
+### 查询账户列表 (分页)
 
 - 接口地址: /accounts
 - 请求方式: GET
@@ -227,7 +275,7 @@
 ```json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": {}
 }
 ```
@@ -249,7 +297,7 @@
 ``` json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": {
         "fileId": "xx", 	// 文件id
         "thumbnail": "xxx"	// 图片地址
@@ -274,7 +322,7 @@
 ``` json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": [{
         "macAddress": "00-05-5D-E8-0F-A3", 	// 设备mac 地址
         "macId": "xxx"	// id
@@ -301,7 +349,7 @@
 ``` json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": {}
 }
 ```
@@ -324,7 +372,7 @@
 ``` json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": {
         macAddress: "00-05-5D-E8-0F-A3", 	// 新增成功的 mac 地址
         macId: "xxx"	// mac地址 id
@@ -334,7 +382,7 @@
 
 
 
-### 查询员工考核目标
+### 查询员工考核目标 (分页)
 
 当前年份是否标识?
 
@@ -353,7 +401,7 @@
 ``` json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": [{	// 返回近3年考核目标数据
         date: "2018", 	// 年度
         total: 4000,	// 目标金额
@@ -370,8 +418,6 @@
 
 ### 修改员工考核目标
 
-当前年份是否标识?
-
 - 接口地址: /targets
 - 请求方式: POST
 - 请求参数
@@ -386,9 +432,183 @@
 ``` json
 {
     "status": "ok",
-    "msg": "okkk",
+    "message": "okkk",
     "data": {}
 }
 ```
 
+
+
+## 客户管理
+
+### 客户筛重 (分页)
+
+- 接口地址: /customers
+- 请求方式: /GET
+- 请求参数
+
+| 名称        |    描述     | 默认值 |
+| ----------- | :---------: | -----: |
+| orgId       | 组织机构 id |     无 |
+| currentPage |  当前页码   |      1 |
+| pageSize    |  每页条数   |     10 |
+
+- 返回参数
+
+```json
+{
+    "status": "ok",
+    "message": "okkk",
+    "data": [
+        {
+            listId: 'xxxx', 	// 待筛选客户组 id
+            custList: [
+                {
+                    customerId: 'xxx',	// 客户 id
+                    name: '刘德华',	// 客户名
+                    phone: '100100100',	// 电话号码
+                    address: '北京市北京北京市北京', // 地址
+                    road: '1区1段',	// 所在段道
+                    leader: '陈奕迅',	// 段道负责人
+            	},
+                {
+                    customerId: 'xxx',	// 客户 id
+                    name: '刘德华',	// 客户名
+                    phone: '100100100',	// 电话号码
+                    address: '北京市北京北京市北京', // 地址
+                    road: '1区1段',	// 所在段道
+                    leader: '陈奕迅',	// 段道负责人
+                }
+            ]
+        },
+        {
+            listId: 'xxxx', 	// 待筛选客户组 id
+            custList: [
+                {
+                    customerId: 'xxx',	// 客户 id
+                    name: '刘德华',	// 客户名
+                    phone: '100100100',	// 电话号码
+                    address: '北京市北京北京市北京', // 地址
+                    road: '1区1段',	// 所在段道
+                    leader: '陈奕迅',	// 段道负责人
+            	},
+                {
+                    customerId: 'xxx',	// 客户 id
+                    name: '刘德华',	// 客户名
+                    phone: '100100100',	// 电话号码
+                    address: '北京市北京北京市北京', // 地址
+                    road: '1区1段',	// 所在段道
+                    leader: '陈奕迅',	// 段道负责人
+                }
+            ]
+        }
+    ]
+}
+```
+
+
+
+### 合并其他
+
+- 接口地址: /merge
+- 请求方式: /POST
+- 请求参数
+
+| 名称   |    描述     | 默认值 |
+| ------ | :---------: | -----: |
+| orgId  | 组织机构 id |     无 |
+| listId |  客户组 id  |     无 |
+| mainId | 当前客户 id |     无 |
+
+- 返回参数
+
+```json
+{
+    "status": "ok",
+    "message": "okkk",
+    "data": {
+        
+    }
+}
+```
+
+
+
+### 移出本组
+
+- 接口地址: /moveout
+- 请求方式: /DELETE
+- 请求参数
+
+| 名称   |    描述     | 默认值 |
+| ------ | :---------: | -----: |
+| orgId  | 组织机构 id |     无 |
+| listId |  客户组 id  |     无 |
+| mainId | 当前客户 id |     无 |
+
+- 返回参数
+
+```json
+{
+    "status": "ok",
+    "message": "okkk",
+    "data": {
+        
+    }
+}
+```
+
+
+
+## 报刊
+
+### 新增报刊精品
+
+- 接口地址: /press
+- 请求方式: /DELETE
+- 请求参数
+
+| 名称      |    描述    | 默认值 |
+| --------- | :--------: | -----: |
+| pressId   |  报刊 id   |     无 |
+| setTop    |  设置置顶  |     无 |
+| bannerUrl | banner URL |     无 |
+| picture   |    xxx     |     无 |
+
+- 返回参数
+
+```json
+{
+    "status": "ok",
+    "message": "okkk",
+    "data": {
+    	
+    }
+}
+```
+
+
+
+### 精品推荐管理 (分页)
+
+- 接口地址: /recommend
+- 请求方式: /PATCH
+- 请求参数
+
+| 名称        |    描述     | 默认值 |
+| ----------- | :---------: | -----: |
+| orgId       | 组织机构 id |     无 |
+| currentPage |    页码     |      1 |
+| pageSize    |  每页条数   |     10 |
+| pressId     |   报刊 id   |     无 |
+
+- 返回参数
+
+```json
+{
+    "status": "ok",
+    "message": "okkk",
+    "data": {}
+}
+```
 
