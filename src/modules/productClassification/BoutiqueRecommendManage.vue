@@ -23,15 +23,26 @@
         </div>
       </div>
     </div>
+    <t-slipbox :visible.sync="addPressData.visible" :styles="addPressData.styls" class="demo__slipbox--1">
+      <template slot="header">
+        <div class="slipbox-title d-flex justify-content-between align-items-center">
+          <p class="text-base">加入精品报刊</p>
+          <t-button type="info" size="sm">保存并提交</t-button>
+        </div>
+      </template>
+      <add-trees></add-trees>
+    </t-slipbox>
   </div>
 </template>
 
 <script>
-import companyTrees from '../components/companyTrees.vue'
+import companyTrees from '../components/CompanyTrees.vue'
+import addTrees from './components/AddPress.vue'
 
 export default {
   components: {
-    companyTrees
+    companyTrees,
+    addTrees
   },
   data() {
     return {
@@ -94,15 +105,19 @@ export default {
           bannerImg: '../url/banner/jingjicankao.jpg'
         }
       ],
-      searchDetails: ''
+      searchDetails: '',
+      addPressData: {
+        visible: false,
+        title: '新增精品报刊',
+        styls: {
+          width: '520px'
+        }
+      }
     }
   },
   methods: {
     $_clickAddPress() {
-      // 加入精品报刊按钮跳转页面
-      this.$router.push({
-        path: '/bk/boutique/addPress'
-      })
+      this.addPressData.visible = true
     }
   }
 }
@@ -115,6 +130,14 @@ export default {
 .boutique-container {
   .row {
     margin: 0;
+  }
+  .slipbox__wraper {
+    .slipbox__content {
+      .slipbox__header {
+        padding: 0 22px;
+        border-bottom: 1px solid #979797;
+      }
+    }
   }
   .index-title {
     p{
@@ -243,6 +266,18 @@ export default {
       background: #fff;
       border-bottom: 1px solid #E9E9E9;
     }
+  }
+}
+.slipbox-title {
+  p {
+    line-height: 54px;
+    margin-bottom: 0;
+  }
+  button {
+    height: 28px;
+    width:108px;
+    line-height: 28px;
+    background: #009241;
   }
 }
 </style>

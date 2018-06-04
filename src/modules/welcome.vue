@@ -9,7 +9,7 @@
         </span>
       </router-link>
       <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion @on-select="menuSelect">
-        <t-menu-item name="/bk/dashboard">
+        <t-menu-item name="/bk">
           <t-icon type="home"></t-icon>
           <span>首页</span>
         </t-menu-item>
@@ -19,9 +19,8 @@
             <span>系统管理</span>
           </template>
           <t-menu-item name="/user/baseInfo">组织机构</t-menu-item>
-          <t-menu-item name="/account/manage">账户管理</t-menu-item>
+          <t-menu-item name="/account/manage">绩效与授权</t-menu-item>
           <t-menu-item name="sys.permission">权限管理</t-menu-item>
-          <t-menu-item name="sys.device">账号设备授权</t-menu-item>
         </t-submenu>
         <t-submenu name="road">
           <template slot="title">
@@ -29,12 +28,8 @@
             <span>段道管理</span>
           </template>
           <t-menu-item name="/road/allot">段道分配</t-menu-item>
-          <t-menu-item name="2-2">活跃用户</t-menu-item>
+          <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
         </t-submenu>
-        <t-menu-item name="roam">
-          <t-icon type="water-percent"></t-icon>
-          <span>流转额计划管理</span>
-        </t-menu-item>
         <t-submenu name="product">
           <template slot="title">
             <t-icon type="chart-bar"></t-icon>
@@ -81,7 +76,7 @@
         <t-breadcrumb-item>当前页</t-breadcrumb-item>
       </t-breadcrumb>
       <div class="layout-main px-4" style="top: 105px; bottom: 50px;">
-        <div :class="['bg-white pos-rel', { 'p-3' : true}]" style="min-height: 100%;">
+        <div :class="['bg-white pos-rel', { 'p-3' : true}]" style="height: 100%;">
           <transition name="cust-router-change" mode="out-in">
             <router-view></router-view>
           </transition>
@@ -106,13 +101,6 @@ export default {
     }
   },
   computed: {
-    needPadding() {
-      let reg = /^\/user/
-      if (reg.test(this.$route.path)) {
-        return false
-      }
-      return true
-    }
   },
   mounted() {
     window.addEventListener('resize', () => {

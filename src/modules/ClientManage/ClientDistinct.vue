@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import companyTrees from '../components/companyTrees.vue'
+import companyTrees from '../components/CompanyTrees.vue'
 
 export default {
   components: {

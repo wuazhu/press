@@ -20,7 +20,7 @@ function rules(config) {
       alias: {
         'src': resolve(__dirname, '../src'),
         'asset': resolve(__dirname, '../src/asset'),
-        'components': resolve(__dirname, '../src/module/components'),
+        'commonComp': resolve(__dirname, '../src/module/components'),
         'module': resolve(__dirname, '../src/module'),
         'styles': resolve(__dirname, '../src/assets/styles'),
       },

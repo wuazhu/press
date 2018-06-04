@@ -1,8 +1,9 @@
-import user from './modules/user/route'
-import roadManage from './modules/roadManage/route'
-import accountManage from './modules/accountManage/route'
-import productClassification from './modules/productClassification/route'
-import ClientManage from './modules/ClientManage/route'
+import user from 'modules/user/route'
+import roadManage from 'modules/roadManage/route'
+import accountManage from 'modules/accountManage/route'
+import productClassification from 'modules/productClassification/route'
+import ClientManage from 'modules/ClientManage/route'
+import notFound from 'modules/components/404Error'
 export default [
   {
     name: 'login',
@@ -15,7 +16,7 @@ export default [
     children: [
       {
         name: 'dashboard',
-        path: 'dashboard',
+        path: '',
         component: require('./modules/index/Index')
       },
       ...user,
@@ -25,17 +26,12 @@ export default [
       ...ClientManage,
       {
         path: '404',
-        component: {
-          template: '<div>not found</div>'
-        }
+        component: notFound
       }
     ]
   },
   {
     path: '*',
-    redirect: '/bk/404',
-    component: {
-      template: '<div>not found</div>'
-    }
+    redirect: '/bk/404'
   }
 ]

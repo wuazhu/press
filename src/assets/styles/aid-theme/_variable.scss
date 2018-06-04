@@ -1,7 +1,7 @@
 /** variable.scss 是主题定制变量定义文件，请根据项目设计需求调整变量值 **/
 
 // 品牌主色定制
-$brand-primary: #10d483;
+$brand-primary: #3ca358;
 
 // body 背景色定制
 $body-bg: #fff;
@@ -11,7 +11,7 @@ $enable-gradients: false;
 
 // 组件相关属性是否应用品牌主色
 // 建议品牌主色与安全色接近时设置 false
-$enable-brand-primary: true;
+$enable-brand-primary: false;
 
 // 基础字体定制
 $font-family-base: null; // 使用系统默认字体

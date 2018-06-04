@@ -1,7 +1,7 @@
 <template>
   <div class="passage-index">
     <div class="index-title">
-      <p class="text-base">账户管理</p>
+      <p class="text-base">绩效与授权</p>
     </div>
     <div class="row index-content d-flex">
       <div class="content-left col-3">
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import companyTrees from '../components/companyTrees.vue'
+import companyTrees from '../components/CompanyTrees.vue'
 
 export default {
   components: {

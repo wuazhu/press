@@ -1,6 +1,6 @@
 <template>
   <div class="user-center h-100 ">
-    <div class="d-flex ov-hide">
+    <div class="d-flex ov-hide h-100">
       <div class="col-3 user-left">
         <div class="userinfo row">
           <span class="col-3 text-center align-middle"><t-avatar bg-state="warning" text="WU"></t-avatar></span>
@@ -15,7 +15,7 @@
           <t-menu-item name="1-3">文章管理</t-menu-item>
         </t-menu>
       </div>
-      <div class="border-left full-right col-9" style="width: 80%">
+      <div class="border-left h-100 col-9" style="width: 80%">
         <router-view></router-view>
       </div>
     </div>
@@ -55,9 +55,5 @@ export default {
       line-height: 60px;
     }
   }
-}
-.full-right {
-  padding-bottom: 1000px;
-  margin-bottom: -1000px;
 }
 </style>
