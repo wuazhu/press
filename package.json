@@ -66,8 +66,8 @@
     "vuex-persistedstate": "^2.5.4"
   },
   "dependencies": {
-    "aid-elements": "^1.1.3",
-    "aid-taurus-desktop": "^1.1.3",
+    "aid-elements": "^1.1.16",
+    "aid-taurus-desktop": "^1.1.16",
     "axios": "^0.15.3",
     "vue": "^2.3.0",
     "vue-i18n": "^7.0.5",
