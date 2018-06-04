@@ -1,87 +1,124 @@
 <template>
-  <div class="product-index">
-    <div class="index-title">
-      <p class="text-base">段道管理</p>
+  <div class="boutique-container clearfix">
+    <div class="index-title d-flex justify-content-between">
+      <p class="text-base">精品推荐管理</p>
+      <t-button type="primary" icon="plus-circle-outline" icon-placement="left" @click="$_clickAddPress">加入精品报刊</t-button>
     </div>
-    <div class="row index-content d-flex">
+    <div class="row index-content d-flex clearfix">
       <div class="content-left col-3">
         <div class="top-title">组织机构</div>
         <company-trees></company-trees>
       </div>
       <div class="content-right">
-        <div class="top-title">段道列表1111</div>
+        <div class="top-title d-flex justify-content-between">
+          <p>威海市分公司精品报刊</p>
+          <p class="d-flex align-items-center">
+            <t-input v-model="searchDetails" icon="magnify" icon-placement="right" placeholder="请输入搜索内容"></t-input>
+            <t-button type="success" size="sm">查询</t-button>
+          </p>
+        </div>
         <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
         <div class="table-paging">
           <t-pager :total="100" :current="1"></t-pager>
         </div>
       </div>
     </div>
-    <t-modal v-model="isShow" :closable="false" title="分配段道负责人" style="width:455px;height:351px;">
-      <t-transfer :operations="['>>','<<']" size="sm"></t-transfer>
-    </t-modal>
+    <t-slipbox :visible.sync="addPressData.visible" :styles="addPressData.styls" class="demo__slipbox--1">
+      <template slot="header">
+        <div class="slipbox-title d-flex justify-content-between align-items-center">
+          <p class="text-base">加入精品报刊</p>
+          <t-button type="info" size="sm">保存并提交</t-button>
+        </div>
+      </template>
+      <add-trees></add-trees>
+    </t-slipbox>
   </div>
 </template>
 
 <script>
 import companyTrees from '../components/CompanyTrees.vue'
+import addTrees from './components/AddPress.vue'
 
 export default {
   components: {
-    companyTrees
+    companyTrees,
+    addTrees
   },
   data() {
     return {
       listHeaderData: [
         {
-          title: '段道名',
-          key: 'name'
+          title: '报刊名',
+          key: 'journalName'
         },
         {
-          title: '描述',
-          key: 'description'
+          title: 'Banner置顶',
+          key: 'banner'
         },
         {
-          title: '责任人',
-          key: 'person'
+          title: 'BannerURL',
+          key: 'bannerURL'
+        },
+        {
+          title: 'Banner图片',
+          key: 'bannerImg'
         },
         {
           title: '操作',
           render: (h, params) => {
-            let vm = this
+            // let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA', 'padding': '0 6px'},
+                style: {'color': '#108EEA'},
                 on: {
                   click() {
-                    vm.isShow = true
                   }
                 }
-              }, '分配责任人')
+              }, '取消精品')
             ])
           }
         }
       ],
       listData: [
         {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
+          journalName: '参考消息',
+          banner: '否',
+          bannerURL: '../url/banner/NicePaper',
+          bannerImg: '-'
         },
         {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
+          journalName: '参考消息',
+          banner: '是',
+          bannerURL: '-',
+          bannerImg: '../url/banner/jingjicankao.jpg'
         },
         {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
+          journalName: '参考消息',
+          banner: '否',
+          bannerURL: '../url/banner/NicePaper',
+          bannerImg: '-'
+        },
+        {
+          journalName: '参考消息',
+          banner: '是',
+          bannerURL: '-',
+          bannerImg: '../url/banner/jingjicankao.jpg'
         }
       ],
-      isShow: false
+      searchDetails: '',
+      addPressData: {
+        visible: false,
+        title: '新增精品报刊',
+        styls: {
+          width: '520px'
+        }
+      }
     }
   },
   methods: {
+    $_clickAddPress() {
+      this.addPressData.visible = true
+    }
   }
 }
 </script>
@@ -90,14 +127,39 @@ export default {
 .p-3 {
   padding:0 !important;
 }
-.product-index {
+.boutique-container {
   .row {
     margin: 0;
+  }
+  .slipbox__wraper {
+    .slipbox__content {
+      .slipbox__header {
+        padding: 0 22px;
+        border-bottom: 1px solid #979797;
+      }
+    }
   }
   .index-title {
     p{
       line-height: 22px;
       margin-bottom: 0;
+    }
+    button {
+      height: 28px;
+      line-height: 28px;
+      background: #009241;
+      width: 115px;
+      i {
+        font-size: 14px;
+        position: relative;
+        top: 1px;
+      }
+      span {
+        font-size: 12px;
+      }
+      &.btn {
+        padding: 0;
+      }
     }
   }
   .index-content {
@@ -109,6 +171,25 @@ export default {
       padding-left: 16px;
       line-height: 40px;
       color: #323232;
+      p {
+        margin-bottom: 0;
+        input{
+          height: 30px;
+          line-height: 30px;
+          font-size: 12px;
+          width: 260px;
+        }
+        button {
+          width: 44px;
+          height: 28px;
+          line-height: 28px;
+          background: #009241;
+          margin: 0 16px 0 8px;
+          span {
+            font-size: 12px;
+          }
+        }
+      }
     }
     &>div {
       background: #FFFFFF;
@@ -185,6 +266,18 @@ export default {
       background: #fff;
       border-bottom: 1px solid #E9E9E9;
     }
+  }
+}
+.slipbox-title {
+  p {
+    line-height: 54px;
+    margin-bottom: 0;
+  }
+  button {
+    height: 28px;
+    width:108px;
+    line-height: 28px;
+    background: #009241;
   }
 }
 </style>
