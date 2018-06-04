@@ -7,7 +7,7 @@ export default [
     component: userIndex,
     children: [
       {
-        path: 'baseInfo',
+        path: '',
         name: 'user.baseInfo',
         component: info
       }
