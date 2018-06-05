@@ -15,7 +15,7 @@
           <t-menu-item name="1-3">文章管理</t-menu-item>
         </t-menu>
       </div>
-      <div class="border-left h-100 col-9" style="width: 80%">
+      <div class="border-left h-100 col-9" >
         <router-view></router-view>
       </div>
     </div>

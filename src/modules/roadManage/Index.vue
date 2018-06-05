@@ -10,20 +10,30 @@
       </div>
       <div class="content-right">
         <div class="top-title">段道列表</div>
-        <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
+        <t-table
+          :columns="listHeaderData"
+          :data="listData"
+          :all-ellipsis="true"
+          line>
+        </t-table>
         <div class="table-paging">
           <t-pager :total="100" :current="1"></t-pager>
         </div>
       </div>
     </div>
-    <t-modal v-model="isShow" :closable="false" title="分配段道负责人" style="width:455px;height:351px;">
+    <t-modal
+      v-model="isShow"
+      :closable="false"
+      title="分配段道负责人"
+      width="455"
+      style="height:351px;">
       <t-transfer :operations="['>>','<<']" size="sm"></t-transfer>
     </t-modal>
   </div>
 </template>
 
 <script>
-import companyTrees from '../components/CompanyTrees.vue'
+import companyTrees from '../components/CompanyTrees'
 
 export default {
   components: {

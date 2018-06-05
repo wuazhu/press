@@ -1,14 +1,22 @@
 <template>
   <div class="layout layout--one-screen bg-gray-lightest-5">
     <div :class="['menu-backdrop', {'show': isOpen===true}]" @click="closeSidebar"></div>
-    <div :class="['layout-sidebar bg-gray-darker show',{'layout-sidebar--folded': isOpen===false}]">
+    <div
+      :class="['layout-sidebar bg-gray-darker show',{'layout-sidebar--folded': isOpen===false}]">
       <router-link to="/bk" class="layout-logo-left">
         <img src="/static/images/zy-logo.png" alt="" class="layout-logo-img">
         <span class="text-xxl text-white align-middle ml-1 layout-logo-text">
           <img src="/static/images/post-logo.png" alt="" class="logo-text ml-2">
         </span>
       </router-link>
-      <t-menu :open-position="openPosition" :class="[{'menu--folded': isOpen===false}]" type="dark" accordion @on-select="menuSelect">
+      <t-menu
+        :open-position="openPosition"
+        :class="[{'menu--folded': isOpen===false}]"
+        :active-name="menuActiveName"
+        :open-names="[menuOpenName]"
+        type="dark"
+        accordion
+        @on-select="menuSelect">
         <t-menu-item name="/bk">
           <t-icon type="home"></t-icon>
           <span>首页</span>
@@ -18,9 +26,9 @@
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
           </template>
-          <t-menu-item name="/user/baseInfo">组织机构</t-menu-item>
-          <t-menu-item name="/account/manage">绩效与授权</t-menu-item>
-          <t-menu-item name="sys.permission">权限管理</t-menu-item>
+          <!-- <t-menu-item name="/user">组织机构</t-menu-item> -->
+          <t-menu-item name="/sys/manage">绩效与授权</t-menu-item>
+          <!-- <t-menu-item name="sys.permission">权限管理</t-menu-item> -->
         </t-submenu>
         <t-submenu name="road">
           <template slot="title">
@@ -35,8 +43,8 @@
             <t-icon type="chart-bar"></t-icon>
             <span>产品分类</span>
           </template>
-          <t-menu-item name="/product/base">基础产品目录</t-menu-item>
           <t-menu-item name="/product/quality">精品推荐管理</t-menu-item>
+          <!-- <t-menu-item name="/product/quality">基础产品目录</t-menu-item> -->
         </t-submenu>
         <t-submenu name="logger">
           <template slot="title">
@@ -51,7 +59,7 @@
             <t-icon type="account-multiple"></t-icon>
             <span>客户管理</span>
           </template>
-          <t-menu-item name="cust-repeat">客户去重</t-menu-item>
+          <t-menu-item name="/cust/merge">客户去重</t-menu-item>
         </t-submenu>
       </t-menu>
     </div>
@@ -89,6 +97,7 @@
   </div>
 </template>
 <script>
+import { forEach } from 'lodash'
 export default {
   props: {
   },
@@ -97,12 +106,29 @@ export default {
       reisezeTimer: null,
       manual: false,
       isOpen: this.initSidebarState(),
-      openPosition: this.initMenuPosition()
+      openPosition: this.initMenuPosition(),
+      breadList: []
     }
   },
   computed: {
+    menuActiveName() {
+      return this.$route.fullPath
+    },
+    menuOpenName() {
+      let rexg = /^(sys|road|product|logger|cust)/
+      let route = this.$route.fullPath.split('/')[1]
+      if (rexg.test(route)) {
+        return route
+      } else {
+        return ''
+      }
+    }
+  },
+  created() {
+    this.$_changeBreadcrumb()
   },
   mounted() {
+    console.log(this.$route.fullPath)
     window.addEventListener('resize', () => {
       if (!this.manual) {
         if (this.reisezeTimer !== null) {
@@ -115,9 +141,20 @@ export default {
     })
   },
   updated() {
+    let matchList = this.$route.matched
+    forEach(matchList, (routeItem) => {
+
+    })
     console.log(this.$route.matched)
   },
   methods: {
+    $_changeBreadcrumb() {
+      console.log(this.$route.matched)
+      let matchList = this.$route.matched
+      forEach(matchList, (routeItem) => {
+
+      })
+    },
     menuSelect(name) {
       this.$router.push({
         path: name

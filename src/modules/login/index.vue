@@ -88,7 +88,7 @@ export default {
               } else {
                 localStorage.removeItem(KEY_USER_NAME)
               }
-              this.$router.push({ name: 'dashboard' })
+              this.$router.push({ path: '/bk' })
             } else {
               this.$Message.danger(res.msg)
             }

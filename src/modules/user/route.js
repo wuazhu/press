@@ -5,11 +5,19 @@ export default [
   {
     path: '/user',
     component: userIndex,
+    meta: {
+      breadName: '个人中心',
+      title: '个人中心'
+    },
     children: [
       {
         path: '',
         name: 'user.baseInfo',
-        component: info
+        component: info,
+        meta: {
+          breadName: '个人中心',
+          title: '个人中心'
+        }
       }
     ]
   }
