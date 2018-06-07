@@ -1,3 +1,36 @@
 /**
- * 本文件是项目定义可复用组件样式
+ * 本文件是项目公用组件样式
 **/
+
+// 设置边框
+.border {
+  border: 1px solid #E9E9E9;
+}
+// overflow:hidden
+.ov-hide {
+  overflow: hidden;
+}
+// position: relative
+.pos-rel {
+  position: relative;
+}
+// position: absolute
+.pos-abs {
+  position: absolute;
+}
+// 公用组织机构头部样式
+.org-title {
+  background: #F7F7F7;
+  padding-left: 16px;
+  line-height: 40px;
+  color: #323232;
+  margin-bottom: -1px;
+}
+.pd-2 {
+  padding: 0.5rem!important;
+}
+
+.full-height {
+  padding-bottom: 10000px;
+  margin-bottom: -10000px;
+}

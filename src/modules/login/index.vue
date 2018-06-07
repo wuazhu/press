@@ -1,28 +1,28 @@
 <template>
   <div class="login-container">
-    <transition :name="transName">
+    <transition name="fade">
       <div v-show="showLoginbox" class="login" @keyup.enter="doLoginHdl">
         <div class="logos d-flex">
           <img src="/static/images/logo.png" alt="">
           <h1 class="col text-lg text-center align-middle">报刊<br>系统</h1>
         </div>
         <t-form
-          ref="login"
+          ref="loginRef"
           :rules="rules"
           :model="loginForm"
           :label-span="2"
           label-position="left"
           size="sm">
-          <t-form-item label="用户名" prop="username">
-            <t-input v-model.trim="loginForm.username" placeholder="管理员: admin, 游客: guest"></t-input>
+          <t-form-item label="用户名" prop="userCode">
+            <t-input v-model.trim="loginForm.userCode" placeholder="管理员: admin, 游客: guest"></t-input>
           </t-form-item>
           <input v-if="false" type="text">
-          <t-form-item label="密码" prop="password">
-            <t-input v-model="loginForm.password" type="password" placeholder="密码: 11"></t-input>
+          <t-form-item label="密码" prop="passWord">
+            <t-input v-model="loginForm.passWord" type="password" placeholder="密码: 11"></t-input>
           </t-form-item>
           <t-form-item class="verify-code" label="验证码" prop="verify">
             <div class="code-wrap">
-              <t-input v-model="loginForm.verify" class="" placeholder="验证码itzx"></t-input>
+              <t-input v-model="loginForm.verify" placeholder="验证码itzx"></t-input>
               <span class="code col-3 border"><img src="/static/images/code.png" alt=""></span>
             </div>
           </t-form-item>
@@ -51,14 +51,14 @@ export default {
       showLoginbox: false,
       transName: 'flipY-reverse-slow',
       loginForm: {
-        username: 'admin',
-        password: '11',
+        userCode: '10admin',
+        passWord: 'Test@1234',
         verify: 'itzx',
         rember: true
       },
       rules: {
-        username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
-        password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
+        userCode: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
+        passWord: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
         verify: [{ required: true, message: '验证码不能为空', trigger: 'blur' }]
       }
     }
@@ -79,22 +79,23 @@ export default {
       doLoginAcs: 'doLogin'
     }),
     doLoginHdl() {
-      this.$refs.login.validate(passed => {
+      this.$refs.loginRef.validate(async passed => {
         if (passed) {
-          this.doLoginAcs(this.loginForm).then((res) => {
-            if (res.status === 200) {
+          try {
+            let response = await this.doLoginAcs(this.loginForm)
+            if (response.data.responseCode === '0') {
               if (this.loginForm.rememberMe === true) {
-                localStorage.setItem(KEY_USER_NAME, this.loginForm.username)
+                localStorage.setItem(KEY_USER_NAME, this.loginForm.userCode)
               } else {
                 localStorage.removeItem(KEY_USER_NAME)
               }
               this.$router.push({ path: '/bk' })
             } else {
-              this.$Message.danger(res.msg)
+              this.$Message.danger(response.data.responseMsg)
             }
-          }).catch(err => {
+          } catch (err) {
             this.$Message.danger(err)
-          })
+          }
         } else {
           this.showLoginbox = false
           setTimeout(() => {

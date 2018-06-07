@@ -37,7 +37,11 @@ const conf = {
   commonConfig: {
     baseURL: '/mock'
   },
-  root: {}
+  root: {
+    bk: {
+      baseURL: ''
+    }
+  }
 }
 
 // 将优先的静态配置覆盖本配置

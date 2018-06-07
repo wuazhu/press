@@ -3,16 +3,16 @@
     <div class="index-title">
       <p class="text-base">绩效与授权</p>
     </div>
-    <div class="row index-content d-flex">
-      <div class="content-left col-3">
+    <div class="row">
+      <div class="col-3 content-left">
         <div class="top-title">组织机构</div>
         <company-trees></company-trees>
       </div>
-      <div class="content-right">
+      <div class="col-9 content-right">
         <div class="top-title">账户列表</div>
         <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
         <div class="table-paging">
-          <t-pager :total="100" :current="1"></t-pager>
+          <t-pager :total="10" :current="1"></t-pager>
         </div>
       </div>
     </div>
@@ -195,22 +195,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.p-3 {
-  padding:0 !important;
-}
+
 .passage-index {
-  .row {
-    margin: 0;
-  }
   .index-title {
     p{
       line-height: 22px;
-      margin-bottom: 0;
     }
   }
   .index-content {
-    width: 100%;
-    margin-top: 12px;
     .top-title {
       background: #F7F7F7;
       border-bottom: 1px solid #E9E9E9;

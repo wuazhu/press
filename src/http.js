@@ -162,6 +162,9 @@ function requestError(error) {
  * @returns {Object|Promise} 返回`Axios`响应对象或Promise对象
  */
 function responseInterceptor(response) {
+  if (response && response.status === 401) {
+    // 用户未登录处理
+  }
   TGlobalLoading.finish()
   return response
 }
@@ -190,6 +193,8 @@ function responseError(error) {
 // 默认服务调用拦截器设置
 http.$http.interceptors.request.use(requestInterceptor, requestError)
 http.$http.interceptors.response.use(responseInterceptor, responseError)
+http.$bk.interceptors.request.use(requestInterceptor, requestError)
+http.$bk.interceptors.response.use(responseInterceptor, responseError)
 
 // 注册插件
 Vue.use(HttpPlugin)

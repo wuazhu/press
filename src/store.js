@@ -25,13 +25,13 @@ import login from './modules/login/store'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  state: {},
+  state: {
+  },
   modules: {
     login
   },
   plugins: [createPersistedState({
     filter: (action) => {
-      console.log(!(action.type === 'login/DO_LOGIN'))
       return !(action.type === 'login/DO_LOGIN')
     }
   })]

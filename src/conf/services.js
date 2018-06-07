@@ -11,5 +11,6 @@
 
 export default {
   login: '/api/v1/dologin',
-  accounts: '/api/v1/accounts'
+  accounts: '/api/v1/accounts',
+  logins: '/sso-web/UspaCsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn'
 }

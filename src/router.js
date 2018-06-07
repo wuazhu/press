@@ -28,6 +28,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   TGlobalLoading.start()
+  if (from.name === null) {
+    // router.app.$store.dispatch('login/fetchAuth')
+  }
+
+  // if (!to.meta.noLogin && router.app.$store.state.login.success === false) {
+  //   router.push({ path: '/login' })
+  // }
   next()
 })
 

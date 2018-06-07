@@ -2,7 +2,7 @@ import * as constants from './constant'
 import services from '../../../conf/services'
 import http from '../../../http'
 const KEY_BK_TOKEN = 'bk-token'
-let { $http } = http
+let { $bk } = http
 
 // 获取用户身份
 export function fetchAuth({ commit }) {
@@ -13,47 +13,31 @@ export function fetchAuth({ commit }) {
 
 // 执行登陆操作
 export async function doLogin({ commit }, data) {
-  let res = await $http.post(services.login, data)
-  if (res.data.status === 200) {
-    localStorage.setItem(KEY_BK_TOKEN, JSON.stringify(res.data.data.token))
-    commit(constants.DO_LOGIN, res.data)
+  let param = {
+    userCode: data.userCode,
+    passWord: data.passWord
+  }
+  let res = await $bk.post(services.logins, {params: JSON.stringify(param)})
+  if (res.data && res.data.data) {
+    if (res.data.data.responseCode === '0') {
+      localStorage.setItem(KEY_BK_TOKEN, JSON.stringify(res.data.data.GLOBAL_SIGN))
+      commit(constants.DO_LOGIN, res.data.data)
+    }
   } else {
     localStorage.removeItem(KEY_BK_TOKEN)
     commit(constants.DO_LOGOUT)
   }
   return res.data
-  // console.log('is action')
-  // return new Promise(async (resolve, reject) => {
-  //   // 调用osp域的远程登录接口
-  //   try {
-  //     let data = await  http.$http.post(services.login, data)
-  //   } catch(err) {
-
-  //   }
-  //   http.$http.post(services.login, data).then(ret => {
-  //     console.log(ret)
-  //     // let payload = ret.data
-  //     if (ret.) {
-  //       localStorage.setItem(KEY_CP_CRM, JSON.stringify(payload.auth))
-  //       commit(constants.DO_LOGIN, payload)
-  //       resolve()
-  //     } else {
-  //       reject('登录失败！请输入正确的登录信息。')
-  //     }
-  //   }).catch(err => {
-  //     reject(`登录失败！${err}`)
-  //   })
-  // })
 }
 
 // 注销
 export function doLogout({ commit }) {
   // 调用osp域的远程注销接口
-  http.$osp.post(services.osp.LOGOUT).then(ret => {
-    let payload = ret.data
-    if (payload.success) {
-      localStorage.removeItem(KEY_BK_TOKEN)
-    }
-    commit(constants.DO_LOGOUT, payload)
-  })
+  // http.$osp.post(services.osp.LOGOUT).then(ret => {
+  //   let payload = ret.data
+  //   if (payload.success) {
+  //     localStorage.removeItem(KEY_BK_TOKEN)
+  //   }
+  //   commit(constants.DO_LOGOUT, payload)
+  // })
 }

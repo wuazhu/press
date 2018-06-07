@@ -73,18 +73,20 @@
           </t-badge>
           <t-dropdown-menu slot="list">
             <t-dropdown-item><router-link to="/user/baseInfo">个人中心</router-link></t-dropdown-item>
-            <t-dropdown-item>退出系统</t-dropdown-item>
+            <t-dropdown-item @on-click="clickLogoutMenu">退出系统</t-dropdown-item>
           </t-dropdown-menu>
         </t-dropdown>
       </nav>
       <t-breadcrumb class="px-4">
-        <t-breadcrumb-item href="#">首页</t-breadcrumb-item>
-        <t-breadcrumb-item href="#">二级</t-breadcrumb-item>
-        <t-breadcrumb-item href="#">三级</t-breadcrumb-item>
-        <t-breadcrumb-item>当前页</t-breadcrumb-item>
+        <t-breadcrumb-item
+          v-for="bread in breadList"
+          :key="bread.name"
+          :href="bread.path"
+        >{{ bread.name }}
+        </t-breadcrumb-item>
       </t-breadcrumb>
       <div class="layout-main px-4" style="top: 105px; bottom: 50px;">
-        <div :class="['bg-white pos-rel', { 'p-3' : true}]" style="height: 100%;">
+        <div :class="['pos-rel', { 'p-3' : true, 'bg-white': bgColor}]" style="height: 100%; overflow-x: hidden; overflow-y: auto;">
           <transition name="cust-router-change" mode="out-in">
             <router-view></router-view>
           </transition>
@@ -98,6 +100,11 @@
 </template>
 <script>
 import { forEach } from 'lodash'
+import { mapMutations } from 'vuex'
+
+const BK_TOKEN = 'bk-token'
+const VUEX = 'vuex'
+
 export default {
   props: {
   },
@@ -111,6 +118,9 @@ export default {
     }
   },
   computed: {
+    bgColor() {
+      return !(this.$route.path === '/bk')
+    },
     menuActiveName() {
       return this.$route.fullPath
     },
@@ -124,11 +134,15 @@ export default {
       }
     }
   },
+  watch: {
+    $route(to, from) {
+      if (to.path !== from.path) this.$_changeBreadcrumb()
+    }
+  },
   created() {
     this.$_changeBreadcrumb()
   },
   mounted() {
-    console.log(this.$route.fullPath)
     window.addEventListener('resize', () => {
       if (!this.manual) {
         if (this.reisezeTimer !== null) {
@@ -140,19 +154,28 @@ export default {
       }
     })
   },
-  updated() {
-    let matchList = this.$route.matched
-    forEach(matchList, (routeItem) => {
-
-    })
-    console.log(this.$route.matched)
-  },
   methods: {
+    ...mapMutations('login', {
+      doLogoutMut: 'DO_LOGOUT'
+    }),
+    clickLogoutMenu() {
+      this.doLogoutMut()
+      this.$router.push('/')
+      localStorage.clear(BK_TOKEN)
+      localStorage.clear(VUEX)
+    },
     $_changeBreadcrumb() {
-      console.log(this.$route.matched)
+      this.breadList = []
       let matchList = this.$route.matched
-      forEach(matchList, (routeItem) => {
-
+      forEach(matchList, (routeItem, routeIndex) => {
+        let routeObj = {
+          name: routeItem.meta.breadName,
+          path: routeItem.path
+        }
+        if ((matchList.length - 1) === routeIndex) {
+          routeObj.path = ''
+        }
+        this.breadList.push(routeObj)
       })
     },
     menuSelect(name) {

@@ -1,7 +1,13 @@
 <template>
-  <div class="components-tree">
-    <span class="mr-5 content-search w-100 d-flex"><t-input v-model="searchContent" placeholder="请输入搜索内容"></t-input></span>
-    <span class="mr-5"><t-tree ref="tree" :data="companyList" :filter-node-method="filterNode" class="filter-tree"></t-tree></span>
+  <div class="components-tree border">
+    <div class="pd-2 content-search d-flex">
+      <t-input
+        v-model="searchContent"
+        placeholder="请输入搜索内容"
+        size="sm">
+      </t-input>
+    </div>
+    <div><t-tree ref="tree" :data="companyList" :filter-node-method="filterNode" class="filter-tree"></t-tree></div>
   </div>
 </template>
 <script>
