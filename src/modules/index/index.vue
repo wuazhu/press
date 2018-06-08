@@ -9,7 +9,7 @@
           <div class="index-card">
             <h2 class="money-data">¥ 126,560</h2>
             <div class="data-box">
-              <t-chart ref="circulateRef" :options="lineChart" :auto-resize="true" chart-width="100%" chart-height="50px"></t-chart>
+              <chart-circulate :salesVolumeData="salesVolumeData"></chart-circulate>
             </div>
           </div>
           <div slot="foot" class="card-foot">
@@ -82,43 +82,22 @@
 </template>
 <script>
 import echarts from 'echarts'
+import { getDashboardBusiness } from './server'
+import chartCirculate from './circulateChart'
 
 export default {
+  components: {
+    chartCirculate
+  },
   data() {
     return {
-      lineChart: {
-        tooltip: {
-          trigger: 'axis',
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          extraCssText: 'box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);',
-          textStyle: {
-            color: '#f9f9f9'
-          }
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          show: false,
-          data: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09', '2018-10', '2018-11', '2018-12']
-        },
-        yAxis: {
-          type: 'value',
-          show: false
-        },
-        series: [{
-          smooth: true,
-          data: [10, 13, 16, 20, 30, 30, 32, 16, 20, 30, 30, 32],
-          type: 'line',
-          areaStyle: {
-            color: '#229541'
-          }
-        }],
-        grid: {
-          // 设置图表在容器中开始绘制的坐标
-          left: 0,
-          right: 0,
-          bottom: 40
-        }
+      circulateDate: {
+        salesVolumeFinish: 0,
+        salesVolumeMonthly: 0
+      },
+      salesVolumeData: {
+        dataAxis:[],
+        data: []
       },
       pieChart: {
         color: ['#1C90D3'],
@@ -150,12 +129,27 @@ export default {
       }
     }
   },
+  created() {
+  },
   mounted() {
     this.makeCirculateChart()
   },
   methods: {
-    makeCirculateChart() {
-      console.log(this.$refs.circulateRef.chart.resize())
+    async makeCirculateChart() {
+      let payload = {
+        year: '2018',
+        area: '1000'
+      }
+      let chartBusiness = await getDashboardBusiness(payload)
+      if (chartBusiness.status === 200) {
+        // console.log(chartBusiness.data)
+        this.circulateDate.salesVolumeFinish = chartBusiness.data.salesVolumeFinish
+        this.circulateDate.salesVolumeMonthly = chartBusiness.data.salesVolumeMonthly
+        this.salesVolumeData.dataAxis = chartBusiness.data.salesVolumeData.dataAxis
+        this.salesVolumeData.data = chartBusiness.data.salesVolumeData.data
+      } else {
+        this.$Message.danger(chartBusiness.message)
+      }
     }
   }
 }
@@ -167,9 +161,9 @@ export default {
 }
 .index-card {
   .data-box {
+    height: 50px;
     &.income-percent {
       padding-top: 26px;
-      height: 50px;
     }
   }
 

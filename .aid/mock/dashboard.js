@@ -5,22 +5,22 @@ module.exports = [
     type: 'func',
     response: req => {
       let obj = {
-        "status": "ok",
+        "status": 200,
         "message": "666",
         "data": {
-            "salesVolumeFinish": 4500, // 已完成流转额
-            "salesVolumeMonthly":400, // 已完成月均流转额
-            "salesVolumeData": {	// 流转额月度数据
-                dataAxis:['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],//已产生月份
-                data:[112, 333, 444, 123, 333, 323, 221, 221, 232, 111, 222, 333],//月流转额
+            "salesVolumeFinish": 4500,
+            "salesVolumeMonthly": 400,
+            "salesVolumeData": {
+              "dataAxis": ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+              "data": [112, 333, 444, 123, 333, 323, 221, 221, 232, 111, 222, 333]
             },
-            "salesVolumeGoal": 6400,  // 年度流转额目标
-            "salesVolumeGoalFinishRate": 3,  // 年度流转额目标完成率
-            "orderFinish":2000,// 已完成订购量(份数)
-            "orderMonthly":200,// 已完成月均订购量(份数)
-            "orderData": {	// 订购量月度数据
-                dataAxis:['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],//已产生月份
-                data:[112, 333, 444, 123, 333, 323, 221, 221, 232, 111, 222, 333],//月订购量
+            "salesVolumeGoal": 6400,
+            "salesVolumeGoalFinishRate": 3,
+            "orderFinish":2000,
+            "orderMonthly":200,
+            "orderData": {
+              "dataAxis": ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+              "data": [112, 333, 444, 123, 333, 323, 221, 221, 232, 111, 222, 333]
             }
         }
       }
@@ -33,7 +33,7 @@ module.exports = [
     type: 'func',
     response: req => {
       let obj = {
-        "status": "ok",
+        "status": 200,
         "data": {
             // 新增客户情况统计
             "increaseNumbers": 4500, // 新增客户数(人)

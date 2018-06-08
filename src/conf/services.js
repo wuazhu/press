@@ -12,5 +12,15 @@
 export default {
   login: '/api/v1/dologin',
   accounts: '/api/v1/accounts',
-  logins: '/sso-web/UspaCsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn'
+  logins: '/sso-web/UspaCsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
+  dashboard: {
+    business: '/api/v1/dashboard/business',
+    customers: '/api/v1/dashboard/customers'
+  },
+  region: {
+    region: '/api/v1/region',
+    presider: '/presider/',
+    savePresider: '/presider/save'
+  }
+
 }
