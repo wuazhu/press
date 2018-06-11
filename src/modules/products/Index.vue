@@ -4,22 +4,28 @@
       <p class="text-base">精品推荐管理</p>
       <t-button type="primary" icon="plus-circle-outline" icon-placement="left" @click="$_clickAddPress">加入精品报刊</t-button>
     </div>
-    <div class="row index-content d-flex clearfix">
-      <div class="content-left col-3">
-        <div class="top-title">组织机构</div>
-        <company-trees></company-trees>
-      </div>
-      <div class="content-right">
-        <div class="top-title d-flex justify-content-between">
-          <p>威海市分公司精品报刊</p>
-          <p class="d-flex align-items-center">
-            <t-input v-model="searchDetails" icon="magnify" icon-placement="right" placeholder="请输入搜索内容"></t-input>
-            <t-button type="success" size="sm">查询</t-button>
-          </p>
+    <div class="row">
+      <div class="col-3">
+        <div class="content-left">
+          <div class="org-title border">组织机构</div>
+          <company-trees></company-trees>
         </div>
-        <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
-        <div class="table-paging">
-          <t-pager :total="100" :current="1"></t-pager>
+      </div>
+      <div class="col-9">
+        <div class="content-right">
+          <div class="cust-list-item border">
+            <div class="org-title d-flex justify-content-between">
+              <p>威海市分公司精品报刊</p>
+              <p class="d-flex align-items-center">
+                <t-input v-model="searchDetails" icon="magnify" icon-placement="right" placeholder="请输入搜索内容"></t-input>
+                <t-button type="success" size="sm">查询</t-button>
+              </p>
+            </div>
+            <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
+          </div>
+          <div class="table-paging text-right">
+            <t-pager :total="100" :current="1"></t-pager>
+          </div>
         </div>
       </div>
     </div>
@@ -124,13 +130,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.p-3 {
-  padding:0 !important;
-}
 .boutique-container {
-  .row {
-    margin: 0;
-  }
   .slipbox__wraper {
     .slipbox__content {
       .slipbox__header {
@@ -140,10 +140,6 @@ export default {
     }
   }
   .index-title {
-    p{
-      line-height: 22px;
-      margin-bottom: 0;
-    }
     button {
       height: 28px;
       line-height: 28px;
@@ -159,87 +155,6 @@ export default {
       }
       &.btn {
         padding: 0;
-      }
-    }
-  }
-  .index-content {
-    width: 100%;
-    margin-top: 12px;
-    .top-title {
-      background: #F7F7F7;
-      border-bottom: 1px solid #E9E9E9;
-      padding-left: 16px;
-      line-height: 40px;
-      color: #323232;
-      p {
-        margin-bottom: 0;
-        input{
-          height: 30px;
-          line-height: 30px;
-          font-size: 12px;
-          width: 260px;
-        }
-        button {
-          width: 44px;
-          height: 28px;
-          line-height: 28px;
-          background: #009241;
-          margin: 0 16px 0 8px;
-          span {
-            font-size: 12px;
-          }
-        }
-      }
-    }
-    &>div {
-      background: #FFFFFF;
-      border: 1px solid #E9E9E9;
-      min-height: 350px;
-      &:nth-child(1) {
-        padding: 0;
-        .content-search {
-          justify-content: center;
-          align-items: center;
-          margin-top: 12px;
-          .input-wrapper {
-            width: 90%;
-            input {
-              width: 100%;
-              height: 28px;
-              font-size: 12px;
-            }
-          }
-        }
-      }
-      &:nth-child(2) {
-        margin-left: 20px;
-        flex: 1;
-        position: relative;
-        .table__header {
-          table {
-            th {
-              background: #fff;
-              height: 40px;
-              font-size: 12px;
-              color: #000;
-            }
-          }
-        }
-        .table-tbody {
-          td {
-            height: 40px;
-            font-size: 12px;
-            color: #000;
-            span {
-              cursor: pointer;
-            }
-          }
-        }
-        .table-paging {
-          position: absolute;
-          bottom: 20px;
-          right: 20px;
-        }
       }
     }
   }
@@ -279,5 +194,31 @@ export default {
     line-height: 28px;
     background: #009241;
   }
+}
+.content-right {
+  p {
+    margin-bottom: 0;
+  }
+  .input-group {
+    .input-wrapper {
+      input {
+        height: 28px;
+        font-size: 12px;
+        width: 260px;
+      }
+    }
+  }
+  .align-items-center {
+    .btn-success.btn-sm {
+      height: 26px;
+      line-height: 26px;
+      background: #009241;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+  }
+}
+.cust-list-item {
+  margin-bottom: 20px;
 }
 </style>
