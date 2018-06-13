@@ -3,21 +3,27 @@
     <div class="index-title">
       <p class="text-base">段道管理</p>
     </div>
-    <div class="row index-content d-flex">
-      <div class="content-left col-3">
-        <div class="top-title">组织机构</div>
-        <company-trees></company-trees>
+    <div class="row">
+      <div class="col-3">
+        <div class="content-left">
+          <div class="org-title border">组织机构</div>
+          <company-trees></company-trees>
+        </div>
       </div>
-      <div class="content-right">
-        <div class="top-title">段道列表</div>
-        <t-table
-          :columns="listHeaderData"
-          :data="listData"
-          :all-ellipsis="true"
-          line>
-        </t-table>
-        <div class="table-paging">
-          <t-pager :total="100" :current="1"></t-pager>
+      <div class="col-9">
+        <div class="content-right">
+          <div class="cust-list-item border">
+            <div class="org-title">段道列表</div>
+            <t-table
+              :columns="listHeaderData"
+              :data="listData"
+              :all-ellipsis="true"
+              line>
+            </t-table>
+          </div>
+          <div class="table-paging text-right">
+            <t-pager :total="100" :current="1"></t-pager>
+          </div>
         </div>
       </div>
     </div>
@@ -34,6 +40,7 @@
 
 <script>
 import companyTrees from '../components/CompanyTrees'
+import { getRoadList } from './server'
 
 export default {
   components: {
@@ -126,85 +133,27 @@ export default {
       isShow: false
     }
   },
+  created() {
+    this.makeRoadList()
+  },
   methods: {
+    async makeRoadList() {
+      let obj = {
+        currentPage: 1,
+        pageSize: 10
+      }
+      let roadListData = await getRoadList(obj)
+      console.log(roadListData)
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.p-3 {
-  padding:0 !important;
-}
 .road-index {
-  .row {
-    margin: 0;
-  }
   .index-title {
     p{
       line-height: 22px;
-      margin-bottom: 0;
-    }
-  }
-  .index-content {
-    width: 100%;
-    margin-top: 12px;
-    .top-title {
-      background: #F7F7F7;
-      border-bottom: 1px solid #E9E9E9;
-      padding-left: 16px;
-      line-height: 40px;
-      color: #323232;
-    }
-    &>div {
-      background: #FFFFFF;
-      border: 1px solid #E9E9E9;
-      min-height: 350px;
-      &:nth-child(1) {
-        padding: 0;
-        .content-search {
-          justify-content: center;
-          align-items: center;
-          margin-top: 12px;
-          .input-wrapper {
-            width: 90%;
-            input {
-              width: 100%;
-              height: 28px;
-              font-size: 12px;
-            }
-          }
-        }
-      }
-      &:nth-child(2) {
-        margin-left: 20px;
-        flex: 1;
-        position: relative;
-        .table__header {
-          table {
-            th {
-              background: #fff;
-              height: 40px;
-              font-size: 12px;
-              color: #000;
-            }
-          }
-        }
-        .table-tbody {
-          td {
-            height: 40px;
-            font-size: 12px;
-            color: #000;
-            span {
-              cursor: pointer;
-            }
-          }
-        }
-        .table-paging {
-          position: absolute;
-          bottom: 20px;
-          right: 20px;
-        }
-      }
     }
   }
   .pagination__item--active {
@@ -231,5 +180,22 @@ export default {
       border-bottom: 1px solid #E9E9E9;
     }
   }
+}
+.table-wrapper {
+  .table--line {
+    .table__header {
+      thead {
+        th {
+          background: #fff;
+          .text-truncate {
+            color: #000;
+          }
+        }
+      }
+    }
+  }
+}
+.cust-list-item {
+  margin-bottom: 20px;
 }
 </style>
