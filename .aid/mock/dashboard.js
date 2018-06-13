@@ -17,7 +17,7 @@ module.exports = [
             "salesVolumeGoal": 6400,
             "salesVolumeGoalFinishRate": 3,
             "orderFinish":2000,
-            "orderMonthly":200,
+            "orderFinishRate":10,
             "orderData": {
               "dataAxis": ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
               "data": [112, 333, 444, 123, 333, 323, 221, 221, 232, 111, 222, 333]

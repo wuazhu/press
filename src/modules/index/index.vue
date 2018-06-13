@@ -7,13 +7,13 @@
             <span>流转额(元)</span>
           </div>
           <div class="index-card">
-            <h2 class="money-data">¥ 126,560</h2>
+            <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
             <div class="data-box">
-              <chart-circulate :salesVolumeData="salesVolumeData"></chart-circulate>
+              <div id="circulateChart"></div>
             </div>
           </div>
           <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">月均销售额</span> <span class="text-gray">￥12,423</span>
+            <span class="text-muted text-md">月均销售额</span> <span class="text-gray">￥{{ salesVolumeMonthly }}</span>
           </div>
         </t-card>
       </div>
@@ -23,13 +23,13 @@
             <span>收入目标(元)</span>
           </div>
           <div class="index-card">
-            <h2 class="money-data">¥ 126,560</h2>
+            <h2 class="money-data">¥ {{ salesVolumeGoal }}</h2>
             <div class="data-box income-percent">
-              <t-progress :percent="25" status="active" hide-info></t-progress>
+              <t-progress :percent="salesVolumeGoalFinishRate" status="active" hide-info></t-progress>
             </div>
           </div>
           <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">目标完成率</span> <span class="text-gray ml-4">90%</span>
+            <span class="text-muted text-md">目标完成率</span> <span class="text-gray ml-4">{{ salesVolumeGoalFinishRate }}%</span>
           </div>
         </t-card>
       </div>
@@ -39,13 +39,13 @@
             <span>订购量(份)</span>
           </div>
           <div class="index-card">
-            <h2 class="money-data">¥ 126,560</h2>
+            <h2 class="money-data">¥ {{ orderFinish }}</h2>
             <div class="data-box" style="width:100%;">
-              <t-chart ref="lineSimple" :options="pieChart" :auto-resize="true" chart-width="100%" chart-height="50px"></t-chart>
+              <div id="orderChart"></div>
             </div>
           </div>
           <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">完成率</span> <span class="text-gray ml-2">90%</span>
+            <span class="text-muted text-md">完成率</span> <span class="text-gray ml-2">{{ orderFinishRate }}%</span>
           </div>
         </t-card>
       </div>
@@ -83,20 +83,24 @@
 <script>
 import echarts from 'echarts'
 import { getDashboardBusiness } from './server'
-import chartCirculate from './circulateChart'
 
 export default {
   components: {
-    chartCirculate
   },
   data() {
     return {
-      circulateDate: {
-        salesVolumeFinish: 0,
-        salesVolumeMonthly: 0
-      },
+      salesVolumeFinish: 0,
+      salesVolumeMonthly: 0,
       salesVolumeData: {
-        dataAxis:[],
+        dataAxis: [],
+        data: []
+      },
+      salesVolumeGoal: 0,
+      salesVolumeGoalFinishRate: 0,
+      orderFinish: 0,
+      orderFinishRate: 0,
+      orderData: {
+        dataAxis: [],
         data: []
       },
       pieChart: {
@@ -129,27 +133,135 @@ export default {
       }
     }
   },
+  computed: {
+    saledPercent() {
+      return this.salesVolumeGoalFinishRate * 100
+    }
+  },
   created() {
   },
   mounted() {
-    this.makeCirculateChart()
+    this.getDashboardData()
   },
   methods: {
-    async makeCirculateChart() {
+    async getDashboardData() {
       let payload = {
         year: '2018',
         area: '1000'
       }
-      let chartBusiness = await getDashboardBusiness(payload)
-      if (chartBusiness.status === 200) {
-        // console.log(chartBusiness.data)
-        this.circulateDate.salesVolumeFinish = chartBusiness.data.salesVolumeFinish
-        this.circulateDate.salesVolumeMonthly = chartBusiness.data.salesVolumeMonthly
-        this.salesVolumeData.dataAxis = chartBusiness.data.salesVolumeData.dataAxis
-        this.salesVolumeData.data = chartBusiness.data.salesVolumeData.data
+      let dashboardData = await getDashboardBusiness(payload)
+      if (dashboardData.status === 200) {
+        // 设置流转额
+        this.salesVolumeFinish = dashboardData.data.salesVolumeFinish
+        this.salesVolumeMonthly = dashboardData.data.salesVolumeMonthly
+        this.salesVolumeData.dataAxis = dashboardData.data.salesVolumeData.dataAxis
+        this.salesVolumeData.data = dashboardData.data.salesVolumeData.data
+        // 设置收入目标
+        this.salesVolumeGoal = dashboardData.data.salesVolumeGoal
+        this.salesVolumeGoalFinishRate = dashboardData.data.salesVolumeGoalFinishRate
+        this.orderFinish = dashboardData.data.orderFinish
+        this.orderMonthly = dashboardData.data.orderFinishRate
+        this.orderData = dashboardData.data.orderData
       } else {
-        this.$Message.danger(chartBusiness.message)
+        this.$Message.danger(dashboardData.message)
       }
+      this.createCirculateChart()
+      this.createOrderChart()
+    },
+    createAllCharts() {
+
+    },
+    createCirculateChart() {
+      let _Charts = echarts.init(document.getElementById('circulateChart'))
+      let circulateChartOpt = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'none', // 默认为直线，可选为：'line' | 'shadow'
+            snap: true,
+            lineStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 1,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0, color: '#fff' // 0% 处的颜色
+                  }, {
+                    offset: 1, color: '#fff' // 100% 处的颜色
+                  }
+                ],
+                globalCoord: false // 缺省为 false
+              }
+            }
+          }
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          show: false,
+          data: this.salesVolumeData.dataAxis
+        },
+        yAxis: {
+          type: 'value',
+          show: false
+        },
+        series: [{
+          smooth: true,
+          data: this.salesVolumeData.data,
+          type: 'line',
+          areaStyle: {
+            color: '#229541'
+          }
+        }],
+        grid: {
+          // 设置图表在容器中开始绘制的坐标
+          left: 0,
+          right: 0,
+          bottom: 50
+        }
+      }
+      _Charts.setOption(circulateChartOpt)
+      setTimeout(() => {
+        _Charts.resize()
+      }, 10)
+    },
+    createOrderChart() {
+      let _orderCharts = echarts.init(document.getElementById('orderChart'))
+      let orderChartOpt = {
+        color: ['#1C90D3'],
+        xAxis: {
+          show: false,
+          type: 'category',
+          data: this.orderData.dataAxis,
+          axisLine: {
+            lineStyle: {
+              bgColor: '#1C90D3'
+            }
+          }
+        },
+        yAxis: {
+          show: false,
+          type: 'value'
+        },
+        series: [{
+          data: this.orderData.data,
+          type: 'bar',
+          barMaxWidth: '12'
+        }],
+        grid: {
+          // 设置图表在容器中开始绘制的坐标
+          left: 0,
+          right: 0,
+          bottom: 80
+        }
+      }
+      _orderCharts.setOption(orderChartOpt)
+      setTimeout(() => {
+        _orderCharts.resize()
+      }, 10)
     }
   }
 }
@@ -222,5 +334,9 @@ export default {
   .nav-tabs {
     padding: 0 10px;
   }
+}
+#circulateChart,
+#orderChart {
+  height: 50px;
 }
 </style>

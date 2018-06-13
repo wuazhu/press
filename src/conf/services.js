@@ -19,8 +19,10 @@ export default {
   },
   region: {
     region: '/api/v1/region',
-    presider: '/presider/',
-    savePresider: '/presider/save'
+    presider: '/api/v1/presider/',
+    savePresider: '/api/v1/presider/save'
+  },
+  customers: {
+    customers: '/api/v1/customers'
   }
-
 }

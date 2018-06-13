@@ -2,7 +2,8 @@ import * as constants from './constant'
 import services from '../../../conf/services'
 import http from '../../../http'
 const KEY_BK_TOKEN = 'bk-token'
-let { $bk } = http
+const cnpSign = 'CNPSIGN'
+let { $http, $bk } = http
 
 // 获取用户身份
 export function fetchAuth({ commit }) {
@@ -20,11 +21,15 @@ export async function doLogin({ commit }, data) {
   let res = await $bk.post(services.logins, {params: JSON.stringify(param)})
   if (res.data && res.data.data) {
     if (res.data.data.responseCode === '0') {
-      localStorage.setItem(KEY_BK_TOKEN, JSON.stringify(res.data.data.GLOBAL_SIGN))
+      let signObj = {
+        sign: res.data.data.GLOBAL_SIGN,
+        sessionId: res.data.data.GLOBAL_SESSION_ID
+      }
+      sessionStorage.setItem(cnpSign, JSON.stringify(signObj))
       commit(constants.DO_LOGIN, res.data.data)
     }
   } else {
-    localStorage.removeItem(KEY_BK_TOKEN)
+    sessionStorage.removeItem(cnpSign)
     commit(constants.DO_LOGOUT)
   }
   return res.data

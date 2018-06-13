@@ -17,7 +17,7 @@ import config from './conf/axios.config.js'
 /* eslint no-useless-escape: "off" */
 /* eslint no-prototype-builtins: "off" */
 
-const BK_TOKEN = 'bk-token'
+const cnpSign = 'CNPSIGN'
 /**
  * 深度合并多个对象，返回合并后的新对象
  * @private
@@ -127,11 +127,15 @@ const HttpPlugin = {
  *                           参见{@link https://github.com/axios/axios Axios}官网
  */
 function requestInterceptor(config) {
-  // 将post方法的content-type 设置为 application/x-www-form-urlencoded
-  let token = localStorage.getItem(BK_TOKEN)
-  if (token) {
-    config.headers.token = token
+  // 不需要加上 sign,session-id的请求地址需要加入如下判断中
+  let rexg = /uspa_IOrgmodelClientCSV_loginIn/
+  console.log(config)
+  if (!rexg.test(config.url)) {
+    let appSignInfo = JSON.parse(sessionStorage.getItem(cnpSign))
+    config.headers['sign'] = appSignInfo.sign
+    config.headers['session-id'] = appSignInfo.sessionId
   }
+  
   if (config.method === 'post') {
     config.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     let data = config.data
