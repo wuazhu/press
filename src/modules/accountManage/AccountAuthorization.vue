@@ -1,7 +1,7 @@
 <template>
   <div class="passage-index">
     <div class="index-title">
-      <p class="text-base">绩效与授权</p>
+      <p class="text-base">账户管理</p>
     </div>
     <div class="row">
       <div class="col-3">
@@ -22,50 +22,6 @@
         </div>
       </div>
     </div>
-    <!-- 修改基本信息 -->
-    <t-modal v-model="isShow" :closable="false" title="修改基本信息" style="width:455px;height:463px;">
-      <t-form :model="inforData" :label-span="2" label-position="left" size="sm">
-        <t-form-item label="头像" prop="input1">
-          <t-upload ref="uploader" :show-upload-list="false" :format="['jpg','jpeg','png']" :max-size="2048" multiple type="drag" action="//jquery-file-upload.appspot.com/" class="demo-upload-list">
-            <div style="line-height:48px;">
-              <i class="aid aid-plus"></i>
-            </div>
-          </t-upload>
-        </t-form-item>
-        <t-form-item label="姓名" prop="input2">
-          <t-input v-model="inforData.input2" placeholder=""></t-input>
-        </t-form-item>
-        <t-form-item label="工号" prop="input3">
-          <t-input v-model="inforData.input3" placeholder=""></t-input>
-        </t-form-item>
-        <div class="form-title">联系方式</div>
-        <t-form-item label="微信号" prop="input4">
-          <t-input v-model="inforData.input4" placeholder=""></t-input>
-        </t-form-item>
-        <t-form-item label="手机号码" prop="inpu5">
-          <t-input v-model="inforData.input5" placeholder=""></t-input>
-        </t-form-item>
-      </t-form>
-    </t-modal>
-    <!-- 设定考核目标 -->
-    <t-modal v-model="targetIsShow" :closable="false" title="设定考核目标" style="width:455px;height:463px;">
-      <t-form :model="targetItem">
-        <t-form-item label="为 刘德华 设定 2018年度 流转额">
-          <t-input v-model="targetItem.input" placeholder="请填写年度流转额"></t-input>
-        </t-form-item>
-        <div class="border-line"></div>
-        <div class="plan-title d-flex justify-content-between">
-          <span>2017年目标</span>
-          <span>￥3000 / ￥4000</span>
-        </div>
-        <t-progress :percent="55" status="active"></t-progress>
-        <div class="plan-title d-flex justify-content-between">
-          <span>2016年目标</span>
-          <span>￥3000 / ￥4000</span>
-        </div>
-        <t-progress :percent="75" status="active"></t-progress>
-      </t-form>
-    </t-modal>
     <!-- 设备授权信息 -->
     <t-modal v-model="equipmentIsShow" :closable="false" title="设备授权信息" style="width:455px;height:463px;">
       <div class="equipment-title">刘德华 拥有的设备</div>
@@ -98,12 +54,16 @@ export default {
     return {
       listHeaderData: [
         {
-          title: '姓名',
-          key: 'name'
+          title: '账户',
+          key: 'account'
+        },
+        {
+          title: '员工',
+          key: 'staff'
         },
         {
           title: '编码',
-          key: 'coding'
+          key: 'code'
         },
         {
           title: '岗位',
@@ -114,68 +74,45 @@ export default {
           key: 'equipment'
         },
         {
-          title: '考核目标',
-          key: 'target'
-        },
-        {
           title: '操作',
-          width: 240,
           render: (h, params) => {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding-right': '6px'},
-                on: {
-                  click() {
-                    vm.isShow = true
-                  }
-                }
-              }, '修改信息'),
-              h('span', {
-                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding': '0 6px'},
+                style: {'color': '#108EEA', 'cursor': 'pointer', 'padding-right': '6px'},
                 on: {
                   click() {
                     vm.equipmentIsShow = true
                   }
                 }
-              }, '授权'),
-              h('span', {
-                style: {'color': '#108EEA', 'padding': '0 6px'},
-                on: {
-                  click() {
-                    vm.targetIsShow = true
-                  }
-                }
-              }, '设定考核目标')
+              }, '授权')
             ])
           }
         }
       ],
       listData: [
         {
-          name: '张学友',
-          coding: '09287621',
+          account: 'zhanghu1',
+          staff: '张学友',
+          code: '09287621',
           station: '投递员',
-          equipment: '3',
-          target: '￥26000'
+          equipment: '3'
         },
         {
-          name: '张学友',
-          coding: '09287621',
+          account: 'zhanghu1',
+          staff: '张学友',
+          code: '09287621',
           station: '投递员',
-          equipment: '3',
-          target: '￥26000'
+          equipment: '3'
         },
         {
-          name: '张学友',
-          coding: '09287621',
+          account: 'zhanghu1',
+          staff: '张学友',
+          code: '09287621',
           station: '投递员',
-          equipment: '3',
-          target: '￥26000'
+          equipment: '3'
         }
       ],
-      isShow: false,
-      targetIsShow: false,
       equipmentIsShow: false,
       inforData: {},
       targetItem: {},

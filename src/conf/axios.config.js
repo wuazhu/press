@@ -35,7 +35,8 @@ const appConf = window.APP_CONF
  */
 const conf = {
   commonConfig: {
-    baseURL: '/mock'
+    // baseURL: '/mock'
+    baseURL: 'http://192.168.252.237:8080/subpress-web'
   },
   root: {
     bk: {

@@ -8,3 +8,11 @@ export async function getRoadList(params) {
   })
   return listData.data
 }
+
+// 查询段道负责人
+export async function queryRoadPresider(params) {
+  let listData = await http.$bk.get(services.region.presider, {
+    params
+  })
+  return listData.data
+}

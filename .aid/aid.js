@@ -60,6 +60,13 @@ module.exports = {
         target: 'http://192.168.248.169:8080',
         changeOrigin: true
       }
+    },
+    {
+      url: '/subpress-web',
+      options: {
+        target: 'http://192.168.252.237:8080',
+        changeOrigin: true
+      }
     }
   ],
   outputPrefix: '/' // 构建后index.html中资源路径的前缀

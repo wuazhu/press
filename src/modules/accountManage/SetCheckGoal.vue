@@ -1,7 +1,7 @@
 <template>
   <div class="passage-index">
     <div class="index-title">
-      <p class="text-base">绩效与授权</p>
+      <p class="text-base">考核目标管理</p>
     </div>
     <div class="row">
       <div class="col-3">
@@ -13,7 +13,7 @@
       <div class="col-9">
         <div class="content-right">
           <div class="cust-list-item border">
-            <div class="org-title">账户列表</div>
+            <div class="org-title">员工</div>
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right">
@@ -22,31 +22,6 @@
         </div>
       </div>
     </div>
-    <!-- 修改基本信息 -->
-    <t-modal v-model="isShow" :closable="false" title="修改基本信息" style="width:455px;height:463px;">
-      <t-form :model="inforData" :label-span="2" label-position="left" size="sm">
-        <t-form-item label="头像" prop="input1">
-          <t-upload ref="uploader" :show-upload-list="false" :format="['jpg','jpeg','png']" :max-size="2048" multiple type="drag" action="//jquery-file-upload.appspot.com/" class="demo-upload-list">
-            <div style="line-height:48px;">
-              <i class="aid aid-plus"></i>
-            </div>
-          </t-upload>
-        </t-form-item>
-        <t-form-item label="姓名" prop="input2">
-          <t-input v-model="inforData.input2" placeholder=""></t-input>
-        </t-form-item>
-        <t-form-item label="工号" prop="input3">
-          <t-input v-model="inforData.input3" placeholder=""></t-input>
-        </t-form-item>
-        <div class="form-title">联系方式</div>
-        <t-form-item label="微信号" prop="input4">
-          <t-input v-model="inforData.input4" placeholder=""></t-input>
-        </t-form-item>
-        <t-form-item label="手机号码" prop="inpu5">
-          <t-input v-model="inforData.input5" placeholder=""></t-input>
-        </t-form-item>
-      </t-form>
-    </t-modal>
     <!-- 设定考核目标 -->
     <t-modal v-model="targetIsShow" :closable="false" title="设定考核目标" style="width:455px;height:463px;">
       <t-form :model="targetItem">
@@ -65,24 +40,6 @@
         </div>
         <t-progress :percent="75" status="active"></t-progress>
       </t-form>
-    </t-modal>
-    <!-- 设备授权信息 -->
-    <t-modal v-model="equipmentIsShow" :closable="false" title="设备授权信息" style="width:455px;height:463px;">
-      <div class="equipment-title">刘德华 拥有的设备</div>
-      <div class="equipmentList">
-        <p>设备MAC</p>
-        <ul>
-          <li class="d-flex justify-content-between">
-            <span>00-05-5D-E8-0F-A3</span>
-            <span>删除授权</span>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span>00-05-5D-E8-0F-A3</span>
-            <span>删除授权</span>
-          </li>
-        </ul>
-        <i class="new-add">+ 新增授权</i>
-      </div>
     </t-modal>
   </div>
 </template>
@@ -110,37 +67,16 @@ export default {
           key: 'station'
         },
         {
-          title: '设备授权',
-          key: 'equipment'
-        },
-        {
           title: '考核目标',
           key: 'target'
         },
         {
           title: '操作',
-          width: 240,
           render: (h, params) => {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding-right': '6px'},
-                on: {
-                  click() {
-                    vm.isShow = true
-                  }
-                }
-              }, '修改信息'),
-              h('span', {
-                style: {'color': '#108EEA', 'border-right': '1px solid #E9E9E9', 'padding': '0 6px'},
-                on: {
-                  click() {
-                    vm.equipmentIsShow = true
-                  }
-                }
-              }, '授权'),
-              h('span', {
-                style: {'color': '#108EEA', 'padding': '0 6px'},
+                style: {'color': '#108EEA', 'padding-right': '6px', 'cursor': 'pointer'},
                 on: {
                   click() {
                     vm.targetIsShow = true
@@ -174,9 +110,7 @@ export default {
           target: '￥26000'
         }
       ],
-      isShow: false,
       targetIsShow: false,
-      equipmentIsShow: false,
       inforData: {},
       targetItem: {},
       equipmenttItem: {}

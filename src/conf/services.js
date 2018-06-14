@@ -18,11 +18,11 @@ export default {
     customers: '/api/v1/dashboard/customers'
   },
   region: {
-    region: '/api/v1/region',
-    presider: '/api/v1/presider/',
-    savePresider: '/api/v1/presider/save'
+    region: '/subpress-web/api/v1/region',
+    presider: '/subpress-web/api/v1/presider/',
+    savePresider: '/subpress-web/api/v1/presider/save'
   },
   customers: {
-    customers: '/api/v1/customers'
+    customers: '/subpress-web/api/v1/customers'
   }
 }

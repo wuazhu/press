@@ -90,11 +90,11 @@ export default {
         },
         {
           title: '描述',
-          key: 'description'
+          key: 'desc'
         },
         {
           title: '责任人',
-          key: 'person'
+          key: 'presider'
         },
         {
           title: '操作',
@@ -102,10 +102,11 @@ export default {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA'},
+                style: {'color': '#108EEA', 'cursor': 'pointer'},
                 on: {
                   click() {
                     vm.isShow = true
+                    console.log(params.row)
                   }
                 }
               }, '分配责任人')
@@ -113,23 +114,7 @@ export default {
           }
         }
       ],
-      listData: [
-        {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
-        },
-        {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
-        },
-        {
-          name: 'A 区一段',
-          description: '从xxx 街以南到 xxx 街以北',
-          person: '郭富城'
-        }
-      ],
+      listData: [],
       isShow: false
     }
   },
@@ -138,12 +123,22 @@ export default {
   },
   methods: {
     async makeRoadList() {
+      // 获取段道列表
       let obj = {
         currentPage: 1,
-        pageSize: 10
+        pageSize: 10,
+        orgId: 10006404
       }
       let roadListData = await getRoadList(obj)
-      console.log(roadListData)
+      if (roadListData.status === 200) {
+        if (roadListData.data) {
+          let _newData = roadListData.data.data
+          _newData.forEach((item, key) => {
+            item.presider = item.presider ? item.presider[0] : ''
+          })
+          this.listData = _newData
+        }
+      }
     }
   }
 }
