@@ -50,28 +50,55 @@
         </t-card>
       </div>
     </div>
-    <div class="index-tabs">
+    <div class="index-tabs border">
       <t-tabs>
-        <t-tab-panel label="客户渠道" name="tab-1">
+        <t-tab-panel label="客户渠道" name="tab-new">
           <div class="row">
-            <div class="col-8">
+            <div class="col-8 chart-box">
               <div class="data-box">
-                <t-chart ref="lineSimple" :options="pieChart" auto-resize chart-width="100%" chart-height="280px"></t-chart>
+                <div id="newmember">
+                  <t-chart
+                    ref="addMemberRef"
+                    :options="setChart"
+                    :auto-resize="true"
+                    chart-width="100%"
+                    chart-height="300px"
+                  ></t-chart>
+                </div>
               </div>
             </div>
-            <div class="col-4">
-              <p class="text-gray font-weight-bold">客户消费能力排行</p>
+            <div class="col-4 bg-chart-gray">
+              <div class="addmember-circle d-flex">
+                <div class="common-chart-circle">
+                  <div id="increaseChart"></div>
+                </div>
+                <div class="flex1 chart-infos">
+                  <dl>
+                    <dt class="add-title">{{ 14000 }}</dt>
+                    <dd class="text-muted">
+                      新增人数(人)
+                    </dd>
+                    <dt class="add-title">{{ 6000 }}</dt>
+                    <dd class="text-muted">
+                      新增收入(元)
+                    </dd>
+                    <dt class="add-title">{{ 5 }}% <span>1%</span></dt>
+                    <dd class="text-muted">
+                      新增率
+                    </dd>
+                  </dl>
+                </div>
+              </div>
             </div>
           </div>
         </t-tab-panel>
-        <t-tab-panel label="客户渠道" name="tab-2">
+        <t-tab-panel label="客户渠道" name="tab-lost">
           <div class="row">
             <div class="col-8">
               <div class="data-box">
-                <t-chart ref="lineSimple" :options="pieChart" :auto-resize="true" chart-width="100%" chart-height="280px"></t-chart>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-4 bg-chart-gray">
               <p class="text-gray font-weight-bold">客户消费能力排行</p>
             </div>
           </div>
@@ -82,69 +109,102 @@
 </template>
 <script>
 import echarts from 'echarts'
-import { getDashboardBusiness } from './server'
+import { forEach } from 'lodash'
+import { getDashboardBusiness, getDashboardCustomer } from './server'
 
 export default {
   components: {
   },
   data() {
     return {
+      // 流转额
       salesVolumeFinish: 0,
       salesVolumeMonthly: 0,
       salesVolumeData: {
         dataAxis: [],
         data: []
       },
+      // 目标
       salesVolumeGoal: 0,
       salesVolumeGoalFinishRate: 0,
+      // 订购量
       orderFinish: 0,
       orderFinishRate: 0,
       orderData: {
         dataAxis: [],
         data: []
       },
-      pieChart: {
-        color: ['#1C90D3'],
+      // 新增客户
+      addCustomerData: {
+        increaseNumbers: 0,
+        increaseSalesVolume: 0,
+        increaseRate: 0,
+        increaseRateDeviation: 0,
+        increaseMonthData: {
+          dataAxis: [],
+          data: []
+        },
+        increaseRatioData: [],
+        increaseRatioLabel: []
+      },
+      setChart: {
+        title: {
+          text: '新增客户趋势',
+          left: 30,
+          top: 0
+        },
+        color: ['#229541'],
+        tooltip: {
+          show: true
+        },
         xAxis: {
-          show: false,
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Sunb', 'Sat1', 'Sun1', 'Sunb1'],
-          axisLine: {
-            lineStyle: {
-              bgColor: '#1C90D3'
-            }
+          data: [],
+          splitLine: {
+            show: false
+          },
+          axisLabel: {
+            rotate: 0
           }
         },
         yAxis: {
-          show: false,
-          type: 'value'
+          type: 'value',
+          axisLine: {
+            show: false
+          },
+          splitLine: {
+            show: false
+          }
         },
         series: [{
-          data: [120, 200, 150, 100, 70, 110, 130, 80, 110, 130, 80],
+          data: [],
           type: 'bar',
-          barMaxWidth: '12'
+          barMaxWidth: 30
         }],
         grid: {
           // 设置图表在容器中开始绘制的坐标
-          left: 0,
-          right: 0,
-          bottom: 80
+          left: 70,
+          right: 40,
+          bottom: 60
         }
       }
     }
   },
   computed: {
-    saledPercent() {
-      return this.salesVolumeGoalFinishRate * 100
-    }
   },
   created() {
   },
   mounted() {
     this.getDashboardData()
+    this.getDashboardCust()
+    // this.createNewMemberCharts()
+    // window.addEventListener('resize', () => {
+    //   this.$refs.addMemberRef.resize()
+    // })
   },
   methods: {
     async getDashboardData() {
+      // 获取首页数据
       let payload = {
         year: '2018',
         area: '1000'
@@ -168,10 +228,92 @@ export default {
       this.createCirculateChart()
       this.createOrderChart()
     },
+    async getDashboardCust() {
+      // 获取首页客户数据
+      let payload = {
+        year: '2018',
+        area: '1000'
+      }
+      let custData = await getDashboardCustomer(payload)
+      if (custData.status === 200) {
+        this.setChart.xAxis.data = custData.data.increaseMonthData.dataAxis
+        this.setChart.series[0].data = custData.data.increaseMonthData.data
+        // 设置新增客户数据
+        this.addCustomerData.increaseNumbers = custData.data.increaseNumbers
+        this.addCustomerData.increaseSalesVolume = custData.data.increaseSalesVolume
+        this.addCustomerData.increaseRate = custData.data.increaseRate
+        this.addCustomerData.increaseRateDeviation = custData.data.increaseRateDeviation
+        this.addCustomerData.increaseMonthData = custData.data.increaseMonthData
+        this.addCustomerData.increaseRatioData = custData.data.increaseRatioData
+        forEach(custData.data.increaseRatioData, item => {
+          this.addCustomerData.increaseRatioLabel.push(item.name)
+        })
+        this.createNewMemberCharts()
+        setTimeout(() => {
+          this.$refs.addMemberRef.resize()
+        }, 10)
+      } else {
+        this.$Message.danger(custData.message)
+      }
+    },
     createAllCharts() {
-
+    },
+    createNewMemberCharts() {
+      let increaseChart = echarts.init(document.getElementById('increaseChart'))
+      let increaseChartOpt = {
+        title: {
+          text: '新增情况统计'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          x: 'center',
+          y: 'bottom',
+          data: this.addCustomerData.increaseRatioLabel
+        },
+        series: [
+          {
+            name: '新增情况',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            color: ['#67A361', '#D6D6D6', '#F7DD6F'],
+            avoidLabelOverlap: false,
+            label: {
+              normal: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                show: true,
+                textStyle: {
+                  fontSize: '15',
+                  fontWeight: 'bold'
+                }
+              }
+            },
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            data: this.addCustomerData.increaseRatioData
+          }
+        ],
+        grid: {
+          top: 'top',
+          bottom: -20
+        }
+      }
+      increaseChart.setOption(increaseChartOpt)
+      setTimeout(() => {
+        increaseChart.resize()
+      }, 10)
     },
     createCirculateChart() {
+      // 流转额图表
       let _Charts = echarts.init(document.getElementById('circulateChart'))
       let circulateChartOpt = {
         tooltip: {
@@ -227,8 +369,12 @@ export default {
       setTimeout(() => {
         _Charts.resize()
       }, 10)
+      window.addEventListener('resize', () => {
+        _Charts.resize()
+      })
     },
     createOrderChart() {
+      // 订购量图表
       let _orderCharts = echarts.init(document.getElementById('orderChart'))
       let orderChartOpt = {
         color: ['#1C90D3'],
@@ -262,6 +408,9 @@ export default {
       setTimeout(() => {
         _orderCharts.resize()
       }, 10)
+      window.addEventListener('resize', () => {
+        _orderCharts.resize()
+      })
     }
   }
 }
@@ -338,5 +487,38 @@ export default {
 #circulateChart,
 #orderChart {
   height: 50px;
+}
+#increaseChart {
+  height: 300px;
+}
+.chart-box {
+  // height: 300px;
+  .data-box {
+    padding: 10px 0;
+  }
+}
+.addmember-circle {
+  padding: 10px 0;
+}
+.common-chart-circle {
+  width: 150px;
+}
+.bg-chart-gray {
+  background: rgba(50,50,50,0.04);
+}
+.add-title {
+  font-size: 24px;
+  font-weight: 500;
+  + dd {
+    margin-bottom: 30px;
+    font-size: 14px;
+    font-weight: 200;
+  }
+}
+.chart-infos {
+  padding: 30px 20px 0 40px;
+  justify-content: center;
+  flex: 1;
+  align-items: center;
 }
 </style>

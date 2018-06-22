@@ -15,7 +15,6 @@
         :active-name="menuActiveName"
         :open-names="[menuOpenName]"
         type="dark"
-        accordion
         @on-select="menuSelect">
         <t-menu-item name="/bk">
           <t-icon type="home"></t-icon>
@@ -26,7 +25,33 @@
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
           </template>
-          <!-- <t-menu-item name="/user">组织机构</t-menu-item> -->
+          <t-submenu name="uspaManage-org">
+            <template slot="title">组织架构管理</template>
+            <t-menu-item name="/uspaManage/uspa/stationTypeManager">岗位类型管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/stationManager">岗位管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/organizeManager">组织管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/operatorManager">员工管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/virtualGroupManager">虚拟组管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/opStationManager">操作员上岗</t-menu-item>
+          </t-submenu>
+          <t-submenu name="uspaManage-permission">
+            <template slot="title">权限管理</template>
+            <t-menu-item name="/uspaManage/uspa/roleManager">功能集管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/entityManager">实体管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/privManager">操作行为管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/entityClassManager">实体分类管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/functionManager">菜单管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/roleExclude">功能集互斥管理</t-menu-item>
+          </t-submenu>
+          <t-submenu name="uspaManage-permission">
+            <template slot="title">功能管理</template>
+            <t-menu-item name="/uspaManage/uspa/entityPrivRelaManager">实体操作行为绑定</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/operatorAuthorManager">操作员授权</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/organizeAuthorManager">组织授权</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/stationTypeAuthorManager">岗位类型授权</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/roleEntityRelaManager">实体与功能集绑定</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/roleFunctionRelaManager">菜单与功能集绑定</t-menu-item>
+          </t-submenu>
           <t-menu-item name="/sys/manage">绩效与授权</t-menu-item>
           <!-- <t-menu-item name="sys.permission">权限管理</t-menu-item> -->
         </t-submenu>
@@ -35,7 +60,7 @@
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
           </template>
-          <t-menu-item name="/road/allot">段道分配</t-menu-item>
+          <t-menu-item name="/road/allot">段  道分配</t-menu-item>
           <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
         </t-submenu>
         <t-submenu name="product">
@@ -86,7 +111,7 @@
         </t-breadcrumb-item>
       </t-breadcrumb>
       <div class="layout-main px-4" style="top: 105px; bottom: 50px;">
-        <div :class="['pos-rel', { 'p-3' : true, 'bg-white': bgColor}]" style="height: 100%; overflow-x: hidden; overflow-y: auto;">
+        <div :class="['pos-rel', { 'p-3' : true, 'bg-white': bgColor, 'bg-uspa': isUspa}]" style="height: 100%; overflow-x: hidden; overflow-y: auto;">
           <transition name="cust-router-change" mode="out-in">
             <router-view></router-view>
           </transition>
@@ -112,6 +137,7 @@ export default {
     return {
       reisezeTimer: null,
       manual: false,
+      isUspa: false,
       isOpen: this.initSidebarState(),
       openPosition: this.initMenuPosition(),
       breadList: []
@@ -125,7 +151,7 @@ export default {
       return this.$route.fullPath
     },
     menuOpenName() {
-      let rexg = /^(sys|road|product|logger|cust)/
+      let rexg = /^(sys|road|product|logger|cust|uspaManager)/
       let route = this.$route.fullPath.split('/')[1]
       if (rexg.test(route)) {
         return route
@@ -136,11 +162,15 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (to.path !== from.path) this.$_changeBreadcrumb()
+      if (to.path !== from.path) {
+        this.$_changeBreadcrumb()
+        this.$_checkUspa()
+      }
     }
   },
   created() {
     this.$_changeBreadcrumb()
+    this.$_checkUspa()
   },
   mounted() {
     window.addEventListener('resize', () => {
@@ -164,6 +194,11 @@ export default {
       localStorage.clear(BK_TOKEN)
       localStorage.clear(VUEX)
     },
+    $_checkUspa() {
+      if (this.$route.name === 'uspaManage') {
+        this.isUspa = true
+      }
+    },
     $_changeBreadcrumb() {
       this.breadList = []
       let matchList = this.$route.matched
@@ -179,6 +214,17 @@ export default {
       })
     },
     menuSelect(name) {
+      // uspa页面处理
+      let rexg = /^\/uspaManage/
+      if (rexg.test(name)) {
+        let timeSec = new Date().getTime()
+        let timeLog = Math.floor(timeSec / 1000)
+        let urlSrc = `${name}/${timeLog}`
+        this.$router.push({
+          path: urlSrc
+        })
+        return
+      }
       this.$router.push({
         path: name
       })
@@ -366,5 +412,18 @@ export default {
   }
 .test-abs {
   position: absolute;
+}
+.bg-uspa {
+  background-color: #f2f6f7!important;
+}
+.menu__submenu {
+  .menu__submenu {
+    .menu__submenu-title{
+      padding-left: 40px;
+    }
+    .menu .menu__item{
+      padding-left: 50px;
+    }
+  }
 }
 </style>

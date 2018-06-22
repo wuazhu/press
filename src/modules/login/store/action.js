@@ -3,7 +3,7 @@ import services from '../../../conf/services'
 import http from '../../../http'
 const KEY_BK_TOKEN = 'bk-token'
 const cnpSign = 'CNPSIGN'
-let { $http, $bk } = http
+let { $http } = http
 
 // 获取用户身份
 export function fetchAuth({ commit }) {
@@ -18,7 +18,7 @@ export async function doLogin({ commit }, data) {
     userCode: data.userCode,
     passWord: data.passWord
   }
-  let res = await $bk.post(services.logins, {params: JSON.stringify(param)})
+  let res = await $http.post(services.logins, {params: JSON.stringify(param)})
   if (res.data && res.data.data) {
     if (res.data.data.responseCode === '0') {
       let signObj = {

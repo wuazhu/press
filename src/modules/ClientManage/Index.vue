@@ -47,6 +47,7 @@
 <script>
 import companyTrees from '../components/CompanyTrees'
 import mergeClient from './components/MergeClient'
+import { getCustomerList } from './server'
 
 export default {
   components: {
@@ -148,6 +149,9 @@ export default {
   methods: {
     $_closeClientBox() {
       this.clientData.visible = false
+    },
+    getCustmerData() {
+      
     }
   }
 }

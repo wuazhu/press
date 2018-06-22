@@ -10,12 +10,12 @@
  */
 
 export default {
-  login: '/api/v1/dologin',
-  accounts: '/api/v1/accounts',
-  logins: '/sso-web/UspaCsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
+  login: '/mock/api/v1/dologin',
+  accounts: '/mock/api/v1/accounts',
+  logins: '/sso-web/CsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
   dashboard: {
-    business: '/api/v1/dashboard/business',
-    customers: '/api/v1/dashboard/customers'
+    business: '/mock/api/v1/dashboard/business',
+    customers: '/mock/api/v1/dashboard/customers'
   },
   region: {
     region: '/subpress-web/api/v1/region',

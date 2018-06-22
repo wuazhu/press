@@ -8,3 +8,10 @@ export async function getDashboardBusiness(params) {
   })
   return chartBusiness.data
 }
+
+export async function getDashboardCustomer(params) {
+  let chartCustomer = await http.$http.get(services.dashboard.customers, {
+    params
+  })
+  return chartCustomer.data
+}

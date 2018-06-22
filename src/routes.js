@@ -3,6 +3,7 @@ import roadManage from 'modules/roadManage/route'
 import accountManage from 'modules/accountManage/route'
 import product from 'modules/products/route'
 import ClientManage from 'modules/ClientManage/route'
+import sysManage from 'modules/systemManage/route'
 import notFound from 'modules/components/404Error'
 export default [
   {
@@ -32,6 +33,7 @@ export default [
       ...accountManage,
       ...product,
       ...ClientManage,
+      ...sysManage,
       {
         path: '404',
         component: notFound,

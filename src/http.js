@@ -129,13 +129,11 @@ const HttpPlugin = {
 function requestInterceptor(config) {
   // 不需要加上 sign,session-id的请求地址需要加入如下判断中
   let rexg = /uspa_IOrgmodelClientCSV_loginIn/
-  console.log(config)
   if (!rexg.test(config.url)) {
     let appSignInfo = JSON.parse(sessionStorage.getItem(cnpSign))
     config.headers['sign'] = appSignInfo.sign
     config.headers['session-id'] = appSignInfo.sessionId
   }
-  
   if (config.method === 'post') {
     config.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     let data = config.data
