@@ -7,48 +7,73 @@
         size="sm">
       </t-input>
     </div>
-    <div><t-tree ref="tree" :data="companyList" :filter-node-method="filterNode" class="filter-tree"></t-tree></div>
+    <div>
+      <t-tree
+        :data="orgTreeData"
+        :props="orgDefaultProp"
+        :load="loadNode"
+        lazy>
+      </t-tree>
+    </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+import { getOrgList } from './server'
+
 export default {
   data() {
     return {
-      companyList: [{
-        id: 1,
-        label: '中国邮政集团',
-        children: [{
-          id: 4,
-          label: '山东分公司',
-          children: [{
-            id: 9,
-            label: '威海市分公司'
-          }, {
-            id: 10,
-            label: '济南市分公司'
-          }]
-        },
-        {
-          id: 5,
-          label: '山西分公司',
-          children: [{
-            id: 14,
-            label: '大同分公司'
-          }]
-        }]
-      }],
+      orgDefaultProp: {
+        label: 'orgName',
+        children: 'childOrgs'
+      },
+      orgTreeData: [],
       searchContent: ''
     }
+  },
+  computed: {
+    ...mapState({
+      orgId: state => state.login.orgId,
+      orgName: state => state.login.orgName
+    })
   },
   watch: {
     searchContent(val) {
       this.$refs.tree.filter(val)
     }
   },
+  creatd() {
+    
+  },
+  mounted() {
+    console.log(this.orgId)
+  },
   methods: {
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+    loadNode(node, resolve) {
+      console.log(node)
+      if (node.level === 0) {
+        return resolve([{
+          orgName: this.orgName,
+          orgId: this.orgId
+        }])
+      } else {
+        this.getNextOrgTree(node.data.orgId, resolve)
+      }
+    },
+    async getNextOrgTree(prevOrgId, resolve) {
+      let nextOrgList = await getOrgList({
+        orgId: prevOrgId
+      })
+      if (nextOrgList.status === 200) {
+        if (nextOrgList.data.length) {
+          return resolve(nextOrgList.data)
+        } else {
+          return resolve([])
+        }
+      } else {
+        this.$Message.danger(nextOrgList.message)
+      }
     }
   }
 }

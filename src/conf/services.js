@@ -24,5 +24,6 @@ export default {
   },
   customers: {
     customers: '/subpress-web/api/v1/customers'
-  }
+  },
+  orgList: '/subpress-web/api/v1/organize'
 }
