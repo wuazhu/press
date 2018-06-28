@@ -7,7 +7,7 @@
       <div class="col-3">
         <div class="content-left">
           <div class="org-title border">组织机构</div>
-          <company-trees></company-trees>
+          <company-trees @emitClickOrgTreeNode="getRoadListData"></company-trees>
         </div>
       </div>
       <div class="col-9">
@@ -15,14 +15,14 @@
           <div class="cust-list-item border">
             <div class="org-title">段道列表</div>
             <t-table
-              :columns="listHeaderData"
-              :data="listData"
+              :columns="roadHeader"
+              :data="roadData"
               :all-ellipsis="true"
               line>
             </t-table>
           </div>
           <div class="table-paging text-right">
-            <t-pager :total="100" :current="1"></t-pager>
+            <t-pager :total="total" :current="currentPage"></t-pager>
           </div>
         </div>
       </div>
@@ -48,42 +48,7 @@ export default {
   },
   data() {
     return {
-      companyList: [{
-        id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
-      }],
-      listHeaderData: [
+      roadHeader: [
         {
           title: '段道名',
           key: 'name'
@@ -114,7 +79,9 @@ export default {
           }
         }
       ],
-      listData: [],
+      roadData: [],
+      currentPage: 1,
+      total: 0,
       isShow: false
     }
   },
@@ -122,6 +89,19 @@ export default {
     this.makeRoadList()
   },
   methods: {
+    async getRoadListData({ orgId }) {
+      let params = {
+        orgId,
+        currentPage: this.currentPage,
+        pageSize: 10
+      }
+      let roadData = await getRoadList(params)
+      console.log(roadData)
+      if (roadData.status === 200) {
+        this.total = roadData.data.total
+        this.roadData = roadData.data.data
+      }
+    },
     async makeRoadList() {
       // 获取段道列表
       let obj = {

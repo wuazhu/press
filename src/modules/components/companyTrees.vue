@@ -9,10 +9,12 @@
     </div>
     <div>
       <t-tree
+        ref="orgTreeRef"
         :data="orgTreeData"
         :props="orgDefaultProp"
         :load="loadNode"
-        lazy>
+        lazy
+        @on-click="$_clickOrgTreeNode">
       </t-tree>
     </div>
   </div>
@@ -40,18 +42,22 @@ export default {
   },
   watch: {
     searchContent(val) {
-      this.$refs.tree.filter(val)
+      this.$refs.orgTreeRef.filter(val)
     }
   },
   creatd() {
-    
   },
   mounted() {
     console.log(this.orgId)
   },
   methods: {
+    $_clickOrgTreeNode(data, node, self) {
+      this.$emit('emitClickOrgTreeNode', {
+        orgId: data.orgId,
+        orgName: data.orgName
+      })
+    },
     loadNode(node, resolve) {
-      console.log(node)
       if (node.level === 0) {
         return resolve([{
           orgName: this.orgName,

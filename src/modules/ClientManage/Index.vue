@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import companyTrees from '../components/CompanyTrees'
-import mergeClient from './components/MergeClient'
 import { getCustomerList } from './server'
+import mergeClient from './components/MergeClient'
+import companyTrees from '../components/CompanyTrees'
 
 export default {
   components: {
@@ -151,7 +151,6 @@ export default {
       this.clientData.visible = false
     },
     getCustmerData() {
-      
     }
   }
 }
