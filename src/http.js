@@ -12,7 +12,8 @@
 
 import Vue from 'vue'
 import axios from 'axios'
-import { TMessage, TGlobalLoading } from 'aid-taurus-desktop'
+import { TMessage, TGlobalLoading, TNotice } from 'aid-taurus-desktop'
+import router from './router'
 import config from './conf/axios.config.js'
 /* eslint no-useless-escape: "off" */
 /* eslint no-prototype-builtins: "off" */
@@ -133,6 +134,8 @@ function requestInterceptor(config) {
     let appSignInfo = JSON.parse(sessionStorage.getItem(cnpSign))
     config.headers['sign'] = appSignInfo.sign
     config.headers['session-id'] = appSignInfo.sessionId
+    config.headers['ID'] = appSignInfo.id
+    config.headers['STAFF_ID'] = appSignInfo.staffId
   }
   if (config.method === 'post') {
     config.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -164,8 +167,27 @@ function requestError(error) {
  * @returns {Object|Promise} 返回`Axios`响应对象或Promise对象
  */
 function responseInterceptor(response) {
-  if (response && response.status === 401) {
-    // 用户未登录处理
+  // console.log('fucku', response)
+  if (response && response.data) {
+    switch (response.data.status) {
+      case 401:
+        router.replace({
+          path: '/',
+          query: { redirect: router.currentRoute.fullPath }
+        })
+        break
+      case 404:
+        TNotice.danger({
+          title: `code: ${response.data.status}`,
+          desc: response.data.message,
+          duration: 5
+        })
+        router.replace({
+          path: '/bk/404',
+          query: { redirect: router.currentRoute.fullPath }
+        })
+        break
+    }
   }
   TGlobalLoading.finish()
   return response
@@ -188,6 +210,24 @@ function responseInterceptor(response) {
  * }
  */
 function responseError(error) {
+  // console.log('错误了哥', error.response)
+  if (error.response) {
+    switch (error.response.status) {
+      case 401: // 当前请求需要用户验证
+        router.replace({
+          path: '/',
+          query: { redirect: router.currentRoute.fullPath }
+        })
+        break
+      case 404:
+        TNotice.danger({
+          title: `code: ${error.response.status}`,
+          desc: JSON.stringify(error.response.data),
+          duration: 5
+        })
+        break
+    }
+  }
   TGlobalLoading.error()
   return Promise.reject(error)
 }

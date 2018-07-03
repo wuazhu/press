@@ -14,7 +14,7 @@ export default {
   accounts: '/mock/api/v1/accounts',
   logins: '/sso-web/CsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
   dashboard: {
-    business: '/mock/api/v1/dashboard/business',
+    business: '/subpress-web/api/v1/incomeAnalysis',
     customers: '/mock/api/v1/dashboard/customers'
   },
   region: {
@@ -25,5 +25,6 @@ export default {
   customers: {
     customers: '/subpress-web/api/v1/customers'
   },
-  orgList: '/subpress-web/api/v1/organize'
+  orgList: '/subpress-web/api/v1/organize',
+  orgStaff: '/subpress-web/api/v1/orgStaff'
 }

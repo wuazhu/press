@@ -60,8 +60,15 @@
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
           </template>
-          <t-menu-item name="/road/allot">段  道分配</t-menu-item>
+          <t-menu-item name="/road/allot">段道分配</t-menu-item>
           <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
+        </t-submenu>
+        <t-submenu name="devices">
+          <template slot="title">
+            <t-icon type="laptop-mac"></t-icon>
+            <span>设备管理</span>
+          </template>
+          <t-menu-item name="/devices/accountAuthor">设备授权</t-menu-item>
         </t-submenu>
         <t-submenu name="product">
           <template slot="title">
@@ -97,7 +104,7 @@
             <t-icon type="arrow-down-drop text-white" size="20"></t-icon>
           </t-badge>
           <t-dropdown-menu slot="list">
-            <t-dropdown-item><router-link to="/user/baseInfo">个人中心</router-link></t-dropdown-item>
+            <t-dropdown-item><router-link to="/user">个人中心</router-link></t-dropdown-item>
             <t-dropdown-item @on-click="clickLogoutMenu">退出系统</t-dropdown-item>
           </t-dropdown-menu>
         </t-dropdown>

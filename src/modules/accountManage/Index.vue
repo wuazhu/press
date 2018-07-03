@@ -310,12 +310,10 @@ export default {
 .table-wrapper {
   .table--line {
     .table__header {
-      thead {
-        th {
-          background: #fff;
-          .text-truncate {
-            color: #000;
-          }
+      th {
+        background: #fff!important;
+        .text-truncate {
+          color: #000;
         }
       }
     }

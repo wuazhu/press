@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import companyTrees from '../components/CompanyTrees'
 import { getRoadList } from './server'
 
@@ -85,39 +86,40 @@ export default {
       isShow: false
     }
   },
+  computed: {
+    ...mapState({
+      orgId: state => state.login.orgId
+    })
+  },
   created() {
-    this.makeRoadList()
+    this.getRoadListData({
+      orgId: this.orgId
+    })
   },
   methods: {
     async getRoadListData({ orgId }) {
       let params = {
-        orgId,
+        orgId: orgId,
         currentPage: this.currentPage,
         pageSize: 10
       }
-      let roadData = await getRoadList(params)
-      console.log(roadData)
-      if (roadData.status === 200) {
-        this.total = roadData.data.total
-        this.roadData = roadData.data.data
-      }
-    },
-    async makeRoadList() {
-      // 获取段道列表
-      let obj = {
-        currentPage: 1,
-        pageSize: 10,
-        orgId: 10006404
-      }
-      let roadListData = await getRoadList(obj)
+      let roadListData = await getRoadList(params)
+      console.log(roadListData)
       if (roadListData.status === 200) {
+        console.log(roadListData)
         if (roadListData.data) {
           let _newData = roadListData.data.data
           _newData.forEach((item, key) => {
-            item.presider = item.presider ? item.presider[0] : ''
+            item.presider = item.presider ? item.presider.join('') : '暂无责任人'
           })
-          this.listData = _newData
+          // this.total = roadListData.data
+          this.roadData = _newData
         }
+      } else {
+        this.$Notice.danger({
+          desc: roadListData.message,
+          title: `错误码: ${roadListData.status}`
+        })
       }
     }
   }
@@ -125,37 +127,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.road-index {
-  .index-title {
-    p{
-      line-height: 22px;
-    }
-  }
-  .pagination__item--active {
-    .pagination__item-link {
-      background-color: #009241;
-      border-color: #009241;
-    }
-  }
-}
-.transfer {
-  height: 180px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .transfer-list {
-    width: 180px;
-    height: 185px;
-    border: 1px solid #E9E9E9;
-    span {
-      color: #000;
-    }
-    .transfer-list__header {
-      background: #fff;
-      border-bottom: 1px solid #E9E9E9;
-    }
-  }
-}
+
 .table-wrapper {
   .table--line {
     .table__header {

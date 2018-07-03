@@ -68,7 +68,11 @@ export default {
       loginState: state => state.login.logined
     })
   },
-
+  beforeRouteEnter(to, from, next) {
+    sessionStorage.clear()
+    localStorage.clear()
+    next()
+  },
   created() {
   },
   mounted() {
@@ -89,7 +93,11 @@ export default {
               } else {
                 localStorage.removeItem(KEY_USER_NAME)
               }
-              this.$router.push({ path: '/bk' })
+              if (this.$route.query.redirect) {
+                this.$router.push({ path: this.$route.query.redirect })
+              } else {
+                this.$router.push('/bk')
+              }
             } else {
               this.$Message.danger(response.data.responseMsg)
             }

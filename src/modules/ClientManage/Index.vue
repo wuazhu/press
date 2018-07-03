@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { getCustomerList } from './server'
+// import { getCustomerList } from './server'
 import mergeClient from './components/MergeClient'
 import companyTrees from '../components/CompanyTrees'
 

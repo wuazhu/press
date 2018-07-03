@@ -23,7 +23,9 @@ export async function doLogin({ commit }, data) {
     if (res.data.data.responseCode === '0') {
       let signObj = {
         sign: res.data.data.GLOBAL_SIGN,
-        sessionId: res.data.data.GLOBAL_SESSION_ID
+        sessionId: res.data.data.GLOBAL_SESSION_ID,
+        id: res.data.data.ID,
+        staffId: res.data.data.STAFF_ID
       }
       sessionStorage.setItem(cnpSign, JSON.stringify(signObj))
       commit(constants.DO_LOGIN, res.data.data)
