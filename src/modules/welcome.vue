@@ -20,6 +20,10 @@
           <t-icon type="home"></t-icon>
           <span>首页</span>
         </t-menu-item>
+        <t-menu-item name="/circulate/setCheckGoal">
+          <t-icon type="cash-usd"></t-icon>
+          <span>流转额设置</span>
+        </t-menu-item>
         <t-submenu name="sys">
           <template slot="title">
             <t-icon type="alert-octagram"></t-icon>
@@ -52,8 +56,6 @@
             <t-menu-item name="/uspaManage/uspa/roleEntityRelaManager">实体与功能集绑定</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/roleFunctionRelaManager">菜单与功能集绑定</t-menu-item>
           </t-submenu>
-          <t-menu-item name="/sys/manage">绩效与授权</t-menu-item>
-          <!-- <t-menu-item name="sys.permission">权限管理</t-menu-item> -->
         </t-submenu>
         <t-submenu name="road">
           <template slot="title">
@@ -78,7 +80,7 @@
           <t-menu-item name="/product/quality">精品推荐管理</t-menu-item>
           <!-- <t-menu-item name="/product/quality">基础产品目录</t-menu-item> -->
         </t-submenu>
-        <t-submenu name="logger">
+        <!-- <t-submenu name="logger">
           <template slot="title">
             <t-icon type="library-books"></t-icon>
             <span>系统日志</span>
@@ -92,7 +94,7 @@
             <span>客户管理</span>
           </template>
           <t-menu-item name="/cust/merge">客户去重</t-menu-item>
-        </t-submenu>
+        </t-submenu> -->
       </t-menu>
     </div>
     <div class="layout-content">
@@ -125,17 +127,14 @@
         </div>
       </div>
       <footer class="p-3 text-center text-gray-light text-sm">
-        2011-2016 © AI design
+        2011-2018 © AI design
       </footer>
     </div>
   </div>
 </template>
 <script>
 import { forEach } from 'lodash'
-import { mapMutations } from 'vuex'
-
-const BK_TOKEN = 'bk-token'
-const VUEX = 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   props: {
@@ -151,6 +150,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      uuid: state => state.login.uuid
+    }),
     bgColor() {
       return !(this.$route.path === '/bk')
     },
@@ -192,14 +194,17 @@ export default {
     })
   },
   methods: {
-    ...mapMutations('login', {
-      doLogoutMut: 'DO_LOGOUT'
+    ...mapActions('login', {
+      doLogoutAc: 'doLogout'
     }),
-    clickLogoutMenu() {
-      this.doLogoutMut()
+    async clickLogoutMenu() {
+      let logout = await this.doLogoutAc(this.uuid)
+      if (logout.responseCode === '0') {
+        localStorage.clear()
+      } else {
+        this.$Message.danger(logout.responseMsg)
+      }
       this.$router.push('/')
-      localStorage.clear(BK_TOKEN)
-      localStorage.clear(VUEX)
     },
     $_checkUspa() {
       if (this.$route.name === 'uspaManage') {

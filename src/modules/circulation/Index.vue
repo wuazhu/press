@@ -1,7 +1,7 @@
 <template>
   <div class="passage-index">
     <div class="index-title">
-      <p class="text-base">账户管理</p>
+      <p class="text-base">考核目标管理</p>
     </div>
     <div class="row">
       <div class="col-3">
@@ -13,38 +13,40 @@
       <div class="col-9">
         <div class="content-right">
           <div class="cust-list-item border">
-            <div class="org-title">账户列表</div>
+            <div class="org-title">员工列表</div>
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right">
-            <t-pager :total="10" :current="1"></t-pager>
+            <t-pager :total="total" :current="currentPage"></t-pager>
           </div>
         </div>
       </div>
     </div>
-    <!-- 设备授权信息 -->
-    <t-modal v-model="equipmentIsShow" :closable="false" title="设备授权信息" style="width:455px;height:463px;">
-      <div class="equipment-title">刘德华 拥有的设备</div>
-      <div class="equipmentList">
-        <p>设备MAC</p>
-        <ul>
-          <li class="d-flex justify-content-between">
-            <span>00-05-5D-E8-0F-A3</span>
-            <span>删除授权</span>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span>00-05-5D-E8-0F-A3</span>
-            <span>删除授权</span>
-          </li>
-        </ul>
-        <i class="new-add">+ 新增授权</i>
-      </div>
+    <!-- 设定考核目标 -->
+    <t-modal v-model="targetIsShow" :closable="false" title="设定考核目标" style="width:455px;height:463px;">
+      <t-form :model="targetItem">
+        <t-form-item label="为 刘德华 设定 2018年度 流转额">
+          <t-input v-model="targetItem.input" placeholder="请填写年度流转额"></t-input>
+        </t-form-item>
+        <div class="border-line"></div>
+        <div class="plan-title d-flex justify-content-between">
+          <span>2017年目标</span>
+          <span>￥3000 / ￥4000</span>
+        </div>
+        <t-progress :percent="55" status="active"></t-progress>
+        <div class="plan-title d-flex justify-content-between">
+          <span>2016年目标</span>
+          <span>￥3000 / ￥4000</span>
+        </div>
+        <t-progress :percent="75" status="active"></t-progress>
+      </t-form>
     </t-modal>
   </div>
 </template>
 
 <script>
 import companyTrees from '../components/CompanyTrees.vue'
+import { getOrgStaff } from '../devices/server.js'
 
 export default {
   components: {
@@ -54,24 +56,20 @@ export default {
     return {
       listHeaderData: [
         {
-          title: '账户',
-          key: 'account'
-        },
-        {
           title: '员工',
-          key: 'staff'
+          key: 'staffId'
         },
         {
-          title: '编码',
-          key: 'code'
+          title: '姓名',
+          key: 'staffName'
         },
         {
           title: '岗位',
-          key: 'station'
+          key: 'staffPosition'
         },
         {
-          title: '设备授权',
-          key: 'equipment'
+          title: '考核目标',
+          key: 'targetCount'
         },
         {
           title: '操作',
@@ -79,60 +77,47 @@ export default {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA', 'cursor': 'pointer', 'padding-right': '6px'},
+                style: {'color': '#108EEA', 'padding-right': '6px', 'cursor': 'pointer'},
                 on: {
                   click() {
-                    vm.equipmentIsShow = true
+                    vm.targetIsShow = true
                   }
                 }
-              }, '授权')
+              }, '设定考核目标')
             ])
           }
         }
       ],
-      listData: [
-        {
-          account: 'zhanghu1',
-          staff: '张学友',
-          code: '09287621',
-          station: '投递员',
-          equipment: '3'
-        },
-        {
-          account: 'zhanghu1',
-          staff: '张学友',
-          code: '09287621',
-          station: '投递员',
-          equipment: '3'
-        },
-        {
-          account: 'zhanghu1',
-          staff: '张学友',
-          code: '09287621',
-          station: '投递员',
-          equipment: '3'
-        }
-      ],
-      equipmentIsShow: false,
+      listData: [],
+      targetIsShow: false,
       inforData: {},
       targetItem: {},
-      equipmenttItem: {}
+      equipmenttItem: {},
+      currentPage: 1,
+      total: 0,
+      orgId: this.$store.state.login.orgId
     }
   },
   created() {
-    // console.log(this.$http)
-    // this.$http.get('/api/v1/accounts', {
-    //   params: {
-    //     orgId: '100',
-    //     currentPage: 1,
-    //     pageSize: 10
-    //   }
-    // })
-    // .then((res) => {
-    //   console.log(res)
-    // })
+    this.getOrgStaffs()
   },
   methods: {
+    changePage(pageNow) {
+      this.currentPage = pageNow
+      this.getOrgStaffs()
+    },
+    async getOrgStaffs() {
+      let params = {
+        pageSize: 10,
+        currentPage: this.currentPage,
+        orgId: this.orgId
+      }
+      let orgStaffs = await getOrgStaff(params)
+      if (orgStaffs.status === 200) {
+        this.total = orgStaffs.data.total
+        this.listData = orgStaffs.data.data
+      }
+    }
   }
 }
 </script>

@@ -18,7 +18,7 @@ export async function doLogin({ commit }, data) {
     userCode: data.userCode,
     passWord: data.passWord
   }
-  let res = await $http.post(services.logins, {params: JSON.stringify(param)})
+  let res = await $http.post(services.login, {params: JSON.stringify(param)})
   if (res.data && res.data.data) {
     if (res.data.data.responseCode === '0') {
       let signObj = {
@@ -38,13 +38,18 @@ export async function doLogin({ commit }, data) {
 }
 
 // 注销
-export function doLogout({ commit }) {
-  // 调用osp域的远程注销接口
-  // http.$osp.post(services.osp.LOGOUT).then(ret => {
-  //   let payload = ret.data
-  //   if (payload.success) {
-  //     localStorage.removeItem(KEY_BK_TOKEN)
-  //   }
-  //   commit(constants.DO_LOGOUT, payload)
-  // })
+export async function doLogout({ commit }, uuid) {
+  let param = {
+    userCode: uuid
+  }
+  let res = await $http.post(services.logout, {params: JSON.stringify(param)})
+  commit(constants.DO_LOGOUT)
+  if (res.data && res.data.data) {
+    return res.data.data
+  } else {
+    return {
+      responseCode: '1',
+      responseMsg: '服务错误'
+    }
+  }
 }

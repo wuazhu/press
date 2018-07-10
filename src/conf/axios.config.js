@@ -42,7 +42,7 @@ const conf = {
   root: {
     bk: {
       // baseURL: 'https://crm.11185.cn/subpress-web'
-      // baseURL: 'http://bk.crm.chinapost.com:18080/subpress-web'
+      // baseURL: 'http://bk.crm.chinapost.com:18080/'
       baseURL: ''
     }
   }

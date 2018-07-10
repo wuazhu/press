@@ -10,10 +10,17 @@ export default {
     state.orgName = payload.ORG_NAME                  // 组织机构名称
     state.staffId = payload.STAFF_ID                  // staffId
     state.token = payload.GLOBAL_SIGN                 // 签名
+    state.uuid = payload.UUID
   },
   [constants.DO_LOGOUT](state) {
     state.logined = false
+    state.username = null
+    state.id = null
+    state.orgId = null
+    state.orgName = null
+    state.staffId = null
     state.token = null
+    state.uuid = null
   },
   [constants.FETCH_AUTH](state, payload) {
     state.logined = payload.success

@@ -50,7 +50,7 @@
         </t-card>
       </div>
     </div>
-    <div class="index-tabs border">
+    <div v-show="false" class="index-tabs border">
       <t-tabs>
         <t-tab-panel label="客户渠道" name="tab-new">
           <div class="row">

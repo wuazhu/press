@@ -10,9 +10,15 @@ export async function getRoadList(params) {
 }
 
 // 查询段道负责人
-export async function queryRoadPresider(params) {
-  let listData = await http.$bk.get(services.region.presider, {
+export async function getPresiders(params) {
+  let presiders = await http.$http.get(services.region.getPresiders + params.rdSgId, {
     params
   })
-  return listData.data
+  return presiders.data
+}
+
+// 保存段道负责人
+export async function savePresiders(params) {
+  let savePresiders = await http.$http.post(services.region.savePresider, params)
+  return savePresiders.data
 }

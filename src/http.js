@@ -131,13 +131,14 @@ function requestInterceptor(config) {
   // 不需要加上 sign,session-id的请求地址需要加入如下判断中
   let rexg = /uspa_IOrgmodelClientCSV_loginIn/
   if (!rexg.test(config.url)) {
-    let appSignInfo = JSON.parse(sessionStorage.getItem(cnpSign))
-    config.headers['sign'] = appSignInfo.sign
-    config.headers['session-id'] = appSignInfo.sessionId
-    config.headers['ID'] = appSignInfo.id
-    config.headers['STAFF_ID'] = appSignInfo.staffId
+    let appSignInfo = JSON.parse(sessionStorage.getItem(cnpSign)) || {}
+    config.headers['sign'] = appSignInfo.sign || ''
+    config.headers['session-id'] = appSignInfo.sessionId || ''
+    config.headers['ID'] = appSignInfo.id || ''
+    config.headers['STAFF_ID'] = appSignInfo.staffId || ''
   }
-  if (config.method === 'post') {
+  let uspaRexg = /(uspa_IOrgmodelClientCSV_loginIn|IOrgmodelClientCSV_logout)/
+  if (config.method === 'post' && uspaRexg.test(config.url)) {
     config.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     let data = config.data
     let param = new URLSearchParams()

@@ -1,10 +1,10 @@
 import user from 'modules/user/route'
 import roadManage from 'modules/roadManage/route'
-import accountManage from 'modules/accountManage/route'
 import product from 'modules/products/route'
-import ClientManage from 'modules/ClientManage/route'
+import custManage from 'modules/custManage/route'
 import sysManage from 'modules/systemManage/route'
 import devicesManage from 'modules/devices/route'
+import ciculateManage from 'modules/circulation/route'
 import notFound from 'modules/components/404Error'
 export default [
   {
@@ -31,11 +31,11 @@ export default [
       },
       ...user,
       ...roadManage,
-      ...accountManage,
       ...product,
-      ...ClientManage,
+      ...custManage,
       ...sysManage,
       ...devicesManage,
+      ...ciculateManage,
       {
         path: '404',
         component: notFound,

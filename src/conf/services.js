@@ -10,21 +10,29 @@
  */
 
 export default {
-  login: '/mock/api/v1/dologin',
-  accounts: '/mock/api/v1/accounts',
-  logins: '/sso-web/CsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
+  logout: '/sso-web/CsfCrmServlet?servicecode=sec_IOrgmodelClientCSV_logout',
+  login: '/sso-web/CsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
   dashboard: {
     business: '/subpress-web/api/v1/incomeAnalysis',
     customers: '/mock/api/v1/dashboard/customers'
   },
   region: {
     region: '/subpress-web/api/v1/region',
-    presider: '/subpress-web/api/v1/presider/',
-    savePresider: '/subpress-web/api/v1/presider/save'
+    savePresider: '/subpress-web/api/v1/savePresider',
+    getPresiders: '/subpress-web/api/v1/presider/'
   },
   customers: {
     customers: '/subpress-web/api/v1/customers'
   },
   orgList: '/subpress-web/api/v1/organize',
-  orgStaff: '/subpress-web/api/v1/orgStaff'
+  orgStaff: '/subpress-web/api/v1/accounts',
+  devices: {
+    getDevices: '/subpress-web/api/v1/getAuthorizeDevice',
+    delDevice: '/subpress-web/api/v1/delAuthorizeDevice',
+    addDevice: '/subpress-web/api/v1/addAuthorizeDevice'
+  },
+  staff: {
+    getStaffExtends: '/subpress-web/api/v1/getStaffExtendInfo',
+    modifyStaffExtends: '/subpress-web/api/v1/modifyStaffExtendInfo'
+  }
 }

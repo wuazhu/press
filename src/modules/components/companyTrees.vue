@@ -13,6 +13,7 @@
         :data="orgTreeData"
         :props="orgDefaultProp"
         :load="loadNode"
+        :filter-node-method="filterNode"
         lazy
         @on-click="$_clickOrgTreeNode">
       </t-tree>
@@ -45,11 +46,6 @@ export default {
       this.$refs.orgTreeRef.filter(val)
     }
   },
-  creatd() {
-  },
-  mounted() {
-    console.log(this.orgId)
-  },
   methods: {
     $_clickOrgTreeNode(data, node, self) {
       this.$emit('emitClickOrgTreeNode', {
@@ -57,28 +53,30 @@ export default {
         orgName: data.orgName
       })
     },
-    loadNode(node, resolve) {
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.orgName.indexOf(value) !== -1
+    },
+    async loadNode(node, resolve) {
+      let orgId = node.data.orgId
       if (node.level === 0) {
         return resolve([{
           orgName: this.orgName,
           orgId: this.orgId
         }])
       } else {
-        this.getNextOrgTree(node.data.orgId, resolve)
-      }
-    },
-    async getNextOrgTree(prevOrgId, resolve) {
-      let nextOrgList = await getOrgList({
-        orgId: prevOrgId
-      })
-      if (nextOrgList.status === 200) {
-        if (nextOrgList.data.length) {
-          return resolve(nextOrgList.data)
+        let nextOrgList = await getOrgList({
+          orgId: orgId
+        })
+        if (nextOrgList.status === 200) {
+          if (nextOrgList.data.childOrgs.length) {
+            return resolve(nextOrgList.data.childOrgs)
+          } else {
+            return resolve([])
+          }
         } else {
-          return resolve([])
+          this.$Message.danger(nextOrgList.message)
         }
-      } else {
-        this.$Message.danger(nextOrgList.message)
       }
     }
   }
