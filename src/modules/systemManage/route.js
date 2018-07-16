@@ -5,8 +5,8 @@ export default [
     name: 'uspaManage',
     component: ifrPage,
     meta: {
-      breadName: '实体管理',
-      title: '实体管理'
+      breadName: '系统管理',
+      title: '系统管理'
     }
   }
 ]

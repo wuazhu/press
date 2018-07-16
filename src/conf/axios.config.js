@@ -35,13 +35,13 @@ const appConf = window.APP_CONF
  */
 const conf = {
   commonConfig: {
-    // baseURL: 'https://crm.11185.cn/'
+    // baseURL: 'http://10.3.234.190:18080/'
     // baseURL: 'http://bk.crm.chinapost.com:18080/'
     baseURL: ''
   },
   root: {
     bk: {
-      // baseURL: 'https://crm.11185.cn/subpress-web'
+      // baseURL: 'http://10.3.234.190:18080/'
       // baseURL: 'http://bk.crm.chinapost.com:18080/'
       baseURL: ''
     }

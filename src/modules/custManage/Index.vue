@@ -7,7 +7,7 @@
       <div class="col-3">
         <div class="content-left">
           <div class="org-title border">组织机构</div>
-          <company-trees></company-trees>
+          <organize-tree></organize-tree>
         </div>
       </div>
       <div class="col-9">
@@ -47,11 +47,11 @@
 <script>
 // import { getCustomerList } from './server'
 import mergeClient from './components/MergeClient'
-import companyTrees from '../components/CompanyTrees'
+import organizeTree from '../components/OrganizeTree'
 
 export default {
   components: {
-    companyTrees,
+    organizeTree,
     mergeClient
   },
   data() {

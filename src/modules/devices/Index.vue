@@ -7,7 +7,7 @@
       <div class="col-3">
         <div class="content-left">
           <div class="org-title border">组织机构</div>
-          <company-trees @emitClickOrgTreeNode="changeOrg"></company-trees>
+          <organize-tree @emitClickOrgTreeNode="changeOrg"></organize-tree>
         </div>
       </div>
       <div class="col-9">
@@ -17,7 +17,7 @@
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right mt-4">
-            <t-pager :total="total" :current="currentPage" @on-change="changePage"></t-pager>
+            <t-pager :total="total" :current="currentPage" :page-size="10" @on-change="changePage"></t-pager>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
       closable title="设备授权信息"
       style="width:455px;height:463px;"
       @on-cancel="$_cancelModal">
-      <div class="equipment-title">刘德华 拥有的设备</div>
+      <div class="equipment-title">{{ userName }} 拥有的设备</div>
       <div class="equipmentList">
         <p>设备MAC</p>
         <ul>
@@ -37,7 +37,9 @@
             :key="mac.macId"
             class="d-flex justify-content-between">
             <span>{{ mac.macAddress }}</span>
-            <span class="link" @click="delDevice(mac)">删除授权</span>
+            <t-poptip confirm title="您确认删除该设备吗？" @on-ok="delDevice(mac)">
+              <span class="link">删除授权</span>
+            </t-poptip>
           </li>
           <li v-if="editing" class="d-flex edit">
             <span class="add-input">
@@ -57,17 +59,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { remove } from 'lodash'
-import companyTrees from '../components/CompanyTrees.vue'
+import organizeTree from '../components/OrganizeTree.vue'
 import { getOrgStaff, getDevices, delDevices, addDevices } from './server.js'
 
 export default {
   components: {
-    companyTrees
+    organizeTree
   },
   data() {
     return {
+      userName: '',
       listHeaderData: [
         {
           title: '账户',
@@ -79,7 +81,9 @@ export default {
         },
         {
           title: '设备授权',
-          key: 'deviceNum'
+          render: (h, params) => {
+            return h('div', params.row.deviceNum)
+          }
         },
         {
           title: '操作',
@@ -91,10 +95,15 @@ export default {
                 style: {'color': '#108EEA', 'cursor': 'pointer', 'padding-right': '6px'},
                 on: {
                   async click() {
-                    let params = {
+                    vm.userName = params.row.staffName
+                    vm.staffId = params.row.staffId
+                    vm.macs = []
+                    vm.$Message.loading('正在加载中...', 0)
+                    let param = {
                       staffId: vm.staffId
                     }
-                    let devices = await getDevices(params)
+                    let devices = await getDevices(param)
+                    vm.$Message.destroy()
                     if (devices.status === 200) {
                       vm.macs = devices.data
                     } else {
@@ -110,7 +119,8 @@ export default {
       ],
       listData: [],
       macs: [],
-      orgIdNow: this.$store.state.login.orgId,
+      orgId: this.$store.state.login.orgId,
+      staffId: this.$store.state.login.staffId,
       equipmentIsShow: false,
       editing: false,
       total: 0,
@@ -119,10 +129,6 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      orgId: state => state.login.orgId,
-      staffId: state => state.login.staffId
-    }),
     isEdited() {
       return Boolean(this.addInfo.length)
     }
@@ -145,7 +151,7 @@ export default {
       this.getOrgStaffs()
     },
     changeOrg(orgInfo) {
-      this.orgIdNow = orgInfo.orgId
+      this.orgId = orgInfo.orgId
       this.getOrgStaffs()
     },
     clickAddButton() {
@@ -163,6 +169,7 @@ export default {
           macAddress: this.addInfo
         })
         this.$_reset()
+        this.getOrgStaffs()
       } else {
         this.$Notice.danger({
           title: `code: ${result.status}`,
@@ -181,20 +188,35 @@ export default {
         this.macs = remove(this.macs, mac => {
           return mac.macId !== macId
         })
+        this.getOrgStaffs()
+      } else {
+        this.$Notice.danger({
+          title: `code: ${delInfo.status}`,
+          desc: delInfo.message
+        })
       }
-      console.log(delInfo)
     },
     async getOrgStaffs() {
       let params = {
-        orgId: this.orgIdNow,
+        orgId: this.orgId,
         currentPage: this.currentPage,
         pageSize: 10
       }
       let orgStaffList = await getOrgStaff(params)
       if (orgStaffList.status === 200) {
-        console.log(orgStaffList)
         this.total = orgStaffList.data.total
         this.listData = orgStaffList.data.data
+      } else {
+        this.total = 0
+        this.listData = []
+        if (orgStaffList.status === 503) {
+          this.$Message.warning('账户列表数据为空!')
+        } else {
+          this.$Notice.danger({
+            title: `code: ${orgStaffList.status}`,
+            desc: orgStaffList.message
+          })
+        }
       }
     }
   }

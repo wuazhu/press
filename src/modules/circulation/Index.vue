@@ -7,7 +7,7 @@
       <div class="col-3">
         <div class="content-left">
           <div class="org-title border">组织机构</div>
-          <company-trees></company-trees>
+          <organize-tree @emitClickOrgTreeNode="changeOrg"></organize-tree>
         </div>
       </div>
       <div class="col-9">
@@ -17,43 +17,48 @@
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right">
-            <t-pager :total="total" :current="currentPage"></t-pager>
+            <t-pager :total="total" :current="currentPage" :page-size="10" @on-change="changePage"></t-pager>
           </div>
         </div>
       </div>
     </div>
     <!-- 设定考核目标 -->
-    <t-modal v-model="targetIsShow" :closable="false" title="设定考核目标" style="width:455px;height:463px;">
+    <t-modal
+      v-model="targetIsShow"
+      :closable="false"
+      title="设定考核目标"
+      style="width:455px;height:463px;"
+      @on-ok="setPerformance">
       <t-form :model="targetItem">
-        <t-form-item label="为 刘德华 设定 2018年度 流转额">
-          <t-input v-model="targetItem.input" placeholder="请填写年度流转额"></t-input>
+        <t-form-item v-for="(item, index) in yearPrevAndNext" :key="index" :label="'设定 ' + item.year +' 年度流转额(元)'">
+          <t-input v-model="item.targetCount" placeholder="请填写年度流转额"></t-input>
         </t-form-item>
         <div class="border-line"></div>
-        <div class="plan-title d-flex justify-content-between">
-          <span>2017年目标</span>
-          <span>￥3000 / ￥4000</span>
+        <div v-for="it in inforData" :key="it.year" class="year-progress mb-2">
+          <div class="plan-title d-flex justify-content-between">
+            <span>{{ it.year }}年目标</span>
+            <span>￥{{ it.finishCount }} / ￥{{ it.targetCount }}</span>
+          </div>
+          <t-progress :percent="(Number(it.finishCount) / Number(it.targetCount) * 100) || 0" status="normal" hide-info></t-progress>
         </div>
-        <t-progress :percent="55" status="active"></t-progress>
-        <div class="plan-title d-flex justify-content-between">
-          <span>2016年目标</span>
-          <span>￥3000 / ￥4000</span>
-        </div>
-        <t-progress :percent="75" status="active"></t-progress>
       </t-form>
     </t-modal>
   </div>
 </template>
 
 <script>
-import companyTrees from '../components/CompanyTrees.vue'
+import { forEach, pick } from 'lodash'
+import organizeTree from '../components/OrganizeTree.vue'
 import { getOrgStaff } from '../devices/server.js'
+import { getPerformanceInfo, setPerformanceInfo } from './server.js'
 
 export default {
   components: {
-    companyTrees
+    organizeTree
   },
   data() {
     return {
+      yearPrevAndNext: [],
       listHeaderData: [
         {
           title: '员工',
@@ -69,7 +74,10 @@ export default {
         },
         {
           title: '考核目标',
-          key: 'targetCount'
+          key: 'targetCount',
+          render: (h, params) => {
+            return h('div', params.row.targetCount)
+          }
         },
         {
           title: '操作',
@@ -80,6 +88,8 @@ export default {
                 style: {'color': '#108EEA', 'padding-right': '6px', 'cursor': 'pointer'},
                 on: {
                   click() {
+                    vm.staffId = params.row.staffId
+                    vm.getPerformance()
                     vm.targetIsShow = true
                   }
                 }
@@ -89,19 +99,72 @@ export default {
         }
       ],
       listData: [],
+      orgId: this.$store.state.login.orgId,
       targetIsShow: false,
-      inforData: {},
+      inforData: [],
       targetItem: {},
-      equipmenttItem: {},
       currentPage: 1,
-      total: 0,
-      orgId: this.$store.state.login.orgId
+      staffId: null,
+      total: 0
     }
   },
   created() {
     this.getOrgStaffs()
   },
   methods: {
+    async setPerformance() {
+      let params = {
+        staffId: `${this.staffId}`,
+        orgId: this.orgId,
+        targetList: []
+      }
+      forEach(this.yearPrevAndNext, y => {
+        let n = pick(y, ['year', 'targetCount'])
+        n.targetCount = Number(n.targetCount)
+        params.targetList.push(n)
+      })
+      let setResult = await setPerformanceInfo(params)
+      if (setResult.status === 200) {
+        this.$Message.success('设置成功!')
+        this.getOrgStaffs()
+      } else {
+        this.$Message.danger(setResult.message)
+      }
+    },
+    changeOrg({ orgId }) {
+      this.orgId = orgId
+      this.getOrgStaffs()
+    },
+    async getPerformance() {
+      let years = []
+      let nowYear = new Date().getFullYear()
+      let nextYear = nowYear + 1
+      let passYearLen = 3
+      years.push(nextYear, nowYear)
+      for (let i = 0; i < passYearLen; i++) {
+        years.push(--nowYear)
+      }
+      let params = {
+        staffId: this.staffId,
+        orgId: this.orgId,
+        yearList: years.join(',')
+      }
+      let performaces = await getPerformanceInfo(params)
+      if (performaces.status === 200) {
+        this.inforData = performaces.data
+        this.yearPrevAndNext = performaces.data.slice(0, 2)
+      } else {
+        this.inforData = []
+        if (performaces.status === 503) {
+          this.$Message.warning('流转额列表为空!')
+        } else {
+          this.$Notice.danger({
+            title: `code: ${performaces.status}`,
+            desc: performaces.message
+          })
+        }
+      }
+    },
     changePage(pageNow) {
       this.currentPage = pageNow
       this.getOrgStaffs()
@@ -116,6 +179,17 @@ export default {
       if (orgStaffs.status === 200) {
         this.total = orgStaffs.data.total
         this.listData = orgStaffs.data.data
+      } else {
+        this.total = 0
+        this.listData = []
+        if (orgStaffs.status === 503) {
+          this.$Message.warning('员工列表数据为空!')
+        } else {
+          this.$Notice.danger({
+            title: `code: ${orgStaffs.status}`,
+            desc: orgStaffs.message
+          })
+        }
       }
     }
   }
@@ -242,5 +316,8 @@ export default {
       }
     }
   }
+}
+.year-progress .bg-primary {
+  background-color: red!important;
 }
 </style>

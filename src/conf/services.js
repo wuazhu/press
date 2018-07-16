@@ -34,5 +34,16 @@ export default {
   staff: {
     getStaffExtends: '/subpress-web/api/v1/getStaffExtendInfo',
     modifyStaffExtends: '/subpress-web/api/v1/modifyStaffExtendInfo'
+  },
+  performance: {
+    getPerformance: '/subpress-web/api/v1/getPerformanceInfo',
+    setPerformance: '/subpress-web/api/v1/addPerformanceTargetForStaff'
+  },
+  // 精品推荐
+  boutique: {
+    getBoutiqueList: '/subpress-web/api/v1/getBoutiqueList',
+    delBoutique: '/subpress-web/api/v1/cancelBoutique',
+    getProductsForBoutique: '/subpress-web/api/v1/getProductsForBoutique',
+    addBoutique: '/subpress-web/api/v1/addBoutique'
   }
 }

@@ -1,6 +1,6 @@
 <template>
-  <div class="components-tree border">
-    <div class="pd-2 content-search d-flex">
+  <div :class="['components-tree', { 'border' : border }]">
+    <div v-if="needFilter" class="pd-2 content-search d-flex">
       <t-input
         v-model="searchContent"
         placeholder="请输入搜索内容"
@@ -25,6 +25,16 @@ import { mapState } from 'vuex'
 import { getOrgList } from './server'
 
 export default {
+  props: {
+    needFilter: {
+      type: Boolean,
+      default: true
+    },
+    border: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       orgDefaultProp: {
@@ -54,7 +64,8 @@ export default {
       })
     },
     filterNode(value, data) {
-      if (!value) return true;
+      console.log(value, data)
+      if (!value) return true
       return data.orgName.indexOf(value) !== -1
     },
     async loadNode(node, resolve) {
@@ -83,5 +94,8 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
+.components-tree {
+  max-height: 450px;
+  overflow-y: auto;
+}
 </style>

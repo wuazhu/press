@@ -69,6 +69,7 @@
     "aid-elements": "^1.1.16",
     "aid-taurus-desktop": "^1.1.16",
     "axios": "^0.15.3",
+    "viser-vue": "^2.2.5",
     "vue": "^2.3.0",
     "vue-i18n": "^7.0.5",
     "vue-router": "^2.5.1",

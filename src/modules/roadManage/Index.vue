@@ -7,7 +7,7 @@
       <div class="col-3">
         <div class="content-left">
           <div class="org-title border">组织机构</div>
-          <company-trees @emitClickOrgTreeNode="getRoadListData"></company-trees>
+          <organize-tree @emitClickOrgTreeNode="changeOrg"></organize-tree>
         </div>
       </div>
       <div class="col-9">
@@ -22,7 +22,7 @@
             </t-table>
           </div>
           <div class="table-paging text-right">
-            <t-pager :total="total" :current="currentPage" @on-change="changePage"></t-pager>
+            <t-pager :total="total" :current="currentPage" :page-size="10" @on-change="changePage"></t-pager>
           </div>
         </div>
       </div>
@@ -36,9 +36,10 @@
       @on-ok="comfirmPresiders"
       @on-cancel="cancelPresiders">
       <t-transfer
+        :titles="['可选', '已选']"
         :operations="['<<','>>']"
         :data="presiderData"
-        :targetKeys="presiderChecked"
+        :target-keys="presiderChecked"
         size="sm"
         @on-change="selectOrCancel"></t-transfer>
     </t-modal>
@@ -46,19 +47,18 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { indexOf, remove, forEach } from 'lodash'
-import companyTrees from '../components/CompanyTrees'
+import organizeTree from '../components/OrganizeTree'
 import { getRoadList, getPresiders, savePresiders } from './server'
 
 export default {
   components: {
-    companyTrees
+    organizeTree
   },
   data() {
     return {
       rdSgId: null,
-      nowOrg: this.$store.state.login.orgId,
+      orgId: this.$store.state.login.orgId,
       presiderData: [],
       presiderChecked: [],
       newPresiders: [],
@@ -85,13 +85,13 @@ export default {
                 style: {'color': '#108EEA', 'cursor': 'pointer'},
                 on: {
                   async click() {
+                    vm.cancelPresiders()
                     vm.isShow = true
                     vm.rdSgId = params.row.id
                     let presiderList = await getPresiders({
-                      orgId: vm.nowOrg,
+                      orgId: vm.orgId,
                       rdSgId: params.row.id
                     })
-                    console.log('presiderList', presiderList)
                     if (presiderList.status === 200) {
                       vm.presiderData = presiderList.data.chooseList
                       vm.presiderChecked = presiderList.data.checkedList
@@ -112,26 +112,21 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      orgId: state => state.login.orgId
-    })
   },
   created() {
-    this.getRoadListData({
-      orgId: this.orgId
-    })
+    this.getRoadListData()
   },
   methods: {
     cancelPresiders() {
       this.newPresiders = []
-      this.delPresiders = []
+      this.removePresiders = []
       this.presiderChecked = []
       this.presiderData = []
     },
     async comfirmPresiders() {
       let params = {
         rdSgId: this.rdSgId,
-        orgId: `${this.nowOrg}`,
+        orgId: `${this.orgId}`,
         addPresiders: [],
         delPresiders: []
       }
@@ -157,8 +152,12 @@ export default {
           params.delPresiders.push(obj)
         })
       }
+      if (params.addPresiders.length === 0 && params.delPresiders.length === 0) {
+        return
+      }
       let svp = await savePresiders(params)
       if (svp.status === 200) {
+        this.getRoadListData()
         this.$Message.success('保存成功!')
       } else {
         this.$Notice.danger({
@@ -170,30 +169,38 @@ export default {
     },
     selectOrCancel(targetKeys, direction, moveKeys) {
       if (direction === 'right') {
-        this.newPresiders.push(...moveKeys)
-      } else {
-        forEach(moveKeys, k => {
-          if (indexOf(this.presiderChecked, k) > -1) {
-            this.removePresiders.push(k)
-            remove(this.presiderChecked, checkItem => {
-              return checkItem === k
+        forEach(moveKeys, mvk => {
+          if (indexOf(this.presiderChecked, mvk) > -1) {
+            remove(this.removePresiders, item => {
+              return mvk === item
             })
           } else {
+            this.newPresiders.push(mvk)
+          }
+        })
+      } else {
+        forEach(moveKeys, mvk => {
+          if (indexOf(this.presiderChecked, mvk) > -1) {
+            this.removePresiders.push(mvk)
+          } else {
             remove(this.newPresiders, n => {
-              return n === k
+              return n === mvk
             })
           }
         })
       }
     },
+    changeOrg({ orgId }) {
+      this.orgId = orgId
+      this.getRoadListData()
+    },
     changePage(pageNow) {
       this.currentPage = pageNow
-      this.getRoadListData({ orgId: this.nowOrg })
+      this.getRoadListData()
     },
-    async getRoadListData({ orgId }) {
-      this.nowOrg = orgId
+    async getRoadListData() {
       let params = {
-        orgId: orgId,
+        orgId: this.orgId,
         currentPage: this.currentPage,
         pageSize: 10
       }
@@ -209,10 +216,16 @@ export default {
           this.roadData = _newData
         }
       } else {
-        this.$Notice.danger({
-          desc: roadListData.message,
-          title: `错误码: ${roadListData.status}`
-        })
+        this.total = 0
+        this.roadData = []
+        if (roadListData.status === 503) {
+          this.$Message.warning('暂无段道信息')
+        } else {
+          this.$Notice.danger({
+            desc: roadListData.message,
+            title: `错误码: ${roadListData.status}`
+          })
+        }
       }
     }
   }

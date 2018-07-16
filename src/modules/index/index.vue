@@ -1,6 +1,24 @@
 <template>
   <div class="page-index">
-    <div class="row">
+    <div class="area bg-white border mb-2">
+      统计范围:
+      <t-dropdown
+        :visible="visibleArea"
+        trigger="custom"
+        placement="bottom-start"
+        style="margin-left: 20px">
+        <t-button size="sm" @click="openOrgChange">
+          {{ showOrgName }}
+          <t-icon type="arrow-down-drop"></t-icon>
+        </t-button>
+        <t-dropdown-menu slot="list">
+          <div class="area-box">
+            <organize-tree :need-filter="false" :border="false" @emitClickOrgTreeNode="changeOrg"></organize-tree>
+          </div>
+        </t-dropdown-menu>
+      </t-dropdown>
+    </div>
+    <!-- <div class="row">
       <div class="col-4">
         <t-card>
           <div class="d-flex text-sm text-5 index-card-header justify-content-between">
@@ -9,7 +27,7 @@
           <div class="index-card">
             <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
             <div class="data-box">
-              <div id="circulateChart"></div>
+              <div id="circulateChart" style="width:200px"></div>
             </div>
           </div>
           <div slot="foot" class="card-foot">
@@ -39,18 +57,68 @@
             <span>订购量(份)</span>
           </div>
           <div class="index-card">
-            <h2 class="money-data">¥ {{ orderFinish }}</h2>
+            <h2 class="money-data">{{ orderFinish }}</h2>
             <div class="data-box" style="width:100%;">
               <div id="orderChart"></div>
             </div>
           </div>
           <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">完成率</span> <span class="text-gray ml-2">{{ orderFinishRate }}%</span>
+            <span class="text-muted text-md">月均量</span> <span class="text-gray ml-2">{{ orderMonthly }}</span>
+          </div>
+        </t-card>
+      </div>
+    </div> -->
+    <div class="row">
+      <div class="col-4">
+        <t-card>
+          <div class="d-flex text-sm text-5 index-card-header justify-content-between">
+            <span>流转额(元)</span>
+          </div>
+          <div class="index-card">
+            <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
+            <div ref="cht" class="data-box cht">
+              <t-chart ref="lineSimple" :options="oneLineChart" chart-height="50" auto-resize></t-chart>
+            </div>
+          </div>
+          <div slot="foot" class="card-foot">
+            <span class="text-muted text-md">月均销售额</span> <span class="text-gray">￥{{ salesVolumeMonthly }}</span>
+          </div>
+        </t-card>
+      </div>
+      <div class="col-4">
+        <t-card>
+          <div class="d-flex text-sm text-muted index-card-header justify-content-between">
+            <span>收入目标(元)</span>
+          </div>
+          <div class="index-card">
+            <h2 class="money-data">¥ {{ salesVolumeGoal }}</h2>
+            <div class="data-box income-percent">
+              <t-progress :percent="salesVolumeGoalFinishRate" status="active" hide-info></t-progress>
+            </div>
+          </div>
+          <div slot="foot" class="card-foot">
+            <span class="text-muted text-md">目标完成率</span> <span class="text-gray ml-4">{{ salesVolumeGoalFinishRate }}%</span>
+          </div>
+        </t-card>
+      </div>
+      <div class="col-4">
+        <t-card>
+          <div class="d-flex text-sm text-muted index-card-header justify-content-between">
+            <span>订购量(份)</span>
+          </div>
+          <div class="index-card">
+            <h2 class="money-data">{{ orderFinish }}</h2>
+            <div class="data-box cht">
+              <t-chart ref="barChart" :options="barChart" chart-height="50" auto-resize></t-chart>
+            </div>
+          </div>
+          <div slot="foot" class="card-foot">
+            <span class="text-muted text-md">月均量</span> <span class="text-gray ml-2">{{ orderMonthly }}</span>
           </div>
         </t-card>
       </div>
     </div>
-    <div v-show="false" class="index-tabs border">
+    <!-- <div v-show="false" class="index-tabs border">
       <t-tabs>
         <t-tab-panel label="客户渠道" name="tab-new">
           <div class="row">
@@ -104,36 +172,39 @@
           </div>
         </t-tab-panel>
       </t-tabs>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
 import echarts from 'echarts'
 import { forEach } from 'lodash'
-import { getDashboardBusiness, getDashboardCustomer } from './server'
+import { getDashboardBusiness, getDashboardCustomer } from './server.js'
+import organizeTree from '../components/OrganizeTree.vue'
 
 export default {
   components: {
+    organizeTree
   },
   data() {
     return {
+      oneLineChart: {},
+      barChart: {},
+      orgId: this.$store.state.login.orgId,
+      showOrgName: this.$store.state.login.orgName,
+      visibleArea: false,
       // 流转额
       salesVolumeFinish: 0,
       salesVolumeMonthly: 0,
-      salesVolumeData: {
-        dataAxis: [],
-        data: []
-      },
+      salesVolumeAxis: [],
+      salesVolumeData: [],
       // 目标
       salesVolumeGoal: 0,
       salesVolumeGoalFinishRate: 0,
       // 订购量
       orderFinish: 0,
-      orderFinishRate: 0,
-      orderData: {
-        dataAxis: [],
-        data: []
-      },
+      orderMonthly: 0,
+      orderData: [],
+      orderAxis: [],
       // 新增客户
       addCustomerData: {
         increaseNumbers: 0,
@@ -193,40 +264,56 @@ export default {
   computed: {
   },
   created() {
-  },
+    },
   mounted() {
     this.getDashboardData()
-    this.getDashboardCust()
-    // this.createNewMemberCharts()
-    // window.addEventListener('resize', () => {
-    //   this.$refs.addMemberRef.resize()
-    // })
+    // this.getDashboardCust()
+    document.addEventListener('click', () => {
+      this.visibleArea = false
+    })
+    
   },
   methods: {
+    changeOrg({ orgId, orgName }) {
+      this.orgId = orgId
+      this.showOrgName = orgName
+      this.visibleArea = false
+      this.getDashboardData()
+    },
+    openOrgChange() {
+      this.visibleArea = !this.visibleArea
+    },
     async getDashboardData() {
       // 获取首页数据
+      let y = new Date().getFullYear()
       let payload = {
-        year: '2018',
-        area: '1000'
+        year: y,
+        orgId: this.orgId
       }
       let dashboardData = await getDashboardBusiness(payload)
       if (dashboardData.status === 200) {
         // 设置流转额
         this.salesVolumeFinish = dashboardData.data.salesVolumeFinish
         this.salesVolumeMonthly = dashboardData.data.salesVolumeMonthly
-        this.salesVolumeData.dataAxis = dashboardData.data.salesVolumeData.dataAxis
-        this.salesVolumeData.data = dashboardData.data.salesVolumeData.data
+        this.salesVolumeAxis = dashboardData.data.salesVolumeData.dataAxis
+        this.salesVolumeData = dashboardData.data.salesVolumeData.data
         // 设置收入目标
         this.salesVolumeGoal = dashboardData.data.salesVolumeGoal
         this.salesVolumeGoalFinishRate = dashboardData.data.salesVolumeGoalFinishRate
+        // 订购量
         this.orderFinish = dashboardData.data.orderFinish
-        this.orderMonthly = dashboardData.data.orderFinishRate
-        this.orderData = dashboardData.data.orderData
+        this.orderMonthly = dashboardData.data.orderMonthly
+        this.orderData = dashboardData.data.orderData.data
+        this.orderAxis = dashboardData.data.orderData.dataAxis
+        this.circulateChart()
+        this.orderChart()
       } else {
+        this.orderData = []
+        this.orderAxis = []
+        this.salesVolumeAxis = []
+        this.salesVolumeData = []
         this.$Message.danger(dashboardData.message)
       }
-      this.createCirculateChart()
-      this.createOrderChart()
     },
     async getDashboardCust() {
       // 获取首页客户数据
@@ -255,9 +342,7 @@ export default {
       } else {
         this.$Message.danger(custData.message)
       }
-    },
-    createAllCharts() {
-    },
+    }, 
     createNewMemberCharts() {
       let increaseChart = echarts.init(document.getElementById('increaseChart'))
       let increaseChartOpt = {
@@ -312,14 +397,13 @@ export default {
         increaseChart.resize()
       }, 10)
     },
-    createCirculateChart() {
-      // 流转额图表
-      let _Charts = echarts.init(document.getElementById('circulateChart'))
-      let circulateChartOpt = {
+    circulateChart() {
+      let options = {
         tooltip: {
           trigger: 'axis',
+          formatter: '{b}月份: <br />流转额: {c}',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'none', // 默认为直线，可选为：'line' | 'shadow'
+            type: 'line', // 默认为直线，可选为：'line' | 'shadow'
             snap: true,
             lineStyle: {
               color: {
@@ -328,13 +412,6 @@ export default {
                 y: 0,
                 x2: 1,
                 y2: 1,
-                colorStops: [
-                  {
-                    offset: 0, color: '#fff' // 0% 处的颜色
-                  }, {
-                    offset: 1, color: '#fff' // 100% 处的颜色
-                  }
-                ],
                 globalCoord: false // 缺省为 false
               }
             }
@@ -344,7 +421,7 @@ export default {
           type: 'category',
           boundaryGap: false,
           show: false,
-          data: this.salesVolumeData.dataAxis
+          data: this.salesVolumeAxis
         },
         yAxis: {
           type: 'value',
@@ -352,7 +429,7 @@ export default {
         },
         series: [{
           smooth: true,
-          data: this.salesVolumeData.data,
+          data: this.salesVolumeData,
           type: 'line',
           areaStyle: {
             color: '#229541'
@@ -360,28 +437,39 @@ export default {
         }],
         grid: {
           // 设置图表在容器中开始绘制的坐标
-          left: 0,
-          right: 0,
-          bottom: 50
+          y: 1,
+          y2: 2,
+          x: 1,
+          x2: 1
         }
       }
-      _Charts.setOption(circulateChartOpt)
-      setTimeout(() => {
-        _Charts.resize()
-      }, 10)
-      window.addEventListener('resize', () => {
-        _Charts.resize()
-      })
+      this.oneLineChart = options
     },
-    createOrderChart() {
-      // 订购量图表
-      let _orderCharts = echarts.init(document.getElementById('orderChart'))
-      let orderChartOpt = {
+    orderChart() {
+      let opts = {
+        tooltip: {
+          trigger: 'axis',
+          formatter: '{b}月份: <br />订购量: {c}',
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
+            snap: true,
+            lineStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 1,
+                y2: 1,
+                globalCoord: false // 缺省为 false
+              }
+            }
+          }
+        },
         color: ['#1C90D3'],
         xAxis: {
           show: false,
           type: 'category',
-          data: this.orderData.dataAxis,
+          data: this.orderAxis,
           axisLine: {
             lineStyle: {
               bgColor: '#1C90D3'
@@ -393,30 +481,32 @@ export default {
           type: 'value'
         },
         series: [{
-          data: this.orderData.data,
+          data: this.orderData,
           type: 'bar',
           barMaxWidth: '12'
         }],
         grid: {
           // 设置图表在容器中开始绘制的坐标
-          left: 0,
-          right: 0,
-          bottom: 80
+          y: 1,
+          y2: 2,
+          x: 1,
+          x2: 1
         }
       }
-      _orderCharts.setOption(orderChartOpt)
-      setTimeout(() => {
-        _orderCharts.resize()
-      }, 10)
-      window.addEventListener('resize', () => {
-        _orderCharts.resize()
-      })
+      this.barChart = opts
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.cht {
+  max-width: 377px;
+}
+.cht div {
+  height: 100%!important;
+  max-width: 377px!important;
+}
 .text-5 {
   color: rgba(50,50,50,0.50);
 }
@@ -520,5 +610,18 @@ export default {
   justify-content: center;
   flex: 1;
   align-items: center;
+}
+.area {
+  padding: 20px;
+  .area-sel {
+    border: 1px solid #000000;
+  }
+}
+.area-box {
+  width: 300px;
+  max-height: 200px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  overflow: auto;
 }
 </style>

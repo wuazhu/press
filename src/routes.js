@@ -25,8 +25,8 @@ export default [
     },
     children: [
       {
-        name: 'dashboard',
         path: '',
+        name: 'dashboard',
         component: require('./modules/index/Index')
       },
       ...user,

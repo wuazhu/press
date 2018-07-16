@@ -215,14 +215,16 @@ export default {
       this.breadList = []
       let matchList = this.$route.matched
       forEach(matchList, (routeItem, routeIndex) => {
-        let routeObj = {
-          name: routeItem.meta.breadName,
-          path: routeItem.path
+        if (routeItem.path !== '/bk/') {
+          let routeObj = {
+            name: routeItem.meta.breadName,
+            path: routeItem.path
+          }
+          if ((matchList.length - 1) === routeIndex) {
+            routeObj.path = ''
+          }
+          this.breadList.push(routeObj)
         }
-        if ((matchList.length - 1) === routeIndex) {
-          routeObj.path = ''
-        }
-        this.breadList.push(routeObj)
       })
     },
     menuSelect(name) {
