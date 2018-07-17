@@ -60,11 +60,11 @@ export default {
     $_clickOrgTreeNode(data, node, self) {
       this.$emit('emitClickOrgTreeNode', {
         orgId: data.orgId,
-        orgName: data.orgName
+        orgName: data.orgName,
+        distId: data.distId
       })
     },
     filterNode(value, data) {
-      console.log(value, data)
       if (!value) return true
       return data.orgName.indexOf(value) !== -1
     },

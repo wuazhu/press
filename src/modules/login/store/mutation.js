@@ -10,7 +10,8 @@ export default {
     state.orgName = payload.ORG_NAME                  // 组织机构名称
     state.staffId = payload.STAFF_ID                  // staffId
     state.token = payload.GLOBAL_SIGN                 // 签名
-    state.uuid = payload.UUID
+    state.uuid = payload.UUID                         // 退出登录需要
+    state.distId = payload.DISTRICT_ID                // 区域 id
   },
   [constants.DO_LOGOUT](state) {
     state.logined = false
@@ -21,6 +22,7 @@ export default {
     state.staffId = null
     state.token = null
     state.uuid = null
+    state.distId = null
   },
   [constants.FETCH_AUTH](state, payload) {
     state.logined = payload.success

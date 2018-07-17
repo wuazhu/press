@@ -49,7 +49,6 @@ export default {
   data() {
     return {
       showLoginbox: false,
-      transName: 'flipY-reverse-slow',
       loginForm: {
         userCode: '10admin',
         passWord: 'Test@1234',

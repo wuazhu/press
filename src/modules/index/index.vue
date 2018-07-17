@@ -261,17 +261,12 @@ export default {
       }
     }
   },
-  computed: {
-  },
-  created() {
-    },
   mounted() {
     this.getDashboardData()
     // this.getDashboardCust()
     document.addEventListener('click', () => {
       this.visibleArea = false
     })
-    
   },
   methods: {
     changeOrg({ orgId, orgName }) {
@@ -342,7 +337,7 @@ export default {
       } else {
         this.$Message.danger(custData.message)
       }
-    }, 
+    },
     createNewMemberCharts() {
       let increaseChart = echarts.init(document.getElementById('increaseChart'))
       let increaseChartOpt = {

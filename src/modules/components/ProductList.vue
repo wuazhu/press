@@ -2,7 +2,7 @@
   <div class="components-tree">
     <div>
       <t-tree
-        ref="orgTreeRef"
+        ref="prodTreeRef"
         :data="products"
         :props="proDefaultProp"
         :load="loadNodeDynamic"
@@ -10,7 +10,6 @@
         highlight-current
         @on-click="$_clickProdsTreeNode">
       </t-tree>
-      <!-- :filter-node-method="filterNode" -->
     </div>
   </div>
 </template>
@@ -27,15 +26,27 @@ export default {
       },
       cataId: '',
       products: [],
-      orgId: this.$store.state.login.orgId
+      orgId: this.$store.state.login.orgId,
+      rres: null
     }
+  },
+  created() {
+    Bus.$on('orgIdChanged', ({ orgId }) => {
+      this.orgId = orgId
+      this.loadNode(this.$refs.prodTreeRef.root, (e) => {
+        this.$refs.prodTreeRef.root.doCreateChildren(e)
+        console.log(this.$refs.prodTreeRef)
+        // this.$refs.prodTreeRef.store._initDefaultCheckedNodes()
+      })
+    })
+  },
+  updated() {
   },
   methods: {
     $_clickProdsTreeNode(data, node, self) {
       if (data.isProduct === 0) {
         this.$Message.warning('请选择非目录刊物!')
       } else {
-        console.log('fei mu lu')
         this.$emit('emitCheckIsProduct', data)
       }
     },
@@ -44,14 +55,11 @@ export default {
       return data.orgName.indexOf(value) !== -1
     },
     loadNodeDynamic(node, resolve) {
-      Bus.$on('orgIdChanged', ({ orgId }) => {
-        this.orgId = orgId
-        this.loadNode(node, resolve)
-      })
+      console.log(resolve)
       this.loadNode(node, resolve)
     },
     async loadNode(node, resolve) {
-      this.cataId = node.data.cataId
+      this.cataId = node.data.cataId || ''
       if (node.level === 0) {
         this.products = []
         let proList = await getProductsForBoutique({

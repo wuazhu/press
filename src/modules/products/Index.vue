@@ -27,12 +27,12 @@
           </div>
         </div>
       </div>
-    </div>    
-    <t-slipbox :visible.sync="visibleBox" class="demo__slipbox--1" :width="520">
+    </div>
+    <t-slipbox :visible.sync="visibleBox" :width="520" class="demo__slipbox--1">
       <template slot="header">
         <div class="slipbox-title d-flex justify-content-between align-items-center">
           <p class="text-base">加入精品报刊</p>
-          <t-button type="primary" size="sm" :disabled="caniSubmit" @click="saveAndsubmit">保存并提交</t-button>
+          <t-button :disabled="caniSubmit" type="primary" size="sm" @click="saveAndsubmit">保存并提交</t-button>
         </div>
       </template>
       <div class="add-press">
@@ -82,13 +82,11 @@ import { remove } from 'lodash'
 import Bus from '../../bus.js'
 import organizeTree from '../components/OrganizeTree.vue'
 import ProductTree from '../components/ProductList.vue'
-import addTrees from './components/AddPress.vue'
 import { getBoutiqueList, delBoutique, addBoutique } from './server.js'
 
 export default {
   components: {
     organizeTree,
-    addTrees,
     ProductTree
   },
   data() {
@@ -165,7 +163,8 @@ export default {
         pressYear: '',
         pressUrl: '',
         isBanner: 1,
-        bannerPicUrl: ''
+        bannerPicUrl: '',
+        distId: this.$store.state.login.distId
       }
     }
   },
@@ -195,9 +194,12 @@ export default {
           pressYear: '',
           pressUrl: '',
           isBanner: 1,
-          bannerPicUrl: ''
+          bannerPicUrl: '',
+          discId: this.$store.state.login.discId
         }
         this.pressName = '请选择报刊'
+        this.$Message.success('新增成功!')
+        this.getBoutiqueLists()
       } else {
         this.$Message.danger(addInfo.message)
       }
@@ -211,9 +213,10 @@ export default {
     $_clickAddPress() {
       this.visibleBox = !this.visibleBox
     },
-    changeOrg({ orgId, orgName }) {
+    changeOrg({ orgId, orgName, distId }) {
       this.orgId = orgId
       this.orgName = orgName
+      this.jpInfo.distId = distId
       Bus.$emit('orgIdChanged', { orgId })
       this.getBoutiqueLists()
     },
