@@ -80,21 +80,6 @@
           <t-menu-item name="/product/quality">精品推荐管理</t-menu-item>
           <!-- <t-menu-item name="/product/quality">基础产品目录</t-menu-item> -->
         </t-submenu>
-        <!-- <t-submenu name="logger">
-          <template slot="title">
-            <t-icon type="library-books"></t-icon>
-            <span>系统日志</span>
-          </template>
-          <t-menu-item name="/logger/device">设备使用日志</t-menu-item>
-          <t-menu-item name="/logger/login">人员登录日志</t-menu-item>
-        </t-submenu>
-        <t-submenu name="cust">
-          <template slot="title">
-            <t-icon type="account-multiple"></t-icon>
-            <span>客户管理</span>
-          </template>
-          <t-menu-item name="/cust/merge">客户去重</t-menu-item>
-        </t-submenu> -->
       </t-menu>
     </div>
     <div class="layout-content">
