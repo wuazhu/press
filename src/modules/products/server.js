@@ -20,3 +20,8 @@ export async function addBoutique(params) {
   let addqueList = await http.$http.post(services.boutique.addBoutique, params)
   return addqueList.data
 }
+
+export async function modifyBoutiqueTop(params) {
+  let modifyResult = await http.$http.post(services.boutique.modifyBoutiqueTop, params)
+  return modifyResult.data
+}

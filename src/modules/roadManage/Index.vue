@@ -43,6 +43,44 @@
         size="sm"
         @on-change="selectOrCancel"></t-transfer>
     </t-modal>
+    <t-modal
+      v-model="showInnerCust"
+      :closable="false"
+      title="查看段道内客户"
+      width="580"
+      style="height:351px;"
+      @on-ok="comfirmPresiders"
+      @on-cancel="cancelPresiders">
+      <div>
+        <div class="d-flex justify-content-between">
+          <div><t-button type="outline" class="clo-2" size="sm">批量移动到段道</t-button></div>
+          <div class="text-right" style="width:300px;">
+            <t-input v-model="custSearchInput" placeholder="请输入搜索内容" size="sm" style="width:140px;"></t-input>
+            <t-button type="primary" size="sm">查询</t-button>
+          </div>
+        </div>
+        <t-table
+          :columns="custHeader"
+          :data="custData"
+          :all-ellipsis="true"
+          line>
+        </t-table>
+      </div>
+      <div class="table-paging text-right mt-2">
+        <t-pager :total="custTotal" :current="custCurrentPage" :page-size="10" @on-change="custChangePage"></t-pager>
+      </div>
+      <div slot="footer"></div>
+    </t-modal>
+    <t-modal
+      v-model="showInnerCust"
+      :closable="false"
+      title="查看段道内客户"
+      width="580"
+      style="height:351px;"
+      @on-ok="comfirmPresiders"
+      @on-cancel="cancelPresiders">
+      
+    </t-modal>
   </div>
 </template>
 
@@ -57,12 +95,64 @@ export default {
   },
   data() {
     return {
+      custTotal: 0,
+      custCurrentPage: 1,
+      custSearchInput: '',
+      showInnerCust: false,
       rdSgId: null,
       orgId: this.$store.state.login.orgId,
       presiderData: [],
       presiderChecked: [],
       newPresiders: [],
       removePresiders: [],
+      custData: [
+        {
+          custName: '客户',
+          contactType: '1',
+          address: '1234123412341234123412341234'
+        },
+        {
+          custName: '客户',
+          contactType: '2',
+          address: '1234123412341234123412341234'
+        }
+      ],
+      custHeader: [
+        {
+          title: '客户姓名',
+          key: 'custName',
+          type: 'selection',
+          width: 50
+        },
+        {
+          title: '客户姓名',
+          key: 'custName'
+        },
+        {
+          title: '联系方式',
+          key: 'contactType'
+        },
+        {
+          title: '地址',
+          key: 'address'
+        },
+        {
+          title: '操作',
+          align: 'right',
+          render: (h, params) => {
+            let vm = this
+            return h('div', [
+              h('span', {
+                style: {'color': '#108EEA', 'cursor': 'pointer'},
+                on: {
+                  async click() {
+                  }
+                }
+              }, '移到其他段道')
+            ])
+          }
+        }
+      ],
       roadHeader: [
         {
           title: '段道名',
@@ -78,6 +168,7 @@ export default {
         },
         {
           title: '操作',
+          align: 'right',
           render: (h, params) => {
             let vm = this
             return h('div', [
@@ -100,7 +191,16 @@ export default {
                     }
                   }
                 }
-              }, '分配责任人')
+              }, '分配责任人'),
+              h('span', {
+                style: {'color': '#108EEA', 'cursor': 'pointer', 'margin-left': '20px'},
+                on: {
+                  async click() {
+                    vm.showInnerCust = true
+                    console.log(123)
+                  }
+                }
+              }, '段道内客户')
             ])
           }
         }
@@ -117,6 +217,9 @@ export default {
     this.getRoadListData()
   },
   methods: {
+    custChangePage(page) {
+      this.custCurrentPage = page
+    },
     cancelPresiders() {
       this.newPresiders = []
       this.removePresiders = []

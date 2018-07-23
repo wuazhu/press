@@ -53,14 +53,14 @@
                 </t-dropdown-menu>
               </t-dropdown>
             </t-form-item>
-            <t-form-item label="是否 Banner 置顶" prop="input2">
+            <t-form-item label="是否轮播图置顶" prop="input2">
               <div class="form-istrue">
                 <t-select v-model="jpInfo.isBanner" size="sm">
                   <t-option v-for="item in isTopicList" :value="item.value" :key="item.label">{{ item.label }}</t-option>
                 </t-select>
               </div>
             </t-form-item>
-            <t-form-item label="Banner 图片上传" prop="input4">
+            <t-form-item label="轮播图片上传" prop="input4">
               <div class="img-upload">
                 <t-upload ref="uploader" :show-upload-list="false" :format="['jpg','jpeg','png']" :max-size="2048" multiple type="drag" action="//jquery-file-upload.appspot.com/" class="demo-upload-list">
                   <div>
@@ -78,11 +78,11 @@
 </template>
 
 <script>
-import { remove } from 'lodash'
+import { remove, map } from 'lodash'
 import Bus from '../../bus.js'
 import organizeTree from '../components/OrganizeTree.vue'
 import ProductTree from '../components/ProductList.vue'
-import { getBoutiqueList, delBoutique, addBoutique } from './server.js'
+import { getBoutiqueList, delBoutique, addBoutique, modifyBoutiqueTop } from './server.js'
 
 export default {
   components: {
@@ -97,15 +97,11 @@ export default {
           key: 'pressName'
         },
         {
-          title: 'Banner置顶',
+          title: '轮播图置顶',
           key: 'isBanner',
           render: (h, params) => {
             return h('div', params.row.isBanner !== 1 ? '否' : '是')
           }
-        },
-        {
-          title: 'BannerURL',
-          key: 'bannerPicUrld'
         },
         {
           title: '操作',
@@ -114,7 +110,10 @@ export default {
             let vm = this
             return h('div', [
               h('span', {
-                style: {'color': '#108EEA'},
+                style: {
+                  'color': '#108EEA',
+                  'cursor': 'pointer'
+                },
                 on: {
                   async click() {
                     let param = {
@@ -130,7 +129,35 @@ export default {
                     }
                   }
                 }
-              }, '取消精品')
+              }, '取消精品'),
+              h('span', {
+                style: {
+                  'color': '#108EEA',
+                  'cursor': 'pointer'
+                },
+                class: ['ml-2'],
+                on: {
+                  async click() {
+                    let param = {
+                      pressId: params.row.pressId,
+                      orgId: vm.orgId,
+                      pressYear: params.row.pressYear,
+                      operatorType: params.row.isBanner === 0 ? 1 : 0
+                    }
+                    let mdfResult = await modifyBoutiqueTop(param)
+                    if (mdfResult.status === 200) {
+                      vm.$Message.success('取消成功!')
+                      map(vm.listData, item => {
+                        if (item.pressId === params.row.pressId) {
+                          item.isBanner = (item.isBanner === 0 ? 1 : 0)
+                        }
+                      })
+                    } else {
+                      vm.$Message.warning(mdfResult.message)
+                    }
+                  }
+                }
+              }, params.row.isBanner === 0 ? '设置置顶' : '取消置顶'),
             ])
           }
         }

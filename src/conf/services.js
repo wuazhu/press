@@ -44,6 +44,7 @@ export default {
     getBoutiqueList: '/subpress-web/api/v1/getBoutiqueList',
     delBoutique: '/subpress-web/api/v1/cancelBoutique',
     getProductsForBoutique: '/subpress-web/api/v1/getProductsForBoutique',
-    addBoutique: '/subpress-web/api/v1/addBoutique'
+    addBoutique: '/subpress-web/api/v1/addBoutique',
+    modifyBoutiqueTop: '/subpress-web/api/v1/modifyBoutiqueTop'
   }
 }
