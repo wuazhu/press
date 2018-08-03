@@ -10,7 +10,6 @@ import { sync } from 'vuex-router-sync'
 
 // 引入Taurus库
 import taurus from 'aid-taurus-desktop'
-import viser from 'viser-vue'
 import store from './store'
 import frame from './frame.vue'
 import i18nManager from './i18n'
@@ -25,8 +24,6 @@ Vue.use(taurus, {
     return ''
   }
 })
-
-Vue.use(viser)
 
 // 将路由状态同步到store中
 sync(store, router)

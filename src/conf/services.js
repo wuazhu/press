@@ -12,6 +12,7 @@
 export default {
   logout: '/sso-web/CsfCrmServlet?servicecode=sec_IOrgmodelClientCSV_logout',
   login: '/sso-web/CsfCrmServlet?servicecode=uspa_IOrgmodelClientCSV_loginIn',
+  verifiyCode: '/uspa-client/CsfCrmServlet?servicecode=sec_IOrgmodelClientCSV_generateImageVerifiyCode',
   dashboard: {
     business: '/subpress-web/api/v1/incomeAnalysis',
     customers: '/mock/api/v1/dashboard/customers'
@@ -19,7 +20,10 @@ export default {
   region: {
     region: '/subpress-web/api/v1/region',
     savePresider: '/subpress-web/api/v1/savePresider',
-    getPresiders: '/subpress-web/api/v1/presider/'
+    getPresiders: '/subpress-web/api/v1/presider/',
+    regCustList: '/subpress-web/api/v1/regCustList',
+    checkRegion: '/subpress-web/api/v1/checkRegion',
+    confirmCustReg: '/subpress-web/api/v1/confirmCustReg'
   },
   customers: {
     customers: '/subpress-web/api/v1/customers'
@@ -46,5 +50,6 @@ export default {
     getProductsForBoutique: '/subpress-web/api/v1/getProductsForBoutique',
     addBoutique: '/subpress-web/api/v1/addBoutique',
     modifyBoutiqueTop: '/subpress-web/api/v1/modifyBoutiqueTop'
-  }
+  },
+  changePassword: '/subpress-web/api/v1/changePassword'
 }

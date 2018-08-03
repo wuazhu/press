@@ -168,7 +168,6 @@ function requestError(error) {
  * @returns {Object|Promise} 返回`Axios`响应对象或Promise对象
  */
 function responseInterceptor(response) {
-  // console.log('fucku', response)
   if (response && response.data) {
     switch (response.data.status) {
       case 401:
@@ -211,7 +210,6 @@ function responseInterceptor(response) {
  * }
  */
 function responseError(error) {
-  // console.log('错误了哥', error.response)
   if (error.response) {
     switch (error.response.status) {
       case 401: // 当前请求需要用户验证

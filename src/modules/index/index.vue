@@ -12,62 +12,12 @@
           <t-icon type="arrow-down-drop"></t-icon>
         </t-button>
         <t-dropdown-menu slot="list">
-          <div class="area-box">
+          <div class="area-box index-area">
             <organize-tree :need-filter="false" :border="false" @emitClickOrgTreeNode="changeOrg"></organize-tree>
           </div>
         </t-dropdown-menu>
       </t-dropdown>
     </div>
-    <!-- <div class="row">
-      <div class="col-4">
-        <t-card>
-          <div class="d-flex text-sm text-5 index-card-header justify-content-between">
-            <span>流转额(元)</span>
-          </div>
-          <div class="index-card">
-            <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
-            <div class="data-box">
-              <div id="circulateChart" style="width:200px"></div>
-            </div>
-          </div>
-          <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">月均销售额</span> <span class="text-gray">￥{{ salesVolumeMonthly }}</span>
-          </div>
-        </t-card>
-      </div>
-      <div class="col-4">
-        <t-card>
-          <div class="d-flex text-sm text-muted index-card-header justify-content-between">
-            <span>收入目标(元)</span>
-          </div>
-          <div class="index-card">
-            <h2 class="money-data">¥ {{ salesVolumeGoal }}</h2>
-            <div class="data-box income-percent">
-              <t-progress :percent="salesVolumeGoalFinishRate" status="active" hide-info></t-progress>
-            </div>
-          </div>
-          <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">目标完成率</span> <span class="text-gray ml-4">{{ salesVolumeGoalFinishRate }}%</span>
-          </div>
-        </t-card>
-      </div>
-      <div class="col-4">
-        <t-card>
-          <div class="d-flex text-sm text-muted index-card-header justify-content-between">
-            <span>订购量(份)</span>
-          </div>
-          <div class="index-card">
-            <h2 class="money-data">{{ orderFinish }}</h2>
-            <div class="data-box" style="width:100%;">
-              <div id="orderChart"></div>
-            </div>
-          </div>
-          <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">月均量</span> <span class="text-gray ml-2">{{ orderMonthly }}</span>
-          </div>
-        </t-card>
-      </div>
-    </div> -->
     <div class="row">
       <div class="col-4">
         <t-card>
@@ -77,7 +27,7 @@
           <div class="index-card">
             <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
             <div ref="cht" class="data-box cht">
-              <t-chart ref="lineSimple" :options="oneLineChart" chart-height="50" auto-resize></t-chart>
+              <t-chart ref="lineChartRef" :options="oneLineChart" chart-height="50" chart-width="350" auto-resize></t-chart>
             </div>
           </div>
           <div slot="foot" class="card-foot">
@@ -109,7 +59,7 @@
           <div class="index-card">
             <h2 class="money-data">{{ orderFinish }}</h2>
             <div class="data-box cht">
-              <t-chart ref="barChart" :options="barChart" chart-height="50" auto-resize></t-chart>
+              <t-chart ref="barChartRef" :options="barChart" chart-height="50" chart-width="350" auto-resize></t-chart>
             </div>
           </div>
           <div slot="foot" class="card-foot">
@@ -263,12 +213,23 @@ export default {
   },
   mounted() {
     this.getDashboardData()
+    setTimeout(() => {
+      this.$_resetEleWidth()
+    }, 2010)
     // this.getDashboardCust()
     document.addEventListener('click', () => {
       this.visibleArea = false
     })
+    window.addEventListener('resize', () => {
+      this.$_resetEleWidth()
+    })
   },
   methods: {
+    $_resetEleWidth() {
+      console.log(12345)
+      this.$refs.barChartRef.resize()
+      this.$refs.lineChartRef.resize()
+    },
     changeOrg({ orgId, orgName }) {
       this.orgId = orgId
       this.showOrgName = orgName
@@ -300,13 +261,25 @@ export default {
         this.orderMonthly = dashboardData.data.orderMonthly
         this.orderData = dashboardData.data.orderData.data
         this.orderAxis = dashboardData.data.orderData.dataAxis
+        this.$_resetEleWidth()
         this.circulateChart()
         this.orderChart()
       } else {
-        this.orderData = []
-        this.orderAxis = []
+        this.salesVolumeFinish = 0
+        this.salesVolumeMonthly = 0
         this.salesVolumeAxis = []
         this.salesVolumeData = []
+        // 设置收入目标
+        this.salesVolumeGoal = 0
+        this.salesVolumeGoalFinishRate = 0
+        // 订购量
+        this.orderFinish = 0
+        this.orderMonthly = 0
+        this.orderData = []
+        this.orderAxis = []
+        this.$_resetEleWidth()
+        this.circulateChart()
+        this.orderChart()
         this.$Message.danger(dashboardData.message)
       }
     },
@@ -488,7 +461,9 @@ export default {
           x2: 1
         }
       }
-      this.barChart = opts
+      setTimeout(() => {
+        this.barChart = opts
+      }, 300)
     }
   }
 }
@@ -496,11 +471,12 @@ export default {
 
 <style lang="less" scoped>
 .cht {
-  max-width: 377px;
+  width: auto;
 }
-.cht div {
+.cht > div,
+.cht > div > div {
   height: 100%!important;
-  max-width: 377px!important;
+  width: 100%!important;
 }
 .text-5 {
   color: rgba(50,50,50,0.50);
@@ -508,6 +484,7 @@ export default {
 .index-card {
   .data-box {
     height: 50px;
+    width: auto;
     &.income-percent {
       padding-top: 26px;
     }
@@ -618,5 +595,9 @@ export default {
   padding-top: 10px;
   padding-bottom: 10px;
   overflow: auto;
+}
+.components-tree {
+  overflow-y: hidden!important;
+  max-height: none!important;
 }
 </style>

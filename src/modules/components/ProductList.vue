@@ -1,11 +1,19 @@
 <template>
   <div class="components-tree">
+    <div class="pd-2 content-search d-flex">
+      <t-input
+        v-model="bookName"
+        placeholder="请输入搜索内容"
+        size="sm">
+      </t-input>
+    </div>
     <div>
       <t-tree
         ref="prodTreeRef"
         :data="products"
         :props="proDefaultProp"
         :load="loadNodeDynamic"
+        :filter-node-method="filterNode"
         lazy
         highlight-current
         @on-click="$_clickProdsTreeNode">
@@ -15,11 +23,13 @@
 </template>
 <script>
 import Bus from '../../bus.js'
+import { debounce } from 'lodash'
 import { getProductsForBoutique } from './server'
 
 export default {
   data() {
     return {
+      bookName: '',
       proDefaultProp: {
         label: 'pressName',
         children: 'children'
@@ -27,22 +37,30 @@ export default {
       cataId: '',
       products: [],
       orgId: this.$store.state.login.orgId,
+      distId: this.$store.state.login.distId,
       rres: null
     }
   },
   created() {
-    Bus.$on('orgIdChanged', ({ orgId }) => {
+    Bus.$on('orgIdChanged', ({ orgId, distId }) => {
       this.orgId = orgId
+      this.distId = distId
       this.loadNode(this.$refs.prodTreeRef.root, (e) => {
         this.$refs.prodTreeRef.root.doCreateChildren(e)
-        console.log(this.$refs.prodTreeRef)
-        // this.$refs.prodTreeRef.store._initDefaultCheckedNodes()
       })
     })
   },
-  updated() {
+  watch: {
+    bookName(val) {
+      this.$refs.prodTreeRef.filter(val)
+      // debounce(this.$refs.prodTreeRef.filter(val), 1000)
+    }
   },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true
+      return data.pressName.indexOf(value) !== -1
+    },
     $_clickProdsTreeNode(data, node, self) {
       if (data.isProduct === 0) {
         this.$Message.warning('请选择非目录刊物!')
@@ -50,12 +68,7 @@ export default {
         this.$emit('emitCheckIsProduct', data)
       }
     },
-    filterNode(value, data) {
-      if (!value) return true
-      return data.orgName.indexOf(value) !== -1
-    },
     loadNodeDynamic(node, resolve) {
-      console.log(resolve)
       this.loadNode(node, resolve)
     },
     async loadNode(node, resolve) {
@@ -64,7 +77,8 @@ export default {
         this.products = []
         let proList = await getProductsForBoutique({
           orgId: this.orgId,
-          cataId: ''
+          cataId: '',
+          distId: this.distId
         })
         if (proList.status === 200 && proList.data.length > 0) {
           return resolve(proList.data)
@@ -75,7 +89,8 @@ export default {
         if (node.data.isProduct === 0) {
           let proList = await getProductsForBoutique({
             orgId: this.orgId,
-            cataId: this.cataId
+            cataId: this.cataId,
+            distId: this.distId
           })
           if (proList.status === 200 && proList.data.length > 0) {
             return resolve(proList.data)

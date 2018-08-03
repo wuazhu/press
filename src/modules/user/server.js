@@ -14,3 +14,9 @@ export async function getStaffExt(params) {
   })
   return staffExt.data
 }
+
+// 修改员工密码
+export async function changePassword(params) {
+  let result = await http.$http.post(services.changePassword, params)
+  return result.data
+}

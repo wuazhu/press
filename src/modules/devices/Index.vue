@@ -13,7 +13,7 @@
       <div class="col-9">
         <div class="content-right">
           <div class="cust-list-item border">
-            <div class="org-title">账户列表</div>
+            <div class="org-title">员工设备绑定</div>
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right mt-4">
@@ -72,11 +72,11 @@ export default {
       userName: '',
       listHeaderData: [
         {
-          title: '账户',
+          title: '员工编号',
           key: 'staffId'
         },
         {
-          title: '员工',
+          title: '员工姓名',
           key: 'staffName'
         },
         {

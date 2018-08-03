@@ -4,6 +4,7 @@ let {
 
 function rules(config) {
   let rules = config.module.rules.map(v => {
+    // console.log(v)
     if(v.test.toString() === '/\\.css/') {
       return {
         test: /\.css/,
@@ -12,6 +13,14 @@ function rules(config) {
     }
     return v
   })
+  rules = rules.concat([
+    {
+      test: /\.vue$/,
+      use: ['vue-loader'],
+      include: /node_modules\/vue-core-image-upload/,
+      exclude: /src/
+    }
+  ])
   return {
     module: {
       rules
@@ -21,6 +30,7 @@ function rules(config) {
         'src': resolve(__dirname, '../src'),
         'asset': resolve(__dirname, '../src/asset'),
         'commonComp': resolve(__dirname, '../src/module/components'),
+        'utils': resolve(__dirname, '../src/utils'),
         'module': resolve(__dirname, '../src/module'),
         'styles': resolve(__dirname, '../src/assets/styles'),
       },
@@ -65,6 +75,20 @@ module.exports = {
       url: '/subpress-web',
       options: {
         target: 'http://192.168.252.237:8080',
+        changeOrigin: true
+      }
+    },
+    {
+      url: '/uspa-client',
+      options: {
+        target: 'http://192.168.252.46:8080',
+        changeOrigin: true
+      }
+    },
+    {
+      url: '/uspa-web',
+      options: {
+        target: 'http://192.168.252.238:8080',
         changeOrigin: true
       }
     }

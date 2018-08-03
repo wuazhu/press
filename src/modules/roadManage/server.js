@@ -22,3 +22,25 @@ export async function savePresiders(params) {
   let savePresiders = await http.$http.post(services.region.savePresider, params)
   return savePresiders.data
 }
+
+// 查询段道内客户
+export async function regCustList(params) {
+  let custList = await http.$http.get(services.region.regCustList, {
+    params
+  })
+  return custList.data
+}
+
+// 校验客户是否存在段道内
+export async function checkRegion(params) {
+  let checkInfo = await http.$http.get(services.region.checkRegion, {
+    params
+  })
+  return checkInfo.data
+}
+
+// 提交客户到段道内
+export async function confirmCustReg(params) {
+  let confirmResult = await http.$http.post(services.region.confirmCustReg, params)
+  return confirmResult.data
+}

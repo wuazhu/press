@@ -23,7 +23,7 @@
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right">
-            <t-pager :total="total" :current="1" :page-size="10" @on-change="changePage"></t-pager>
+            <t-pager :total="total" :current="currentPage" :page-size="10" @on-change="changePage"></t-pager>
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@
                   <t-icon type="arrow-down-drop"></t-icon>
                 </t-button>
                 <t-dropdown-menu slot="list">
-                  <div class="area-box" @click="clickArea">
+                  <div class="area-box books" @click="clickArea">
                     <product-tree @emitCheckIsProduct="checkIsProduct"></product-tree>
                   </div>
                 </t-dropdown-menu>
@@ -60,14 +60,34 @@
                 </t-select>
               </div>
             </t-form-item>
-            <t-form-item label="轮播图片上传" prop="input4">
+            <t-form-item label="轮播图片上传" prop="input4" class="upls">
               <div class="img-upload">
-                <t-upload ref="uploader" :show-upload-list="false" :format="['jpg','jpeg','png']" :max-size="2048" multiple type="drag" action="//jquery-file-upload.appspot.com/" class="demo-upload-list">
+                <!-- <t-upload ref="uploader" :show-upload-list="false" :format="['jpg','jpeg','png']" :max-size="2048" multiple type="drag" action="//jquery-file-upload.appspot.com/" class="demo-upload-list">
                   <div>
                     <i class="aid aid-plus"></i>
                     <i class="upload-txt">上传图片</i>
                   </div>
-                </t-upload>
+                </t-upload> -->
+                <div class="upl-box">
+                  <!-- <vue-cropper
+                    ref="cropper"
+                    :img="uplOption.img"
+                    :output-size="uplOption.size"
+                    :output-type="uplOption.outputType"
+                    :info="uplOption.info"
+                    :fixed="uplOption.fixed"
+                    :fixedBox="uplOption.fixedBox"
+                  ></vue-cropper> -->
+                  <!-- <a class="btn" @click="toggleUplShow">设置头像</a> -->
+                  <vue-core-image-upload
+                    class="btn btn-primary"
+                    :crop="false"
+                    @imageuploaded="imageuploaded"
+                    :data="upldata"
+                    :max-file-size="5242880"
+                    url="/subpress-web/api/v1/upload" >
+                  </vue-core-image-upload>
+                </div>
               </div>
             </t-form-item>
           </t-form>
@@ -79,6 +99,7 @@
 
 <script>
 import { remove, map } from 'lodash'
+import VueCoreImageUpload from 'vue-core-image-upload'
 import Bus from '../../bus.js'
 import organizeTree from '../components/OrganizeTree.vue'
 import ProductTree from '../components/ProductList.vue'
@@ -87,14 +108,25 @@ import { getBoutiqueList, delBoutique, addBoutique, modifyBoutiqueTop } from './
 export default {
   components: {
     organizeTree,
-    ProductTree
+    ProductTree,
+    VueCoreImageUpload
   },
   data() {
     return {
+      upldata: {},
+      uplOption: {
+        url: '',
+        showUpl: false,
+        imgDataUrl: ''
+      },
       listHeaderData: [
         {
           title: '报刊名',
           key: 'pressName'
+        },
+        {
+          title: '报刊年份',
+          key: 'pressYear'
         },
         {
           title: '轮播图置顶',
@@ -122,7 +154,7 @@ export default {
                     }
                     let delInfo = await delBoutique(param)
                     if (delInfo.status === 200) {
-                      vm.$Message.success('取消成功!')
+                      vm.$Message.success('操作成功!')
                       vm.listData = remove(vm.listData, item => item.id !== params.row.id)
                     } else {
                       vm.$Message.warning(delInfo.message)
@@ -142,11 +174,14 @@ export default {
                       pressId: params.row.pressId,
                       orgId: vm.orgId,
                       pressYear: params.row.pressYear,
-                      operatorType: params.row.isBanner === 0 ? 1 : 0
+                      pressUrl: params.row.pressUrl,
+                      bannerPicUrl: params.row.bannerPicUrl,
+                      pressCatalogId: params.row.pressCatalogId,
+                      isBanner: params.row.isBanner === 0 ? 1 : 0
                     }
                     let mdfResult = await modifyBoutiqueTop(param)
                     if (mdfResult.status === 200) {
-                      vm.$Message.success('取消成功!')
+                      vm.$Message.success('操作成功!')
                       map(vm.listData, item => {
                         if (item.pressId === params.row.pressId) {
                           item.isBanner = (item.isBanner === 0 ? 1 : 0)
@@ -157,7 +192,7 @@ export default {
                     }
                   }
                 }
-              }, params.row.isBanner === 0 ? '设置置顶' : '取消置顶'),
+              }, params.row.isBanner === 0 ? '设置置顶' : '取消置顶')
             ])
           }
         }
@@ -191,6 +226,7 @@ export default {
         pressUrl: '',
         isBanner: 1,
         bannerPicUrl: '',
+        cataId: '',
         distId: this.$store.state.login.distId
       }
     }
@@ -209,6 +245,9 @@ export default {
     })
   },
   methods: {
+    imageuploaded() {
+      // 上传成功， 参数( jsonData, field )
+    },
     async saveAndsubmit() {
       let addInfo = await addBoutique(this.jpInfo)
       if (addInfo.status === 200) {
@@ -222,6 +261,7 @@ export default {
           pressUrl: '',
           isBanner: 1,
           bannerPicUrl: '',
+          cataId: '',
           discId: this.$store.state.login.discId
         }
         this.pressName = '请选择报刊'
@@ -232,10 +272,10 @@ export default {
       }
     },
     searchBout(event) {
+      console.log('进入搜索')
       this.currentPage = 1
       event.stopPropagation()
       this.getBoutiqueLists()
-      debugger
     },
     $_clickAddPress() {
       this.visibleBox = !this.visibleBox
@@ -244,8 +284,9 @@ export default {
       this.orgId = orgId
       this.orgName = orgName
       this.jpInfo.distId = distId
-      Bus.$emit('orgIdChanged', { orgId })
+      this.currentPage = 1
       this.getBoutiqueLists()
+      Bus.$emit('orgIdChanged', { orgId, distId })
     },
     changePage(pageNow) {
       this.currentPage = pageNow
@@ -281,7 +322,7 @@ export default {
       $event.stopPropagation()
     },
     checkIsProduct({
-      pressCatalogId, orgId, pressId, pressName, pressYear, pressUrl, isBanner, bannerPicUrl
+      pressCatalogId, orgId, pressId, pressName, pressYear, pressUrl, isBanner, bannerPicUrl, cataId
     }) {
       this.jpInfo.pressCatalogId = pressCatalogId
       this.jpInfo.orgId = orgId
@@ -289,6 +330,7 @@ export default {
       this.jpInfo.pressName = pressName
       this.jpInfo.pressYear = pressYear
       this.jpInfo.pressUrl = pressUrl
+      this.jpInfo.cataId = cataId
       this.jpInfo.bannerPicUrl = ''
       this.pressName = pressName
       this.visibleBk = false
@@ -302,8 +344,8 @@ export default {
 
 <style lang="less" scoped>
 .area-box {
-  width: 300px;
-  max-height: 200px;
+  width: 400px;
+  max-height: 400px;
   overflow-y: auto;
 }
 .boutique-container {
@@ -396,5 +438,15 @@ export default {
 }
 .cust-list-item {
   margin-bottom: 20px;
+}
+.upl-box {
+  height: 200px;
+  width: 375px;
+}
+.area-box.books {
+  .components-tree {
+    overflow-y: hidden!important;
+    max-height: none!important;
+  }
 }
 </style>

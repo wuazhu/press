@@ -12,6 +12,9 @@ export default {
     state.token = payload.GLOBAL_SIGN                 // 签名
     state.uuid = payload.UUID                         // 退出登录需要
     state.distId = payload.DISTRICT_ID                // 区域 id
+    state.isAdmin = payload.IS_ADMIN                  // 是否管理员
+    state.roles = payload.ROLES                       // 角色列表
+    state.code = payload.CODE                         // CODE
   },
   [constants.DO_LOGOUT](state) {
     state.logined = false
@@ -23,6 +26,9 @@ export default {
     state.token = null
     state.uuid = null
     state.distId = null
+    state.isAdmin = null
+    state.roles = null
+    state.code = null
   },
   [constants.FETCH_AUTH](state, payload) {
     state.logined = payload.success

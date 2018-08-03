@@ -1,6 +1,8 @@
-import * as constants from './constant'
-import services from '../../../conf/services'
-import http from '../../../http'
+import { strToBase64 } from '../../utils/utils.js'
+import * as constants from './constant.js'
+import services from '../../../conf/services.js'
+import http from '../../../http.js'
+
 const KEY_BK_TOKEN = 'bk-token'
 const cnpSign = 'CNPSIGN'
 let { $http } = http
@@ -52,4 +54,24 @@ export async function doLogout({ commit }, uuid) {
       responseMsg: '服务错误'
     }
   }
+}
+
+// 获取验证码
+export async function getVerifiyCode({ commit }) {
+  let res = await $http.post(services.verifiyCode, {params: ''})
+  let response = {
+    status: 400,
+    message: '请求验证码失败',
+    data: {
+      url: '',
+      code: 'itzx'
+    }
+  }
+  if (res.data && res.data.data && res.data.data.responseCode === '0') {
+    response.status = 200
+    response.message = res.data.data.responseMsg
+    response.data.url = res.data.data.imageSrc
+    response.data.code = strToBase64(res.data.data.imageCode)
+  }
+  return response
 }

@@ -53,41 +53,73 @@
       @on-cancel="cancelPresiders">
       <div>
         <div class="d-flex justify-content-between">
-          <div><t-button type="outline" class="clo-2" size="sm">批量移动到段道</t-button></div>
-          <div class="text-right" style="width:300px;">
+          <div><t-button :disabled="batchDis" type="outline" class="clo-2" size="sm" @click="batchToRoad">批量移动到段道</t-button></div>
+          <div class="text-right" style="width:300px;" @keyup.enter="searchCustList">
             <t-input v-model="custSearchInput" placeholder="请输入搜索内容" size="sm" style="width:140px;"></t-input>
-            <t-button type="primary" size="sm">查询</t-button>
+            <t-button type="primary" size="sm" @click="searchCustList">查询</t-button>
           </div>
         </div>
         <t-table
           :columns="custHeader"
           :data="custData"
           :all-ellipsis="true"
-          line>
+          line
+          @on-select="chooseCustSingle"
+          @on-select-cancel="cancelChooseCustSingle"
+          @on-select-all="selectAllCust"
+          @on-select-all-cancel="cancelSelectAllCust">
         </t-table>
       </div>
       <div class="table-paging text-right mt-2">
-        <t-pager :total="custTotal" :current="custCurrentPage" :page-size="10" @on-change="custChangePage"></t-pager>
+        <t-pager :total="custTotal" :current="custCurrentPage" :page-size="5" @on-change="custChangePage"></t-pager>
       </div>
       <div slot="footer"></div>
     </t-modal>
     <t-modal
-      v-model="showInnerCust"
+      v-model="showRegList"
       :closable="false"
-      title="查看段道内客户"
-      width="580"
+      title="选择一个分配的段道"
+      width="500"
       style="height:351px;"
-      @on-ok="comfirmPresiders"
-      @on-cancel="cancelPresiders">
-      
+      @on-cancel="cancelChangeRegion">
+      <t-table :columns="regionModalHeader" :data="regionModalData" all-ellipsis highlight-row border @on-current-change="selOneRegion"></t-table>
+      <div class="text-right mt-2 pb-2 border-bottom inner-pager">
+        <t-pager :total="totalInner" :current="currentPageInner" :page-size="5" @on-change="regionInnerChangePage"></t-pager>
+      </div>
+      <div slot="footer">
+        <div class="text-right">
+          <t-button type="outline" size="sm" @click="cancelChangeRegion">取 消</t-button>
+          <t-button type="primary" size="sm" @click="comfirmChangeRegion">确 认</t-button>
+        </div>
+      </div>
+    </t-modal>
+    <t-modal
+      v-model="confirmChange"
+      :closable="false"
+      width="400"
+      @on-cancel="submitCancel">
+      <div>
+        <div>
+          <t-alert type="danger" show-icon>如下人员已存在段道内, 确认是否提交?</t-alert>
+          <div>
+            <t-tag v-for="(m, mid) in existsCustList" :key="mid" state="muted">{{ m }}</t-tag>
+          </div>
+        </div>
+      </div>
+      <div slot="footer">
+        <div class="text-right">
+          <t-button type="outline" size="sm" style="width:80px" @click="submitCancel">取 消</t-button>
+          <t-button type="primary" size="sm" style="width:80px" @click="submitConfirm">确 认</t-button>
+        </div>
+      </div>
     </t-modal>
   </div>
 </template>
 
 <script>
-import { indexOf, remove, forEach } from 'lodash'
+import { indexOf, remove, forEach, filter, map, uniqBy, concat, pick } from 'lodash'
 import organizeTree from '../components/OrganizeTree'
-import { getRoadList, getPresiders, savePresiders } from './server'
+import { getRoadList, getPresiders, savePresiders, regCustList, checkRegion, confirmCustReg } from './server'
 
 export default {
   components: {
@@ -95,26 +127,38 @@ export default {
   },
   data() {
     return {
+      custIdSingle: '',
+      cid: null,
+      custIds: [],
+      singleSelect: false,
+      innerRegionId: null,
       custTotal: 0,
       custCurrentPage: 1,
       custSearchInput: '',
       showInnerCust: false,
+      showRegList: false,
+      confirmChange: false,
       rdSgId: null,
       orgId: this.$store.state.login.orgId,
+      regionId: null,
       presiderData: [],
       presiderChecked: [],
       newPresiders: [],
       removePresiders: [],
-      custData: [
+      custData: [],
+      regionModalData: [],
+      regionModalHeader: [
         {
-          custName: '客户',
-          contactType: '1',
-          address: '1234123412341234123412341234'
+          title: '段道名',
+          key: 'name'
         },
         {
-          custName: '客户',
-          contactType: '2',
-          address: '1234123412341234123412341234'
+          title: '描述',
+          key: 'desc'
+        },
+        {
+          title: '责任人',
+          key: 'presider'
         }
       ],
       custHeader: [
@@ -130,7 +174,7 @@ export default {
         },
         {
           title: '联系方式',
-          key: 'contactType'
+          key: 'phone'
         },
         {
           title: '地址',
@@ -146,6 +190,12 @@ export default {
                 style: {'color': '#108EEA', 'cursor': 'pointer'},
                 on: {
                   async click() {
+                    vm.singleSelect = true
+                    vm.custIdSingle = ''
+                    vm.custIdSingle = params.row.custId
+                    vm.cid = params.row.cid
+                    vm.$_openRegionList()
+                    vm.getRoadListInner()
                   }
                 }
               }, '移到其他段道')
@@ -191,13 +241,14 @@ export default {
                     }
                   }
                 }
-              }, '分配责任人'),
+              }, params.row.type === 0 ? '分配责任人' : null),
               h('span', {
                 style: {'color': '#108EEA', 'cursor': 'pointer', 'margin-left': '20px'},
                 on: {
                   async click() {
                     vm.showInnerCust = true
-                    console.log(123)
+                    vm.regionId = params.row.id
+                    vm.searchCustList()
                   }
                 }
               }, '段道内客户')
@@ -207,24 +258,232 @@ export default {
       ],
       roadData: [],
       currentPage: 1,
+      currentPageInner: 1,
+      totalInner: 0,
       total: 0,
-      isShow: false
+      isShow: false,
+      existsCustList: [],
+      cacheSelectList: []
     }
   },
   computed: {
+    batchDis() {
+      return this.cacheSelectList.length <= 0
+    }
   },
   created() {
     this.getRoadListData()
   },
   methods: {
+    batchToRoad() {
+      this.singleSelect = false
+      this.$_openRegionList()
+      this.getRoadListInner()
+    },
+    matchArr(custList) {
+      // 匹配 _checked 属性
+      let ret = map(custList, custItem => {
+        if (this.cacheSelectList.length === 0) return custItem
+        forEach(this.cacheSelectList, cacheItem => {
+          if (custItem.custId === cacheItem.custId) {
+            custItem._checked = true
+          }
+        })
+        return custItem
+      })
+      return ret
+    },
+    selectAllCust(selection) {
+      // 选择所有客户
+      this.cacheSelectList = uniqBy(concat(this.cacheSelectList, this.custData), 'custId')
+      console.log('全选后的', this.cacheSelectList)
+    },
+    cancelSelectAllCust() {
+      // 取消全选客户
+      forEach(this.custData, cust => {
+        remove(this.cacheSelectList, c => {
+          return cust.custId === c.custId
+        })
+      })
+      console.log(this.cacheSelectList)
+    },
+    chooseCustSingle(selection, row) {
+      // 单选客户
+      this.cacheSelectList.push(row)
+    },
+    cancelChooseCustSingle(selection, row) {
+      // 取消单选客户
+      this.cacheSelectList = filter(this.cacheSelectList, fi => {
+        return fi.custId !== row.custId
+      })
+      console.log(this.cacheSelectList)
+    },
+    selOneRegion(currentRow) {
+      // 单选段道列表某行
+      this.innerRegionId = currentRow.id
+    },
+    submitCancel() {
+      // 取消提交
+      this.$_closeSubmitModal()
+      this.existsCustList = []
+    },
+    submitConfirm() {
+      // 确认提交
+      this.$_submit()
+    },
+    $_closeSubmitModal() {
+      this.confirmChange = false
+    },
+    $_openSubmitModal() {
+      this.confirmChange = true
+    },
+    $_openRegionList() {
+      this.showRegList = true
+    },
+    $_closeRegionList() {
+      this.showRegList = false
+    },
+    cancelChangeRegion() {
+      // 取消选定移动的段道
+      this.singleSelect = false
+      this.innerRegionId = null
+      this.currentPageInner = 1
+      this.showRegList = false
+    },
+    async comfirmChangeRegion() {
+      // 确定选定移动的段道
+      if (this.singleSelect) {
+        // 是否来自单选
+        if (!this.innerRegionId) {
+          this.$Message.warning('请指定一个段道!')
+        } else {
+          let param = {
+            regionId: this.innerRegionId,
+            orgId: this.orgId,
+            custIds: this.custIdSingle
+          }
+          let checkInfo = await checkRegion(param)
+          if (checkInfo.status === 200) {
+            if (!checkInfo.data.flg) {
+              this.$_submit()
+              this.confirmChange = false
+            } else {
+              this.confirmChange = true
+              this.existsCustList = []
+              this.existsCustList = checkInfo.data.custNames
+            }
+          } else {
+            this.$Message.danger(checkInfo.message)
+          }
+        }
+      } else {
+        // 来自多选
+        if (!this.innerRegionId) {
+          this.$Message.warning('请指定一个段道!')
+        } else {
+          let ids = ''
+          forEach(this.cacheSelectList, (cs, ind) => {
+            if (ind === this.cacheSelectList.length - 1) {
+              ids += cs.custId
+            } else {
+              ids += cs.custId + ','
+            }
+          })
+          let param = {
+            regionId: this.innerRegionId,
+            orgId: this.orgId,
+            custIds: ids
+          }
+          let checkInfo = await checkRegion(param)
+          if (checkInfo.status === 200) {
+            if (!checkInfo.data.flg) {
+              this.$_submit()
+              this.confirmChange = false
+            } else {
+              this.confirmChange = true
+              this.existsCustList = []
+              this.existsCustList = checkInfo.data.custNames
+            }
+          } else {
+            this.$Message.danger(checkInfo.message)
+          }
+        }
+      }
+    },
+    $_resetAllInfo() {
+      this.cid = null
+      this.innerRegionId = null
+      this.custIdSingle = ''
+      this.custSearchInput = ''
+      this.showInnerCust = false
+      this.showRegList = false
+      this.confirmChange = false
+      this.cacheSelectList = []
+    },
+    async $_submit() {
+      let param = {
+        regionId: this.innerRegionId,
+        orgId: this.orgId,
+        custList: []
+      }
+      if (this.singleSelect) {
+        param.custList.push({
+          custId: this.custIdSingle,
+          cid: this.cid
+        })
+      } else {
+        forEach(this.cacheSelectList, csl => {
+          param.custList.push(pick(csl, ['cid', 'custId']))
+        })
+      }
+      let result = await confirmCustReg(param)
+      if (result.status === 200) {
+        this.$Message.info('切换段道成功!')
+        this.$_resetAllInfo()
+      } else {
+        this.$Notice.danger({
+          title: `code: ${result.status}`,
+          desc: result.message
+        })
+      }
+    },
+    async searchCustList() {
+      let custParam = {
+        regionId: this.regionId,
+        orgId: this.orgId,
+        custName: this.custSearchInput,
+        currentPage: this.custCurrentPage,
+        pageSize: 5
+      }
+      let custListResult = await regCustList(custParam)
+      if (custListResult.status === 200) {
+        this.custTotal = custListResult.data.total
+        let arr = []
+        if (this.cacheSelectList.length > 0) {
+          arr = this.matchArr(custListResult.data.list)
+        } else {
+          arr = custListResult.data.list
+        }
+        this.custData = arr
+      }
+    },
+    // 弹窗内段道列表切换分页
+    regionInnerChangePage(page) {
+      this.currentPageInner = page
+      this.getRoadListInner()
+    },
     custChangePage(page) {
       this.custCurrentPage = page
+      this.searchCustList()
     },
     cancelPresiders() {
+      this.custCurrentPage = 1
       this.newPresiders = []
       this.removePresiders = []
       this.presiderChecked = []
       this.presiderData = []
+      this.cacheSelectList = []
+      this.$_resetAllInfo()
     },
     async comfirmPresiders() {
       let params = {
@@ -301,6 +560,35 @@ export default {
       this.currentPage = pageNow
       this.getRoadListData()
     },
+    async getRoadListInner() {
+      let params = {
+        orgId: this.orgId,
+        currentPage: this.currentPageInner,
+        pageSize: 5
+      }
+      let roadListData = await getRoadList(params)
+      if (roadListData.status === 200) {
+        if (roadListData.data) {
+          this.totalInner = roadListData.data.total
+          let _newData = roadListData.data.data
+          _newData.forEach((item, key) => {
+            item.presider = item.presider ? item.presider.join(', ') : '暂无责任人'
+          })
+          this.regionModalData = _newData
+        }
+      } else {
+        this.totalInner = 0
+        this.regionModalData = []
+        if (roadListData.status === 503) {
+          this.$Message.warning('暂无段道信息')
+        } else {
+          this.$Notice.danger({
+            desc: roadListData.message,
+            title: `错误码: ${roadListData.status}`
+          })
+        }
+      }
+    },
     async getRoadListData() {
       let params = {
         orgId: this.orgId,
@@ -356,5 +644,8 @@ export default {
 }
 .transfer-list {
   width: 200px!important;
+}
+.inner-pager {
+  margin-bottom: -10px;
 }
 </style>

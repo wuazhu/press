@@ -34,7 +34,6 @@ export default {
       let timeSrc = urlStrr[urlStrr.length - 1]
       let pth = '/uspa-web/pc/iframe.html?DATE_TMP='
       this.pageUrl = `${pth + timeSrc}&menuName=${rode}`
-      console.log(this.pageUrl)
     }
   }
 }

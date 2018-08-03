@@ -13,7 +13,7 @@
       <div class="col-9">
         <div class="content-right">
           <div class="cust-list-item border">
-            <div class="org-title">员工列表</div>
+            <div class="org-title">考核目标设置</div>
             <t-table :columns="listHeaderData" :data="listData" :all-ellipsis="true" line></t-table>
           </div>
           <div class="table-paging text-right">
@@ -61,11 +61,11 @@ export default {
       yearPrevAndNext: [],
       listHeaderData: [
         {
-          title: '员工',
+          title: '员工编号',
           key: 'staffId'
         },
         {
-          title: '姓名',
+          title: '员工名称',
           key: 'staffName'
         },
         {

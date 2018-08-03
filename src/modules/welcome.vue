@@ -20,11 +20,11 @@
           <t-icon type="home"></t-icon>
           <span>首页</span>
         </t-menu-item>
-        <t-menu-item name="/circulate/setCheckGoal">
+        <t-menu-item v-if="(isAdmin !== 'true')" name="/circulate/setCheckGoal">
           <t-icon type="cash-usd"></t-icon>
           <span>流转额设置</span>
         </t-menu-item>
-        <t-submenu name="sys">
+        <t-submenu v-if="(isAdmin === 'true')" name="sys">
           <template slot="title">
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
@@ -57,7 +57,7 @@
             <t-menu-item name="/uspaManage/uspa/roleFunctionRelaManager">菜单与功能集绑定</t-menu-item>
           </t-submenu>
         </t-submenu>
-        <t-submenu name="road">
+        <t-submenu v-if="(isAdmin !== 'true')" name="road">
           <template slot="title">
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
@@ -65,14 +65,14 @@
           <t-menu-item name="/road/allot">段道分配</t-menu-item>
           <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
         </t-submenu>
-        <t-submenu name="devices">
+        <t-submenu v-if="(isAdmin !== 'true')" name="devices">
           <template slot="title">
             <t-icon type="laptop-mac"></t-icon>
             <span>设备管理</span>
           </template>
           <t-menu-item name="/devices/accountAuthor">设备授权</t-menu-item>
         </t-submenu>
-        <t-submenu name="product">
+        <t-submenu v-if="(isAdmin !== 'true')" name="product">
           <template slot="title">
             <t-icon type="chart-bar"></t-icon>
             <span>产品分类</span>
@@ -92,6 +92,7 @@
           </t-badge>
           <t-dropdown-menu slot="list">
             <t-dropdown-item><router-link to="/user">个人中心</router-link></t-dropdown-item>
+            <t-dropdown-item><router-link to="/modifyPassword">修改密码</router-link></t-dropdown-item>
             <t-dropdown-item @on-click="clickLogoutMenu">退出系统</t-dropdown-item>
           </t-dropdown-menu>
         </t-dropdown>
@@ -136,7 +137,8 @@ export default {
   },
   computed: {
     ...mapState({
-      uuid: state => state.login.uuid
+      uuid: state => state.login.uuid,
+      isAdmin: state => state.login.isAdmin
     }),
     bgColor() {
       return !(this.$route.path === '/bk')
