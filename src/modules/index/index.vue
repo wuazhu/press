@@ -226,7 +226,6 @@ export default {
   },
   methods: {
     $_resetEleWidth() {
-      console.log(12345)
       this.$refs.barChartRef.resize()
       this.$refs.lineChartRef.resize()
     },

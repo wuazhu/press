@@ -296,7 +296,6 @@ export default {
     selectAllCust(selection) {
       // 选择所有客户
       this.cacheSelectList = uniqBy(concat(this.cacheSelectList, this.custData), 'custId')
-      console.log('全选后的', this.cacheSelectList)
     },
     cancelSelectAllCust() {
       // 取消全选客户
@@ -305,7 +304,6 @@ export default {
           return cust.custId === c.custId
         })
       })
-      console.log(this.cacheSelectList)
     },
     chooseCustSingle(selection, row) {
       // 单选客户
@@ -316,7 +314,6 @@ export default {
       this.cacheSelectList = filter(this.cacheSelectList, fi => {
         return fi.custId !== row.custId
       })
-      console.log(this.cacheSelectList)
     },
     selOneRegion(currentRow) {
       // 单选段道列表某行

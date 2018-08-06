@@ -68,7 +68,8 @@ export default {
         userCode: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
         passWord: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
         verify: [{ required: true, message: '验证码不能为空', trigger: 'blur' }]
-      }
+      },
+      roleIdenty: null
     }
   },
   computed: {
@@ -94,23 +95,44 @@ export default {
     }),
     async getVCode() {
       let vCode = await this.getVerifiyCode()
-      console.log(vCode)
       if (vCode.status === 200) {
         this.qrUrl = vCode.data.url
         this.qrCodeVal = vCode.data.code
       }
     },
-    $_chekIden(rolesList) {
-      if (find(rolesList, {roleId: 120000600})) {
-        // 系统管理员权限
+    $_chekIden(rol) {
+      // 120000200 业务管理员
+      // 120000400 收订
+      // 120000600 系统管理员
+      // 124000800 投递人员
+      if (this.$_checkYwgl(rol) || this.$_checkXtgl(rol)) {
         return 1
       } else {
-        if (find(rolesList, {roleId: 120000200})) {
-          // 业务管理员
-          return 2
-        } else {
-          return 3
-        }
+        return 2
+      }
+    },
+    $_checkYwgl(rol) {
+      // 校验业务管理人员
+      if (find(rol, {roleId: 120000200})) {
+        return true
+      }
+    },
+    $_checkXtgl(rol) {
+      // 校验系统管理人员
+      if (find(rol, {roleId: 120000600})) {
+        return true
+      }
+    },
+    $_checkSdry(rol) {
+      // 校验收递管理人员
+      if (find(rol, {roleId: 120000400})) {
+        return true
+      }
+    },
+    $_checkStgl(rol) {
+      // 校验收投管理人员
+      if (find(rol, {roleId: 120000800})) {
+        return true
       }
     },
     doLoginHdl() {
@@ -135,7 +157,7 @@ export default {
               // 124000800 投递人员
               let rolesList = response.data.ROLES
               const roleType = this.$_chekIden(rolesList)
-              if (roleType === 3) {
+              if (roleType > 1) {
                 this.$Message.warning('🚫非系统人员, 禁止登录!', 6)
                 return
               }

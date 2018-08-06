@@ -9,6 +9,7 @@
           <img src="/static/images/post-logo.png" alt="" class="logo-text ml-2">
         </span>
       </router-link>
+      {{ roleIdenty }}
       <t-menu
         :open-position="openPosition"
         :class="[{'menu--folded': isOpen===false}]"
@@ -20,11 +21,11 @@
           <t-icon type="home"></t-icon>
           <span>首页</span>
         </t-menu-item>
-        <t-menu-item v-if="(isAdmin !== 'true')" name="/circulate/setCheckGoal">
+        <t-menu-item v-if="(roleIdenty === 2 || roleIdenty === 3)" name="/circulate/setCheckGoal">
           <t-icon type="cash-usd"></t-icon>
           <span>流转额设置</span>
         </t-menu-item>
-        <t-submenu v-if="(isAdmin === 'true')" name="sys">
+        <t-submenu v-if="(roleIdenty === 1 || roleIdenty === 3)" name="sys">
           <template slot="title">
             <t-icon type="alert-octagram"></t-icon>
             <span>系统管理</span>
@@ -57,7 +58,7 @@
             <t-menu-item name="/uspaManage/uspa/roleFunctionRelaManager">菜单与功能集绑定</t-menu-item>
           </t-submenu>
         </t-submenu>
-        <t-submenu v-if="(isAdmin !== 'true')" name="road">
+        <t-submenu v-if="(roleIdenty === 2 || roleIdenty === 3)" name="road">
           <template slot="title">
             <t-icon type="road-variant"></t-icon>
             <span>段道管理</span>
@@ -65,14 +66,14 @@
           <t-menu-item name="/road/allot">段道分配</t-menu-item>
           <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
         </t-submenu>
-        <t-submenu v-if="(isAdmin !== 'true')" name="devices">
+        <t-submenu v-if="(roleIdenty === 2 || roleIdenty === 3)" name="devices">
           <template slot="title">
             <t-icon type="laptop-mac"></t-icon>
             <span>设备管理</span>
           </template>
           <t-menu-item name="/devices/accountAuthor">设备授权</t-menu-item>
         </t-submenu>
-        <t-submenu v-if="(isAdmin !== 'true')" name="product">
+        <t-submenu v-if="(roleIdenty === 2 || roleIdenty === 3)" name="product">
           <template slot="title">
             <t-icon type="chart-bar"></t-icon>
             <span>产品分类</span>
@@ -119,7 +120,7 @@
   </div>
 </template>
 <script>
-import { forEach } from 'lodash'
+import { forEach, find } from 'lodash'
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -132,13 +133,14 @@ export default {
       isUspa: false,
       isOpen: this.initSidebarState(),
       openPosition: this.initMenuPosition(),
-      breadList: []
+      breadList: [],
+      roleList: this.$store.state.login.roles,
+      roleIdenty: null
     }
   },
   computed: {
     ...mapState({
-      uuid: state => state.login.uuid,
-      isAdmin: state => state.login.isAdmin
+      uuid: state => state.login.uuid
     }),
     bgColor() {
       return !(this.$route.path === '/bk')
@@ -165,6 +167,7 @@ export default {
     }
   },
   created() {
+    this.$_chekIden()
     this.$_changeBreadcrumb()
     this.$_checkUspa()
   },
@@ -184,6 +187,70 @@ export default {
     ...mapActions('login', {
       doLogoutAc: 'doLogout'
     }),
+    $_chekIden() {
+      // 120000200 业务管理员
+      // 120000400 收订
+      // 120000600 系统管理员
+      // 124000800 投递人员
+      // 1 => 纯系统管理 只有系统管理菜单
+      // 2 => 纯业务管理 没有系统管理菜单
+      // 3 => 啥都有
+      if (this.roleList.length === 1) {
+        if (this.$_checkXtgl()) {
+          this.roleIdenty = 1
+        } else if (this.$_checkYwgl()) {
+          this.roleIdenty = 2
+        }
+      } else if (this.roleList.length === 2) {
+        if (this.$_checkXtgl() && (this.$_checkSdry() || this.$_checkStgl())) {
+          // 系统管理员 + 投递 | 收投
+          this.roleIdenty = 1
+        } else if (this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl())) {
+          // 业务管理员 + 投递 | 收投
+          this.roleIdenty = 2
+        } else if (this.$_checkXtgl() && this.$_checkYwgl()) {
+          // 业务管理员 + 系统管理员
+          this.roleIdenty = 3
+        }
+      } else if (this.roleList.length === 3) {
+        if (this.$_checkYwgl() && this.$_checkSdry() & this.$_checkStgl()) {
+          // 业务管理员 + 投递 + 收投
+          this.roleIdenty = 2
+        } else if (this.$_checkXtgl() && this.$_checkSdry() & this.$_checkStgl()) {
+          // 业务管理员 + 投递 + 收投
+          this.roleIdenty = 1
+        } else if (this.$_checkXtgl() && this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl())) {
+          // 业务管理员 + 系统管理员
+          this.roleIdenty = 3
+        }
+      } else {
+        this.roleIdenty = 3
+      }
+    },
+    $_checkYwgl() {
+      // 校验业务管理人员
+      if (find(this.roleList, {roleId: 120000200})) {
+        return true
+      }
+    },
+    $_checkXtgl() {
+      // 校验系统管理人员
+      if (find(this.roleList, {roleId: 120000600})) {
+        return true
+      }
+    },
+    $_checkSdry() {
+      // 校验收递管理人员
+      if (find(this.roleList, {roleId: 120000400})) {
+        return true
+      }
+    },
+    $_checkStgl() {
+      // 校验收投管理人员
+      if (find(this.roleList, {roleId: 120000800})) {
+        return true
+      }
+    },
     async clickLogoutMenu() {
       let logout = await this.doLogoutAc(this.uuid)
       if (logout.responseCode === '0') {

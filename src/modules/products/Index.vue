@@ -60,46 +60,60 @@
                 </t-select>
               </div>
             </t-form-item>
-            <t-form-item label="轮播图片上传" prop="input4" class="upls">
+            <!-- <t-form-item label="轮播图片上传" prop="input4" class="upls">
               <div class="img-upload">
-                <!-- <t-upload ref="uploader" :show-upload-list="false" :format="['jpg','jpeg','png']" :max-size="2048" multiple type="drag" action="//jquery-file-upload.appspot.com/" class="demo-upload-list">
-                  <div>
-                    <i class="aid aid-plus"></i>
-                    <i class="upload-txt">上传图片</i>
-                  </div>
-                </t-upload> -->
                 <div class="upl-box">
-                  <!-- <vue-cropper
-                    ref="cropper"
-                    :img="uplOption.img"
-                    :output-size="uplOption.size"
-                    :output-type="uplOption.outputType"
-                    :info="uplOption.info"
-                    :fixed="uplOption.fixed"
-                    :fixedBox="uplOption.fixedBox"
-                  ></vue-cropper> -->
-                  <!-- <a class="btn" @click="toggleUplShow">设置头像</a> -->
-                  <vue-core-image-upload
-                    class="btn btn-primary"
-                    :crop="false"
-                    @imageuploaded="imageuploaded"
-                    :data="upldata"
-                    :max-file-size="5242880"
-                    url="/subpress-web/api/v1/upload" >
-                  </vue-core-image-upload>
+                  <t-button @click="changeImg" class="btn">上传图片</t-button>
+                  <vue-cropper
+                    ref="cropperUpl"
+                    :img="uplOpts.img"
+                    :outputSize="uplOpts.size"
+                    :outputType="uplOpts.outputType"
+                    :info="uplOpts.info"
+                    :canScale="uplOpts.canScale"
+                    :autoCrop="uplOpts.autoCrop"
+                    :autoCropWidth="uplOpts.autoCropWidth"
+                    :autoCropHeight="uplOpts.autoCropHeight"
+                    :fixed="uplOpts.fixed"
+                    :fixedNumber="uplOpts.fixedNumber"
+                  ></vue-cropper>
                 </div>
               </div>
-            </t-form-item>
+            </t-form-item> -->
           </t-form>
         </div>
       </div>
     </t-slipbox>
+    <!-- <t-modal
+      v-model="showUpl"
+      width="800"
+      height="500">
+      <div class="cut-box">
+        <vue-cropper
+          ref="cropperUpl"
+          :img="uplOpts.img"
+          :outputSize="uplOpts.size"
+          :outputType="uplOpts.outputType"
+          :info="uplOpts.info"
+          :canScale="uplOpts.canScale"
+          :autoCrop="uplOpts.autoCrop"
+          :autoCropWidth="uplOpts.autoCropWidth"
+          :autoCropHeight="uplOpts.autoCropHeight"
+          :fixed="uplOpts.fixed"
+          :fixedNumber="uplOpts.fixedNumber"
+          :original="true"
+          :fixedBox="false"
+          :canMoveBox="true">
+        </vue-cropper>
+      </div>
+    </t-modal> -->
   </div>
 </template>
 
 <script>
 import { remove, map } from 'lodash'
-import VueCoreImageUpload from 'vue-core-image-upload'
+// import VueCoreImageUpload from 'vue-core-image-upload'
+import VueCropper from 'vue-cropper'
 import Bus from '../../bus.js'
 import organizeTree from '../components/OrganizeTree.vue'
 import ProductTree from '../components/ProductList.vue'
@@ -109,15 +123,24 @@ export default {
   components: {
     organizeTree,
     ProductTree,
-    VueCoreImageUpload
+    VueCropper
   },
   data() {
     return {
-      upldata: {},
-      uplOption: {
-        url: '',
-        showUpl: false,
-        imgDataUrl: ''
+      showUpl: false,
+      uplOpts: {
+        img: 'http://ofyaji162.bkt.clouddn.com/bg1.jpg',
+        info: true,
+        size: 1,
+        outputType: 'png',
+        canScale: true,
+        autoCrop: true,
+        // 只有自动截图开启 宽度高度才生效
+        autoCropWidth: 75,
+        autoCropHeight: 40,
+        // 开启宽度和高度比例
+        fixed: true,
+        fixedNumber: [1.875, 1]
       },
       listHeaderData: [
         {
@@ -245,8 +268,8 @@ export default {
     })
   },
   methods: {
-    imageuploaded() {
-      // 上传成功， 参数( jsonData, field )
+    changeImg() {
+      this.showUpl = !this.showUpl
     },
     async saveAndsubmit() {
       let addInfo = await addBoutique(this.jpInfo)
@@ -272,7 +295,6 @@ export default {
       }
     },
     searchBout(event) {
-      console.log('进入搜索')
       this.currentPage = 1
       event.stopPropagation()
       this.getBoutiqueLists()
@@ -448,5 +470,9 @@ export default {
     overflow-y: hidden!important;
     max-height: none!important;
   }
+}
+.cut-box {
+  width:350px;
+  height: 200px;
 }
 </style>

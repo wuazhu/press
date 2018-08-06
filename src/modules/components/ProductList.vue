@@ -23,7 +23,6 @@
 </template>
 <script>
 import Bus from '../../bus.js'
-import { debounce } from 'lodash'
 import { getProductsForBoutique } from './server'
 
 export default {
@@ -41,6 +40,11 @@ export default {
       rres: null
     }
   },
+  watch: {
+    bookName(val) {
+      this.$refs.prodTreeRef.filter(val)
+    }
+  },
   created() {
     Bus.$on('orgIdChanged', ({ orgId, distId }) => {
       this.orgId = orgId
@@ -49,12 +53,6 @@ export default {
         this.$refs.prodTreeRef.root.doCreateChildren(e)
       })
     })
-  },
-  watch: {
-    bookName(val) {
-      this.$refs.prodTreeRef.filter(val)
-      // debounce(this.$refs.prodTreeRef.filter(val), 1000)
-    }
   },
   methods: {
     filterNode(value, data) {

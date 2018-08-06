@@ -14,13 +14,13 @@
                 <t-input v-model="userInfo.code" disabled placeholder="用户名"></t-input>
               </t-form-item>
               <t-form-item label="旧密码:" prop="oldPassword">
-                <t-input type="password" v-model="userInfo.oldPassword" placeholder="请输入旧密码..."></t-input>
+                <t-input v-model="userInfo.oldPassword" type="password" placeholder="请输入旧密码..."></t-input>
               </t-form-item>
               <t-form-item label="新密码:" prop="newPassword">
-                <t-input type="password" v-model="userInfo.newPassword" placeholder="请输入新密码..."></t-input>
+                <t-input v-model="userInfo.newPassword" type="password" placeholder="请输入新密码..."></t-input>
               </t-form-item>
               <t-form-item label="确认密码:" prop="confirmPass">
-                <t-input type="password" v-model="userInfo.confirmPass" placeholder="请确认密码..."></t-input>
+                <t-input v-model="userInfo.confirmPass" type="password" placeholder="请确认密码..."></t-input>
               </t-form-item>
             </t-form>
             <t-button type="primary" block @click="changePass">确认修改</t-button>
@@ -55,8 +55,8 @@ export default {
         confirmPass: ''
       },
       passRules: {
-        oldPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur'}],
-        newPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur'}],
+        oldPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
+        newPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
         confirmPass: [{ required: true, validator: CHECKSAME, trigger: 'blur' }]
       }
     }
@@ -84,8 +84,6 @@ export default {
               desc: result.message
             })
           }
-        } else {
-          this.$Message.danger('表单验证失败!')
         }
       })
     }

@@ -17,7 +17,7 @@ function rules(config) {
     {
       test: /\.vue$/,
       use: ['vue-loader'],
-      include: /node_modules\/vue-core-image-upload/,
+      include: /node_modules\/vue-cropper/,
       exclude: /src/
     }
   ])
