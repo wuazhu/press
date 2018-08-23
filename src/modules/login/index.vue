@@ -26,13 +26,13 @@
               <span class="code col-3 border-left" @click="getVCode"><img :src="qrUrl" alt="" class="qrcode"></span>
             </div>
           </t-form-item>
-          <t-form-item label="记住我" prop="rember">
+          <!-- <t-form-item label="记住我" prop="rember">
             <t-switch v-model="loginForm.rember">
               <span slot="open">开</span>
               <span slot="close">关</span>
             </t-switch>
-          </t-form-item>
-          <t-button type="primary" block @click="doLoginHdl">登录</t-button>
+          </t-form-item> -->
+          <t-button type="primary" block @click="doLoginHdl" class="mt-4">登录</t-button>
         </t-form>
         <!-- <div class="logo"><img src="/static/images/china-post-logo.svg" alt=""></div> -->
       </div>
@@ -62,7 +62,7 @@ export default {
         // userCode: '10admin',
         // passWord: 'Test@1234',
         // verify: 'itzx',
-        rember: true
+        // rember: true
       },
       rules: {
         userCode: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],

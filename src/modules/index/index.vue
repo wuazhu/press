@@ -1,128 +1,134 @@
 <template>
   <div class="page-index">
-    <div class="area bg-white border mb-2">
-      统计范围:
-      <t-dropdown
-        :visible="visibleArea"
-        trigger="custom"
-        placement="bottom-start"
-        style="margin-left: 20px">
-        <t-button size="sm" @click="openOrgChange">
-          {{ showOrgName }}
-          <t-icon type="arrow-down-drop"></t-icon>
-        </t-button>
-        <t-dropdown-menu slot="list">
-          <div class="area-box index-area">
-            <organize-tree :need-filter="false" :border="false" @emitClickOrgTreeNode="changeOrg"></organize-tree>
-          </div>
-        </t-dropdown-menu>
-      </t-dropdown>
+    <div v-if="ROLEIDENTY === 1" class="text-center">
+      <img src="/static/images/home.png" alt="" class="home-img">
     </div>
-    <div class="row">
-      <div class="col-4">
-        <t-card>
-          <div class="d-flex text-sm text-5 index-card-header justify-content-between">
-            <span>流转额(元)</span>
-          </div>
-          <div class="index-card">
-            <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
-            <div ref="cht" class="data-box cht">
-              <t-chart ref="lineChartRef" :options="oneLineChart" chart-height="50" chart-width="350" auto-resize></t-chart>
+    <div v-else>
+      <div class="area bg-white border mb-2">
+        统计范围:
+        <t-dropdown
+          :visible="visibleArea"
+          trigger="custom"
+          placement="bottom-start"
+          style="margin-left: 20px">
+          <t-button size="sm" @click="openOrgChange">
+            {{ showOrgName }}
+            <t-icon type="arrow-down-drop"></t-icon>
+          </t-button>
+          <t-dropdown-menu slot="list">
+            <div class="area-box index-area">
+              <organize-tree :need-filter="false" :border="false" @emitClickOrgTreeNode="changeOrg"></organize-tree>
             </div>
-          </div>
-          <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">月均销售额</span> <span class="text-gray">￥{{ salesVolumeMonthly }}</span>
-          </div>
-        </t-card>
+          </t-dropdown-menu>
+        </t-dropdown>
       </div>
-      <div class="col-4">
-        <t-card>
-          <div class="d-flex text-sm text-muted index-card-header justify-content-between">
-            <span>收入目标(元)</span>
-          </div>
-          <div class="index-card">
-            <h2 class="money-data">¥ {{ salesVolumeGoal }}</h2>
-            <div class="data-box income-percent">
-              <t-progress :percent="salesVolumeGoalFinishRate" status="active" hide-info></t-progress>
+      <div class="row">
+        <div class="col-4">
+          <t-card>
+            <div class="d-flex text-sm text-5 index-card-header justify-content-between">
+              <span>流转额(元)</span>
             </div>
-          </div>
-          <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">目标完成率</span> <span class="text-gray ml-4">{{ salesVolumeGoalFinishRate }}%</span>
-          </div>
-        </t-card>
-      </div>
-      <div class="col-4">
-        <t-card>
-          <div class="d-flex text-sm text-muted index-card-header justify-content-between">
-            <span>订购量(份)</span>
-          </div>
-          <div class="index-card">
-            <h2 class="money-data">{{ orderFinish }}</h2>
-            <div class="data-box cht">
-              <t-chart ref="barChartRef" :options="barChart" chart-height="50" chart-width="350" auto-resize></t-chart>
+            <div class="index-card">
+              <h2 class="money-data">¥ {{ salesVolumeFinish }}</h2>
+              <div ref="cht" class="data-box cht">
+                <t-chart ref="lineChartRef" :options="oneLineChart" chart-height="50" chart-width="350" auto-resize></t-chart>
+              </div>
             </div>
-          </div>
-          <div slot="foot" class="card-foot">
-            <span class="text-muted text-md">月均量</span> <span class="text-gray ml-2">{{ orderMonthly }}</span>
-          </div>
-        </t-card>
+            <div slot="foot" class="card-foot">
+              <span class="text-muted text-md">月均销售额</span> <span class="text-gray">￥{{ salesVolumeMonthly }}</span>
+            </div>
+          </t-card>
+        </div>
+        <div class="col-4">
+          <t-card>
+            <div class="d-flex text-sm text-muted index-card-header justify-content-between">
+              <span>收入目标(元)</span>
+            </div>
+            <div class="index-card">
+              <h2 class="money-data">¥ {{ salesVolumeGoal }}</h2>
+              <div class="data-box income-percent">
+                <t-progress :percent="salesVolumeGoalFinishRate" status="active" hide-info></t-progress>
+              </div>
+            </div>
+            <div slot="foot" class="card-foot">
+              <span class="text-muted text-md">目标完成率</span> <span class="text-gray ml-4">{{ salesVolumeGoalFinishRate }}%</span>
+            </div>
+          </t-card>
+        </div>
+        <div class="col-4">
+          <t-card>
+            <div class="d-flex text-sm text-muted index-card-header justify-content-between">
+              <span>订购量(份)</span>
+            </div>
+            <div class="index-card">
+              <h2 class="money-data">{{ orderFinish }}</h2>
+              <div class="data-box cht">
+                <t-chart ref="barChartRef" :options="barChart" chart-height="50" chart-width="350" auto-resize></t-chart>
+              </div>
+            </div>
+            <div slot="foot" class="card-foot">
+              <span class="text-muted text-md">月均量</span> <span class="text-gray ml-2">{{ orderMonthly }}</span>
+            </div>
+          </t-card>
+        </div>
       </div>
+      <!-- <div v-show="false" class="index-tabs border">
+        <t-tabs>
+          <t-tab-panel label="客户渠道" name="tab-new">
+            <div class="row">
+              <div class="col-8 chart-box">
+                <div class="data-box">
+                  <div id="newmember">
+                    <t-chart
+                      ref="addMemberRef"
+                      :options="setChart"
+                      :auto-resize="true"
+                      chart-width="100%"
+                      chart-height="300px"
+                    ></t-chart>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4 bg-chart-gray">
+                <div class="addmember-circle d-flex">
+                  <div class="common-chart-circle">
+                    <div id="increaseChart"></div>
+                  </div>
+                  <div class="flex1 chart-infos">
+                    <dl>
+                      <dt class="add-title">{{ 14000 }}</dt>
+                      <dd class="text-muted">
+                        新增人数(人)
+                      </dd>
+                      <dt class="add-title">{{ 6000 }}</dt>
+                      <dd class="text-muted">
+                        新增收入(元)
+                      </dd>
+                      <dt class="add-title">{{ 5 }}% <span>1%</span></dt>
+                      <dd class="text-muted">
+                        新增率
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </t-tab-panel>
+          <t-tab-panel label="客户渠道" name="tab-lost">
+            <div class="row">
+              <div class="col-8">
+                <div class="data-box">
+                </div>
+              </div>
+              <div class="col-4 bg-chart-gray">
+                <p class="text-gray font-weight-bold">客户消费能力排行</p>
+              </div>
+            </div>
+          </t-tab-panel>
+        </t-tabs>
+      </div> -->
     </div>
-    <!-- <div v-show="false" class="index-tabs border">
-      <t-tabs>
-        <t-tab-panel label="客户渠道" name="tab-new">
-          <div class="row">
-            <div class="col-8 chart-box">
-              <div class="data-box">
-                <div id="newmember">
-                  <t-chart
-                    ref="addMemberRef"
-                    :options="setChart"
-                    :auto-resize="true"
-                    chart-width="100%"
-                    chart-height="300px"
-                  ></t-chart>
-                </div>
-              </div>
-            </div>
-            <div class="col-4 bg-chart-gray">
-              <div class="addmember-circle d-flex">
-                <div class="common-chart-circle">
-                  <div id="increaseChart"></div>
-                </div>
-                <div class="flex1 chart-infos">
-                  <dl>
-                    <dt class="add-title">{{ 14000 }}</dt>
-                    <dd class="text-muted">
-                      新增人数(人)
-                    </dd>
-                    <dt class="add-title">{{ 6000 }}</dt>
-                    <dd class="text-muted">
-                      新增收入(元)
-                    </dd>
-                    <dt class="add-title">{{ 5 }}% <span>1%</span></dt>
-                    <dd class="text-muted">
-                      新增率
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </t-tab-panel>
-        <t-tab-panel label="客户渠道" name="tab-lost">
-          <div class="row">
-            <div class="col-8">
-              <div class="data-box">
-              </div>
-            </div>
-            <div class="col-4 bg-chart-gray">
-              <p class="text-gray font-weight-bold">客户消费能力排行</p>
-            </div>
-          </div>
-        </t-tab-panel>
-      </t-tabs>
-    </div> -->
+    
   </div>
 </template>
 <script>
@@ -130,8 +136,10 @@ import echarts from 'echarts'
 import { forEach } from 'lodash'
 import { getDashboardBusiness, getDashboardCustomer } from './server.js'
 import organizeTree from '../components/OrganizeTree.vue'
+import ckIdenMixin from '../utils/CheckIdenMixIn.js'
 
 export default {
+  mixins: [ckIdenMixin],
   components: {
     organizeTree
   },
@@ -212,17 +220,19 @@ export default {
     }
   },
   mounted() {
-    this.getDashboardData()
-    setTimeout(() => {
-      this.$_resetEleWidth()
-    }, 2010)
-    // this.getDashboardCust()
-    document.addEventListener('click', () => {
-      this.visibleArea = false
-    })
-    window.addEventListener('resize', () => {
-      this.$_resetEleWidth()
-    })
+    if (this.ROLEIDENTY !== 1) {
+      this.getDashboardData()
+      setTimeout(() => {
+        this.$_resetEleWidth()
+      }, 2010)
+      // this.getDashboardCust()
+      document.addEventListener('click', () => {
+        this.visibleArea = false
+      })
+      window.addEventListener('resize', () => {
+        this.$_resetEleWidth()
+      })
+    }
   },
   methods: {
     $_resetEleWidth() {
@@ -598,5 +608,9 @@ export default {
 .components-tree {
   overflow-y: hidden!important;
   max-height: none!important;
+}
+.home-img {
+  max-width: 800px;
+  width: 100%;
 }
 </style>

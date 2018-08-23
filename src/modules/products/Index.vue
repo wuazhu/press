@@ -32,7 +32,7 @@
       <template slot="header">
         <div class="slipbox-title d-flex justify-content-between align-items-center">
           <p class="text-base">加入精品报刊</p>
-          <t-button :disabled="caniSubmit" type="primary" size="sm" @click="saveAndsubmit">保存并提交</t-button>
+          <t-button type="primary" size="sm" @click="saveAndsubmit">保存并提交</t-button>
         </div>
       </template>
       <div class="add-press">
@@ -80,7 +80,7 @@ import organizeTree from '../components/OrganizeTree.vue'
 import ProductTree from '../components/ProductList.vue'
 import { getBoutiqueList, delBoutique, addBoutique, modifyBoutiqueTop } from './server.js'
 const appSignInfo = JSON.parse(sessionStorage.getItem('CNPSIGN'))
-console.log(appSignInfo)
+
 export default {
   components: {
     organizeTree,
@@ -206,19 +206,6 @@ export default {
       }
     }
   },
-  computed: {
-    caniSubmit() {
-      if (this.pressName === '请选择报刊') {
-        return true
-      } else {
-        if (this.jpInfo.isBanner === 1) {
-          return this.jpInfo.bannerPicUrl === ''
-        } else {
-          return false
-        }
-      }
-    }
-  },
   created() {
     this.getBoutiqueLists()
   },
@@ -241,6 +228,24 @@ export default {
       this.$Message.danger(error)
     },
     async saveAndsubmit() {
+      console.log(this.jpInfo)
+      if (this.pressName === '请选择报刊') {
+        this.$Message.danger('请选择报刊')
+        return
+      } else {
+        if (this.jpInfo.isBanner === 1) {
+          if (this.jpInfo.bannerPicUrl === '') {
+            this.$Message.danger('请上传图片', 3)
+          } else {
+            this.$_saveAndSub()
+          }
+        } else {
+          this.$_saveAndSub()
+        }
+      }
+      
+    },
+    async $_saveAndSub() {
       let addInfo = await addBoutique(this.jpInfo)
       if (addInfo.status === 200) {
         this.visibleBox = false
@@ -323,7 +328,6 @@ export default {
       this.jpInfo.pressYear = pressYear
       this.jpInfo.pressUrl = pressUrl
       this.jpInfo.cataId = cataId
-      this.jpInfo.bannerPicUrl = ''
       this.pressName = pressName
       this.visibleBk = false
     },
