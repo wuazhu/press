@@ -60,87 +60,39 @@
                 </t-select>
               </div>
             </t-form-item>
-            <!-- <t-form-item label="轮播图片上传" prop="input4" class="upls">
-              <div class="img-upload">
-                <div class="upl-box">
-                  <t-button @click="changeImg" class="btn">上传图片</t-button>
-                  <vue-cropper
-                    ref="cropperUpl"
-                    :img="uplOpts.img"
-                    :outputSize="uplOpts.size"
-                    :outputType="uplOpts.outputType"
-                    :info="uplOpts.info"
-                    :canScale="uplOpts.canScale"
-                    :autoCrop="uplOpts.autoCrop"
-                    :autoCropWidth="uplOpts.autoCropWidth"
-                    :autoCropHeight="uplOpts.autoCropHeight"
-                    :fixed="uplOpts.fixed"
-                    :fixedNumber="uplOpts.fixedNumber"
-                  ></vue-cropper>
-                </div>
-              </div>
-            </t-form-item> -->
+            <t-form-item label="轮播图片上传" prop="input4" class="upls" v-show="jpInfo.isBanner === 1">
+              <t-upload action="/subpress-web/api/v1/upload" style="width: 300px;" name="file" :on-success="uplSuccess" :on-error="uplError" :headers="uplHead" ref="uplRef" accept="image/*">
+                <t-button type="outline-secondary" icon="aid aid-upload" size="sm">点击上传</t-button>
+                <div slot="tip" class="text-sm mt-2 text-gray">支持扩展名：.png .jpg .gif...</div>  
+              </t-upload>
+            </t-form-item>
           </t-form>
         </div>
       </div>
     </t-slipbox>
-    <!-- <t-modal
-      v-model="showUpl"
-      width="800"
-      height="500">
-      <div class="cut-box">
-        <vue-cropper
-          ref="cropperUpl"
-          :img="uplOpts.img"
-          :outputSize="uplOpts.size"
-          :outputType="uplOpts.outputType"
-          :info="uplOpts.info"
-          :canScale="uplOpts.canScale"
-          :autoCrop="uplOpts.autoCrop"
-          :autoCropWidth="uplOpts.autoCropWidth"
-          :autoCropHeight="uplOpts.autoCropHeight"
-          :fixed="uplOpts.fixed"
-          :fixedNumber="uplOpts.fixedNumber"
-          :original="true"
-          :fixedBox="false"
-          :canMoveBox="true">
-        </vue-cropper>
-      </div>
-    </t-modal> -->
   </div>
 </template>
 
 <script>
 import { remove, map } from 'lodash'
-// import VueCoreImageUpload from 'vue-core-image-upload'
-import VueCropper from 'vue-cropper'
 import Bus from '../../bus.js'
 import organizeTree from '../components/OrganizeTree.vue'
 import ProductTree from '../components/ProductList.vue'
 import { getBoutiqueList, delBoutique, addBoutique, modifyBoutiqueTop } from './server.js'
-
+const appSignInfo = JSON.parse(sessionStorage.getItem('CNPSIGN'))
+console.log(appSignInfo)
 export default {
   components: {
     organizeTree,
-    ProductTree,
-    VueCropper
+    ProductTree
   },
   data() {
     return {
-      showUpl: false,
-      uplOpts: {
-        img: 'http://ofyaji162.bkt.clouddn.com/bg1.jpg',
-        info: true,
-        size: 1,
-        outputType: 'png',
-        canScale: true,
-        autoCrop: true,
-        // 只有自动截图开启 宽度高度才生效
-        autoCropWidth: 75,
-        autoCropHeight: 40,
-        // 开启宽度和高度比例
-        fixed: true,
-        fixedNumber: [1.875, 1]
+      uplHead: {
+        'sign': appSignInfo.sign || '',
+        'session-id': appSignInfo.sessionId || '',
+        'ID': appSignInfo.id || '',
+        'STAFF_ID': appSignInfo.staffId || ''
       },
       listHeaderData: [
         {
@@ -256,7 +208,15 @@ export default {
   },
   computed: {
     caniSubmit() {
-      return this.pressName === '请选择报刊'
+      if (this.pressName === '请选择报刊') {
+        return true
+      } else {
+        if (this.jpInfo.isBanner === 1) {
+          return this.jpInfo.bannerPicUrl === ''
+        } else {
+          return false
+        }
+      }
     }
   },
   created() {
@@ -268,8 +228,17 @@ export default {
     })
   },
   methods: {
-    changeImg() {
-      this.showUpl = !this.showUpl
+    uplSuccess(response, file, fileList) {
+      if (response.status === 200) {
+        this.jpInfo.bannerPicUrl = response.data
+      } else {
+        this.$Message.danger(response.message)
+        this.jpInfo.bannerPicUrl = ''
+        this.$refs.uplRef.clearFiles()
+      }
+    },
+    uplError(error, file, fileList) {
+      this.$Message.danger(error)
     },
     async saveAndsubmit() {
       let addInfo = await addBoutique(this.jpInfo)
@@ -301,6 +270,7 @@ export default {
     },
     $_clickAddPress() {
       this.visibleBox = !this.visibleBox
+      this.$refs.uplRef.clearFiles()
     },
     changeOrg({ orgId, orgName, distId }) {
       this.orgId = orgId
