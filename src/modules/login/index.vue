@@ -32,7 +32,7 @@
               <span slot="close">关</span>
             </t-switch>
           </t-form-item> -->
-          <t-button type="primary" block @click="doLoginHdl" class="mt-4">登录</t-button>
+          <t-button type="primary" block class="mt-4" @click="doLoginHdl">登录</t-button>
         </t-form>
         <!-- <div class="logo"><img src="/static/images/china-post-logo.svg" alt=""></div> -->
       </div>
@@ -58,7 +58,7 @@ export default {
       loginForm: {
         userCode: '',
         passWord: '',
-        verify: '',
+        verify: ''
         // userCode: '10admin',
         // passWord: 'Test@1234',
         // verify: 'itzx',

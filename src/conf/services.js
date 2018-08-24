@@ -29,6 +29,8 @@ export default {
     customers: '/subpress-web/api/v1/customers'
   },
   orgList: '/subpress-web/api/v1/organize',
+  // mockOrg: '/mock/org',
+  // mockBooks: '/mock/book',
   orgStaff: '/subpress-web/api/v1/accounts',
   devices: {
     getDevices: '/subpress-web/api/v1/getAuthorizeDevice',

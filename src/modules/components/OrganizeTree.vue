@@ -1,11 +1,11 @@
 <template>
   <div :class="['components-tree', { 'border' : border }]">
     <div v-if="needFilter" class="pd-2 content-search d-flex">
-      <t-input
+      <!-- <t-input
         v-model="searchContent"
         placeholder="请输入搜索内容"
         size="sm">
-      </t-input>
+      </t-input> -->
     </div>
     <div>
       <t-tree
@@ -48,7 +48,8 @@ export default {
   computed: {
     ...mapState({
       orgId: state => state.login.orgId,
-      orgName: state => state.login.orgName
+      orgName: state => state.login.orgName,
+      distId: state => state.login.distId
     })
   },
   watch: {
@@ -58,10 +59,16 @@ export default {
   },
   methods: {
     $_clickOrgTreeNode(data, node, self) {
+      let distId = null
+      if (this.orgId === data.orgId) {
+        distId = this.distId
+      } else {
+        distId = data.distId
+      }
       this.$emit('emitClickOrgTreeNode', {
         orgId: data.orgId,
         orgName: data.orgName,
-        distId: data.distId
+        distId: distId
       })
     },
     filterNode(value, data) {

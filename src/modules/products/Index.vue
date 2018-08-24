@@ -60,10 +60,10 @@
                 </t-select>
               </div>
             </t-form-item>
-            <t-form-item label="轮播图片上传" prop="input4" class="upls" v-show="jpInfo.isBanner === 1">
-              <t-upload action="/subpress-web/api/v1/upload" style="width: 300px;" name="file" :on-success="uplSuccess" :on-error="uplError" :headers="uplHead" ref="uplRef" accept="image/*">
+            <t-form-item v-show="jpInfo.isBanner === 1" label="轮播图片上传" prop="input4" class="upls">
+              <t-upload ref="uplRef" :on-success="uplSuccess" :on-error="uplError" :headers="uplHead" action="/subpress-web/api/v1/upload" style="width: 300px;" name="file" accept="image/*">
                 <t-button type="outline-secondary" icon="aid aid-upload" size="sm">点击上传</t-button>
-                <div slot="tip" class="text-sm mt-2 text-gray">支持扩展名：.png .jpg .gif...</div>  
+                <div slot="tip" class="text-sm mt-2 text-gray">支持扩展名：.png .jpg .gif...</div>
               </t-upload>
             </t-form-item>
           </t-form>
@@ -152,7 +152,8 @@ export default {
                       pressUrl: params.row.pressUrl,
                       bannerPicUrl: params.row.bannerPicUrl,
                       pressCatalogId: params.row.pressCatalogId,
-                      isBanner: params.row.isBanner === 0 ? 1 : 0
+                      isBanner: params.row.isBanner === 0 ? 1 : 0,
+                      cataId: params.row.cataId
                     }
                     let mdfResult = await modifyBoutiqueTop(param)
                     if (mdfResult.status === 200) {
@@ -243,7 +244,6 @@ export default {
           this.$_saveAndSub()
         }
       }
-      
     },
     async $_saveAndSub() {
       let addInfo = await addBoutique(this.jpInfo)
@@ -319,7 +319,7 @@ export default {
       $event.stopPropagation()
     },
     checkIsProduct({
-      pressCatalogId, orgId, pressId, pressName, pressYear, pressUrl, isBanner, bannerPicUrl, cataId
+      pressCatalogId, orgId, pressId, labelName, pressName, pressYear, pressUrl, isBanner, bannerPicUrl, cataId
     }) {
       this.jpInfo.pressCatalogId = pressCatalogId
       this.jpInfo.orgId = orgId
@@ -328,7 +328,7 @@ export default {
       this.jpInfo.pressYear = pressYear
       this.jpInfo.pressUrl = pressUrl
       this.jpInfo.cataId = cataId
-      this.pressName = pressName
+      this.pressName = labelName
       this.visibleBk = false
     },
     changeBk() {

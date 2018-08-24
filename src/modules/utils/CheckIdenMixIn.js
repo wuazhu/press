@@ -21,7 +21,6 @@ const mixin = {
       // 1 => 纯系统管理 只有系统管理菜单
       // 2 => 纯业务管理 没有系统管理菜单
       // 3 => 啥都有
-      
       if (this.ROLELIST.length === 1) {
         if (this.$_checkXtgl()) {
           this.ROLEIDENTY = 1

@@ -128,7 +128,6 @@
         </t-tabs>
       </div> -->
     </div>
-    
   </div>
 </template>
 <script>
@@ -139,10 +138,10 @@ import organizeTree from '../components/OrganizeTree.vue'
 import ckIdenMixin from '../utils/CheckIdenMixIn.js'
 
 export default {
-  mixins: [ckIdenMixin],
   components: {
     organizeTree
   },
+  mixins: [ckIdenMixin],
   data() {
     return {
       oneLineChart: {},

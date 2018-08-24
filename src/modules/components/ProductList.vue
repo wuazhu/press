@@ -1,11 +1,11 @@
 <template>
   <div class="components-tree">
     <div class="pd-2 content-search d-flex">
-      <t-input
+      <!-- <t-input
         v-model="bookName"
         placeholder="请输入搜索内容"
         size="sm">
-      </t-input>
+      </t-input> -->
     </div>
     <div>
       <t-tree
@@ -30,14 +30,13 @@ export default {
     return {
       bookName: '',
       proDefaultProp: {
-        label: 'pressName',
+        label: 'labelName',
         children: 'children'
       },
       cataId: '',
       products: [],
       orgId: this.$store.state.login.orgId,
-      distId: this.$store.state.login.distId,
-      rres: null
+      distId: this.$store.state.login.distId
     }
   },
   watch: {
