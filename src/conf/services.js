@@ -23,7 +23,13 @@ export default {
     getPresiders: '/subpress-web/api/v1/presider/',
     regCustList: '/subpress-web/api/v1/regCustList',
     checkRegion: '/subpress-web/api/v1/checkRegion',
-    confirmCustReg: '/subpress-web/api/v1/confirmCustReg'
+    confirmCustReg: '/subpress-web/api/v1/confirmCustReg',
+    addMarketSeg: '/subpress-web/api/v1/addMarketSeg',
+    unDistriList: '/subpress-web/api/v1/unDistriList',
+    distriList: '/subpress-web/api/v1/distriList',
+    marketSegList: '/subpress-web/api/v1/marketSegList',
+    moveInSeg: '/subpress-web/api/v1/moveInSeg',
+    moveOutSeg: '/subpress-web/api/v1/moveOutSeg'
   },
   customers: {
     customers: '/subpress-web/api/v1/customers'

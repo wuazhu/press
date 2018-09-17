@@ -13,7 +13,10 @@
       <div class="col-9">
         <div class="content-right">
           <div class="cust-list-item border">
-            <div class="org-title">段道列表</div>
+            <div class="org-title d-flex justify-content-between">
+              <span>段道列表</span>
+              <t-button type="primary" size="sm" class="mr-2" style="height:24px;line-height:24px;margin-top:6px;" @click="showAddRoads = !showAddRoads">新增段道</t-button>
+            </div>
             <t-table
               :columns="roadHeader"
               :data="roadData"
@@ -27,6 +30,25 @@
         </div>
       </div>
     </div>
+    <t-modal
+      v-model="showAddRoads"
+      :closable="false"
+      title="新建段道"
+      width="450"
+      style="height:200px;">
+      <t-form ref="addRoadsRef" :model="addRoadsForm" :rules="addRoadsFormRule" :label-span="2" label-position="left" >
+        <t-form-item label="段道名称" prop="addRoadName">
+          <t-input v-model="addRoadsForm.addRoadName" placeholder="请输入段道名称..."></t-input>
+        </t-form-item>
+        <t-form-item label="段道描述" prop="segDesc">
+          <t-input v-model="addRoadsForm.segDesc" placeholder="请输入段道描述..."></t-input>
+        </t-form-item>
+      </t-form>
+      <div slot="footer">
+        <t-button size="sm" @click="cancelAddRoads">取 消</t-button>
+        <t-button type="primary" size="sm" @click="comfirmAddRoads">确 定</t-button>
+      </div>
+    </t-modal>
     <t-modal
       v-model="isShow"
       :closable="false"
@@ -119,7 +141,7 @@
 <script>
 import { indexOf, remove, forEach, filter, map, uniqBy, concat, pick } from 'lodash'
 import organizeTree from '../components/OrganizeTree'
-import { getRoadList, getPresiders, savePresiders, regCustList, checkRegion, confirmCustReg } from './server'
+import { getRoadList, getPresiders, savePresiders, regCustList, checkRegion, confirmCustReg, addMarketSeg } from './server'
 
 export default {
   components: {
@@ -127,6 +149,19 @@ export default {
   },
   data() {
     return {
+      addRoadsFormRule: {
+        addRoadName: [
+          {required: true, message: '段道名称不能为空', trigger: 'blur'}
+        ],
+        segDesc: [
+          {required: false, message: '请输入段道描述', trigger: 'blur'}
+        ]
+      },
+      addRoadsForm: {
+        addRoadName: '',
+        segDesc: ''
+      },
+      showAddRoads: false,
       custIdSingle: '',
       cid: null,
       custIds: [],
@@ -275,6 +310,33 @@ export default {
     this.getRoadListData()
   },
   methods: {
+    comfirmAddRoads() {
+      this.$refs.addRoadsRef.validate(async valid => {
+        if (valid) {
+          let param = {
+            orgId: `${this.orgId}`,
+            segName: this.addRoadsForm.addRoadName,
+            segDesc: this.addRoadsForm.segDesc
+          }
+          let addResult = await addMarketSeg(param)
+          if (addResult.status === 200) {
+            this.showAddRoads = false
+            this.$refs.addRoadsRef.resetFields()
+            this.getRoadListData()
+            this.$Message.success('新增段道成功!')
+          } else {
+            this.$Notice.danger({
+              title: `code: ${addResult.status}`,
+              desc: addResult.message
+            })
+          }
+        }
+      })
+    },
+    cancelAddRoads() {
+      this.showAddRoads = false
+      this.$refs.addRoadsRef.resetFields()
+    },
     batchToRoad() {
       this.singleSelect = false
       this.$_openRegionList()

@@ -1,6 +1,43 @@
 import http from '../../http'
 import services from '../../conf/services'
 
+// 移出段道
+export async function moveOutSeg(params) {
+  let result = await http.$http.post(services.region.moveOutSeg, params)
+  return result.data
+}
+// 移入段道
+export async function moveInSeg(params) {
+  let result = await http.$http.post(services.region.moveInSeg, params)
+  return result.data
+}
+// 新增段道
+export async function addMarketSeg(params) {
+  let result = await http.$http.post(services.region.addMarketSeg, params)
+  return result.data
+}
+// 营销段道列表
+export async function marketSegList(params) {
+  let result = await http.$http.get(services.region.marketSegList, {
+    params
+  })
+  return result.data
+}
+// 待分配客户列表
+export async function unDistriList(params) {
+  let result = await http.$http.get(services.region.unDistriList, {
+    params
+  })
+  return result.data
+}
+// 已分配客户列表
+export async function distriList(params) {
+  let result = await http.$http.get(services.region.distriList, {
+    params
+  })
+  return result.data
+}
+
 // 获取段道列表
 export async function getRoadList(params) {
   let listData = await http.$http.get(services.region.region, {

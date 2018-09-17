@@ -6,7 +6,7 @@ dist/
 yarn-error.log
 yarn.lock
 npm-debug.log
-.ipu/temp/
+.aid/temp/
 selenium-debug.log
 .idea/
 build/

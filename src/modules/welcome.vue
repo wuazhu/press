@@ -64,6 +64,7 @@
             <span>段道管理</span>
           </template>
           <t-menu-item name="/road/allot">段道分配</t-menu-item>
+          <t-menu-item name="/road/bigallot">大宗段道分配</t-menu-item>
           <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
         </t-submenu>
         <t-submenu v-if="(roleIdenty === 2 || roleIdenty === 3)" name="devices">
