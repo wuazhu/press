@@ -193,6 +193,7 @@ export default {
       // 120000400 收订
       // 120000600 系统管理员
       // 124000800 投递人员
+      // 120001000 营销人员
       // 1 => 纯系统管理 只有系统管理菜单
       // 2 => 纯业务管理 没有系统管理菜单
       // 3 => 啥都有
@@ -203,25 +204,41 @@ export default {
           this.roleIdenty = 2
         }
       } else if (this.roleList.length === 2) {
-        if (this.$_checkXtgl() && (this.$_checkSdry() || this.$_checkStgl())) {
-          // 系统管理员 + 投递 | 收投
+        if (this.$_checkXtgl() && (this.$_checkSdry() || this.$_checkStgl() || this.$_checkYxry())) {
+          // 系统管理员 + 投递 | 收投 | 营销
           this.roleIdenty = 1
-        } else if (this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl())) {
-          // 业务管理员 + 投递 | 收投
+        } else if (this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl() || this.$_checkYxry())) {
+          // 业务管理员 + 投递 | 收投 | 营销
           this.roleIdenty = 2
         } else if (this.$_checkXtgl() && this.$_checkYwgl()) {
           // 业务管理员 + 系统管理员
           this.roleIdenty = 3
         }
       } else if (this.roleList.length === 3) {
-        if (this.$_checkYwgl() && this.$_checkSdry() & this.$_checkStgl()) {
+        if (this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl()) && this.$_checkYxry()) {
+          // 业务管理员 + 营销 |投递 | 收投
+          this.roleIdenty = 2
+        } else if (this.$_checkYwgl() && this.$_checkSdry() && this.$_checkStgl()) {
           // 业务管理员 + 投递 + 收投
           this.roleIdenty = 2
-        } else if (this.$_checkXtgl() && this.$_checkSdry() & this.$_checkStgl()) {
-          // 业务管理员 + 投递 + 收投
+        } else if (this.$_checkXtgl() && (this.$_checkSdry() || this.$_checkStgl()) && this.$_checkYxry()) {
+          // 系统管理员 + 营销 | 投递 | 收投
           this.roleIdenty = 1
-        } else if (this.$_checkXtgl() && this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl())) {
+        } else if (this.$_checkXtgl() && this.$_checkSdry() && this.$_checkStgl()) {
+          // 系统管理员 + 投递 + 收投
+          this.roleIdenty = 1
+        } else if (this.$_checkXtgl() && this.$_checkYwgl() && (this.$_checkSdry() || this.$_checkStgl() || this.$_checkYxry())) {
           // 业务管理员 + 系统管理员
+          this.roleIdenty = 3
+        }
+      } else if (this.roleList.length === 4) {
+        if (this.$_checkYwgl() && this.$_checkSdry() && this.$_checkStgl() && this.$_checkYxry()) {
+          // 业务管理员 + 营销 + 投递 + 收投
+          this.roleIdenty = 2
+        } else if (this.$_checkXtgl() && this.$_checkSdry() && this.$_checkStgl() && this.$_checkYxry()) {
+          // 系统管理员 + 营销 + 投递 + 收投
+          this.roleIdenty = 1
+        } else {
           this.roleIdenty = 3
         }
       } else {
@@ -249,6 +266,12 @@ export default {
     $_checkStgl() {
       // 校验收投管理人员
       if (find(this.roleList, {roleId: 120000800})) {
+        return true
+      }
+    },
+    $_checkYxry(rol) {
+      // 校验营销人员
+      if (find(this.roleList, {roleId: 120001000})) {
         return true
       }
     },
