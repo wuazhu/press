@@ -276,7 +276,7 @@ export default {
                     }
                   }
                 }
-              }, params.row.type === 0 ? '分配责任人' : null),
+              }, (params.row.type === 0 || params.row.segType === 2) ? '分配责任人' : null),
               h('span', {
                 style: {'color': '#108EEA', 'cursor': 'pointer', 'margin-left': '20px'},
                 on: {

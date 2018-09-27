@@ -134,8 +134,6 @@ export default {
                 style: {'color': '#108EEA', 'cursor': 'pointer'},
                 on: {
                   async click() {
-                    console.log(params);
-                    
                     vm.oid = params.row.cid
                     vm.moveOutAllot()
                   }
@@ -197,8 +195,6 @@ export default {
         oid: this.oid,
         orgId: this.$store.state.login.orgId
       }
-      console.log(params);
-      
       let rs = await moveOutSeg(params)
       if (rs.status === 200) {
         this.oid = ''
