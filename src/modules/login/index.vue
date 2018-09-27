@@ -105,6 +105,7 @@ export default {
       // 120000400 收订
       // 120000600 系统管理员
       // 124000800 投递人员
+      // 120001000 营销人员
       if (this.$_checkYwgl(rol) || this.$_checkXtgl(rol)) {
         return 1
       } else {
@@ -135,6 +136,12 @@ export default {
         return true
       }
     },
+    $_checkYxry(rol) {
+      // 校验营销人员
+      if (find(rol, {roleId: 120001000})) {
+        return true
+      }
+    },
     doLoginHdl() {
       this.$refs.loginRef.validate(async passed => {
         if (passed) {
@@ -155,6 +162,7 @@ export default {
               // 120000400 收订
               // 120000600 系统管理员
               // 124000800 投递人员
+              // 120001000 营销人员
               let rolesList = response.data.ROLES
               const roleType = this.$_chekIden(rolesList)
               if (roleType > 1) {

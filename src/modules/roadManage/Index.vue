@@ -278,6 +278,26 @@ export default {
                 }
               }, (params.row.type === 0 || params.row.segType === 2) ? '分配责任人' : null),
               h('span', {
+                style: {'color': '#108EEA', 'cursor': 'pointer'},
+                on: {
+                  async click() {
+                    vm.cancelPresiders()
+                    vm.isShow = true
+                    vm.rdSgId = params.row.id
+                    let presiderList = await getPresiders({
+                      orgId: vm.orgId,
+                      rdSgId: params.row.id
+                    })
+                    if (presiderList.status === 200) {
+                      vm.presiderData = presiderList.data.chooseList
+                      vm.presiderChecked = presiderList.data.checkedList
+                    } else {
+                      vm.$Message.danger(presiderList.message)
+                    }
+                  }
+                }
+              }, params.row.type === 1 && params.row.segType === 2 ? '分配责任人' : null),
+              h('span', {
                 style: {'color': '#108EEA', 'cursor': 'pointer', 'margin-left': '20px'},
                 on: {
                   async click() {
