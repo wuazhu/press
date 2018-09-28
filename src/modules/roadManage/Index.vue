@@ -15,7 +15,7 @@
           <div class="cust-list-item border">
             <div class="org-title d-flex justify-content-between">
               <span>段道列表</span>
-              <t-button type="primary" size="sm" class="mr-2" style="height:24px;line-height:24px;margin-top:6px;" @click="showAddRoads = !showAddRoads">新增段道</t-button>
+              <!-- <t-button type="primary" size="sm" class="mr-2" style="height:24px;line-height:24px;margin-top:6px;" @click="showAddRoads = !showAddRoads">新增段道</t-button> -->
             </div>
             <t-table
               :columns="roadHeader"
@@ -277,26 +277,6 @@ export default {
                   }
                 }
               }, (params.row.type === 0 || params.row.segType === 2) ? '分配责任人' : null),
-              h('span', {
-                style: {'color': '#108EEA', 'cursor': 'pointer'},
-                on: {
-                  async click() {
-                    vm.cancelPresiders()
-                    vm.isShow = true
-                    vm.rdSgId = params.row.id
-                    let presiderList = await getPresiders({
-                      orgId: vm.orgId,
-                      rdSgId: params.row.id
-                    })
-                    if (presiderList.status === 200) {
-                      vm.presiderData = presiderList.data.chooseList
-                      vm.presiderChecked = presiderList.data.checkedList
-                    } else {
-                      vm.$Message.danger(presiderList.message)
-                    }
-                  }
-                }
-              }, params.row.type === 1 && params.row.segType === 2 ? '分配责任人' : null),
               h('span', {
                 style: {'color': '#108EEA', 'cursor': 'pointer', 'margin-left': '20px'},
                 on: {

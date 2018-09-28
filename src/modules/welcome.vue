@@ -9,7 +9,7 @@
           <img src="/static/images/post-logo.png" alt="" class="logo-text ml-2">
         </span>
       </router-link>
-      {{ roleIdenty }}
+      <!-- {{ roleIdenty }} -->
       <t-menu
         :open-position="openPosition"
         :class="[{'menu--folded': isOpen===false}]"
@@ -32,30 +32,30 @@
           </template>
           <t-submenu name="uspaManage-org">
             <template slot="title">组织架构管理</template>
-            <t-menu-item name="/uspaManage/uspa/stationTypeManager">岗位类型管理</t-menu-item>
-            <t-menu-item name="/uspaManage/uspa/stationManager">岗位管理</t-menu-item>
+            <!-- <t-menu-item name="/uspaManage/uspa/stationTypeManager">岗位类型管理</t-menu-item> -->
+            <!-- <t-menu-item name="/uspaManage/uspa/stationManager">岗位管理</t-menu-item> -->
             <t-menu-item name="/uspaManage/uspa/organizeManager">组织管理</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/operatorManager">员工管理</t-menu-item>
-            <t-menu-item name="/uspaManage/uspa/virtualGroupManager">虚拟组管理</t-menu-item>
-            <t-menu-item name="/uspaManage/uspa/opStationManager">操作员上岗</t-menu-item>
+            <!-- <t-menu-item name="/uspaManage/uspa/virtualGroupManager">虚拟组管理</t-menu-item> -->
+            <!-- <t-menu-item name="/uspaManage/uspa/opStationManager">操作员上岗</t-menu-item> -->
           </t-submenu>
           <t-submenu name="uspaManage-permission">
             <template slot="title">权限管理</template>
             <t-menu-item name="/uspaManage/uspa/roleManager">功能集管理</t-menu-item>
-            <t-menu-item name="/uspaManage/uspa/entityManager">实体管理</t-menu-item>
+            <!-- <t-menu-item name="/uspaManage/uspa/entityManager">实体管理</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/privManager">操作行为管理</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/entityClassManager">实体分类管理</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/functionManager">菜单管理</t-menu-item>
-            <t-menu-item name="/uspaManage/uspa/roleExclude">功能集互斥管理</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/roleExclude">功能集互斥管理</t-menu-item> -->
           </t-submenu>
           <t-submenu name="uspaManage-permission">
             <template slot="title">功能管理</template>
-            <t-menu-item name="/uspaManage/uspa/entityPrivRelaManager">实体操作行为绑定</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/operatorAuthorManager">操作员授权</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/organizeAuthorManager">组织授权</t-menu-item>
+            <!-- <t-menu-item name="/uspaManage/uspa/entityPrivRelaManager">实体操作行为绑定</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/stationTypeAuthorManager">岗位类型授权</t-menu-item>
             <t-menu-item name="/uspaManage/uspa/roleEntityRelaManager">实体与功能集绑定</t-menu-item>
-            <t-menu-item name="/uspaManage/uspa/roleFunctionRelaManager">菜单与功能集绑定</t-menu-item>
+            <t-menu-item name="/uspaManage/uspa/roleFunctionRelaManager">菜单与功能集绑定</t-menu-item> -->
           </t-submenu>
         </t-submenu>
         <t-submenu v-if="(roleIdenty === 2 || roleIdenty === 3)" name="road">
@@ -64,7 +64,7 @@
             <span>段道管理</span>
           </template>
           <t-menu-item name="/road/allot">段道分配</t-menu-item>
-          <t-menu-item name="/road/bigallot">大宗段道分配</t-menu-item>
+          <!-- <t-menu-item name="/road/bigallot">大宗段道分配</t-menu-item> -->
           <!-- <t-menu-item name="2-2">活跃用户</t-menu-item> -->
         </t-submenu>
         <t-submenu v-if="(roleIdenty === 2 || roleIdenty === 3)" name="devices">
